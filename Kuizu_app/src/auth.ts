@@ -318,10 +318,18 @@ if (form) {
           }
         }
 
+        const dispatchFirstWelcomeEmail = (targetEmail: string, targetName: string) => {
+          const welcomeKey = `kuizu_welcome_sent_${targetEmail.toLowerCase().trim()}`;
+          if (!localStorage.getItem(welcomeKey)) {
+            localStorage.setItem(welcomeKey, 'true');
+            sendWelcomeEmail(targetEmail, targetName);
+          }
+        };
+
         if (signUpRes.status === 'complete') {
           await clerk.setActive({ session: signUpRes.createdSessionId });
           syncClerkUserToLocalStorage(clerk.user);
-          sendWelcomeEmail(email, fullName || firstName);
+          dispatchFirstWelcomeEmail(email, fullName || firstName);
           confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
           showToast('Account created! Welcome to KUIZU!', '🎉');
           setTimeout(() => {
@@ -346,7 +354,7 @@ if (form) {
               if (verifyRes.status === 'complete') {
                 await clerk.setActive({ session: verifyRes.createdSessionId });
                 syncClerkUserToLocalStorage(clerk.user);
-                sendWelcomeEmail(email, fullName || firstName);
+                dispatchFirstWelcomeEmail(email, fullName || firstName);
                 confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
                 showToast('Email verified! Welcome to KUIZU!', '🎉');
                 setTimeout(() => {
@@ -364,7 +372,7 @@ if (form) {
               localStorage.setItem('kuizu_user_name', fullName || email.split('@')[0]);
               localStorage.setItem('kuizu_user_email', email);
               localStorage.setItem('kuizu_logged_in', 'true');
-              sendWelcomeEmail(email, fullName || email.split('@')[0]);
+              dispatchFirstWelcomeEmail(email, fullName || email.split('@')[0]);
               window.location.href = '/home';
             }
           );

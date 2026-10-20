@@ -1239,7 +1239,7 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
   // RESEND EMAIL API DISPATCH
   // ----------------------------------------------------
   if (pathname === '/api/email/send' && method === 'POST') {
-    const { to, subject, html, text, from = 'KUIZU <onboarding@resend.dev>' } = body;
+    const { to, subject, html, text, from = 'KUIZU <onboarding@resend.dev>', attachments } = body;
     const resendApiKey =
       (import.meta as any).env?.VITE_RESEND_API_KEY ||
       (import.meta as any).env?.RESEND_API_KEY ||
@@ -1261,19 +1261,24 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
     }
 
     try {
+      const payload: any = {
+        from,
+        to: Array.isArray(to) ? to : [to],
+        subject,
+        html,
+        text
+      };
+      if (attachments && Array.isArray(attachments) && attachments.length > 0) {
+        payload.attachments = attachments;
+      }
+
       const resendRes = await nativeFetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${resendApiKey}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          from,
-          to: Array.isArray(to) ? to : [to],
-          subject,
-          html,
-          text
-        })
+        body: JSON.stringify(payload)
       });
 
       const resendData = await resendRes.json();
@@ -1282,7 +1287,7 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
         return jsonResponse({ success: false, error: resendData }, resendRes.status);
       }
 
-      console.log('✅ [Resend] Email successfully sent:', resendData);
+      console.log('✅ [Resend] Email successfully sent with attachments:', resendData);
       return jsonResponse({ success: true, data: resendData });
     } catch (sendErr: any) {
       console.warn('⚠️ [Resend] Network error sending email:', sendErr);

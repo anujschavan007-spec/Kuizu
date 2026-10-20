@@ -280,8 +280,20 @@ export function unlockBadge(badgeId: string, customDate?: string): boolean {
   // Send badge achievement congratulatory email via Resend
   if (!wasUnlocked) {
     try {
-      const userEmail = localStorage.getItem('kuizu_user_email') || '';
-      const userName = localStorage.getItem('kuizu_user_name') || 'Kuizu Champion';
+      let userEmail = localStorage.getItem('kuizu_user_email') || '';
+      let userName = localStorage.getItem('kuizu_user_name') || 'Kuizu Champion';
+
+      // Fallback: check Clerk if loaded on window
+      if (!userEmail && typeof window !== 'undefined' && (window as any).Clerk?.user) {
+        userEmail = (window as any).Clerk.user.primaryEmailAddress?.emailAddress || '';
+        userName = (window as any).Clerk.user.fullName || (window as any).Clerk.user.firstName || userName;
+      }
+
+      // Fallback to active developer email if none specified in dev/local
+      if (!userEmail) {
+        userEmail = 'anujschavan007@gmail.com';
+      }
+
       if (userEmail) {
         sendBadgeWinEmail(userEmail, userName, def);
       }
@@ -360,11 +372,41 @@ export function openBadgeModal(badgeId: string): void {
   }
 }
 
-// Expose on window for easy developer inspection & testing in console
+/**
+ * Helper to test sending a live badge achievement email with 3D GLB attachment
+ */
+export async function testSendBadgeEmail(badgeId: string = 'first-problem-solver', targetEmail?: string): Promise<boolean> {
+  const def = resolveBadgeDefinition(badgeId) || ALL_BADGE_DEFINITIONS[0];
+  const userEmail = targetEmail || localStorage.getItem('kuizu_user_email') || 'anujschavan007@gmail.com';
+  const userName = localStorage.getItem('kuizu_user_name') || 'Kuizu Champion';
+  return sendBadgeWinEmail(userEmail, userName, def);
+}
+
+// Auto-open 3D badge modal if visited via email link (?badge=... or ?trophy=...)
 if (typeof window !== 'undefined') {
+  const checkUrlBadgeParam = () => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const badgeParam = urlParams.get('badge') || urlParams.get('trophy');
+      if (badgeParam) {
+        setTimeout(() => {
+          openBadgeModal(badgeParam);
+        }, 700);
+      }
+    } catch (_) {}
+  };
+
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', checkUrlBadgeParam);
+  } else {
+    checkUrlBadgeParam();
+  }
+
+  // Expose on window for easy developer inspection & testing in console
   (window as any).kuizuUnlockBadge = unlockBadge;
   (window as any).kuizuLockBadge = lockBadge;
   (window as any).kuizuResetBadges = resetAllBadges;
   (window as any).kuizuOpenBadgeModal = openBadgeModal;
   (window as any).kuizuGetBadges = getBadges;
+  (window as any).kuizuTestBadgeEmail = testSendBadgeEmail;
 }

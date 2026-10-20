@@ -1,5 +1,6 @@
 import './supabaseApiBridge';
 import { Clerk } from '@clerk/clerk-js';
+import { sendWelcomeEmail } from './resendEmailService';
 
 export const CLERK_PUBLISHABLE_KEY =
   (import.meta as any).env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
@@ -46,6 +47,19 @@ export function syncClerkUserToLocalStorage(user: any) {
     localStorage.setItem('kuizu_user_avatar', user.imageUrl);
   }
   localStorage.setItem('kuizu_logged_in', 'true');
+
+  // Trigger Welcome Email via Resend if user is newly registered (within last 30 minutes)
+  if (email) {
+    const welcomeKey = `kuizu_welcome_sent_${email.toLowerCase().trim()}`;
+    if (!localStorage.getItem(welcomeKey)) {
+      const createdTime = user.createdAt ? new Date(user.createdAt).getTime() : 0;
+      const isNewUser = (Date.now() - createdTime) < (30 * 60 * 1000); // Created within last 30 minutes
+      if (isNewUser) {
+        localStorage.setItem(welcomeKey, 'true');
+        sendWelcomeEmail(email, displayName);
+      }
+    }
+  }
 
   // Asynchronously register / update user in Bun SQLite DB
   if (email) {

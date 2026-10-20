@@ -2083,7 +2083,7 @@ const server = Bun.serve({
       // ----------------------------------------------------
       if (pathname === "/api/email/send" && method === "POST") {
         const body = await req.json();
-        const { to, subject, html, text, from = "KUIZU <onboarding@resend.dev>" } = body;
+        const { to, subject, html, text, from = "KUIZU <onboarding@resend.dev>", attachments } = body;
         const resendApiKey = process.env.RESEND_API_KEY || process.env.VITE_RESEND_API_KEY || "";
 
         if (!to || !subject) {
@@ -2102,19 +2102,24 @@ const server = Bun.serve({
         }
 
         try {
+          const payload: any = {
+            from,
+            to: Array.isArray(to) ? to : [to],
+            subject,
+            html,
+            text
+          };
+          if (attachments && Array.isArray(attachments) && attachments.length > 0) {
+            payload.attachments = attachments;
+          }
+
           const resendRes = await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {
               "Authorization": `Bearer ${resendApiKey}`,
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-              from,
-              to: Array.isArray(to) ? to : [to],
-              subject,
-              html,
-              text
-            })
+            body: JSON.stringify(payload)
           });
 
           const resendData = await resendRes.json();
@@ -2123,7 +2128,7 @@ const server = Bun.serve({
             return jsonResponse({ success: false, error: resendData }, resendRes.status);
           }
 
-          console.log("✅ [Resend Backend] Email sent successfully:", resendData);
+          console.log("✅ [Resend Backend] Email sent successfully with attachments:", resendData);
           return jsonResponse({ success: true, data: resendData });
         } catch (sendErr: any) {
           console.warn("⚠️ [Resend Backend] Network error:", sendErr);
