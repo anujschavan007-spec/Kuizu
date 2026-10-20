@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quest Path • Problems • KUIZU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="problems-page-body quest-page-body">
+    <!-- Top Navigation Header -->
+    <header class="home-header">
+      <div class="container home-nav-container">
+        <!-- Brand Logo -->
+        <a href="/home" class="brand-logo" aria-label="KUIZU Home">
+          <svg class="brand-icon" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12.5 3C7.5 3 3 7 3 13V22C3 28 8 33 13.5 33C17.5 33 21 30.5 22.5 26.5L24 23L25.5 26.5C27 30.5 30.5 33 34.5 33C40 33 45 28 45 22V13C45 7 40.5 3 35.5 3H12.5Z"
+              fill="url(#questBrandGrad)"
+            />
+            <path d="M11 15H17M14 12V18" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="31.5" cy="17.5" r="2.2" fill="white" />
+            <circle cx="36.5" cy="13.5" r="2.2" fill="white" />
+            <defs>
+              <linearGradient id="questBrandGrad" x1="3" y1="3" x2="45" y2="33" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4F46E5" />
+                <stop offset="1" stop-color="#7C3AED" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand-text">KUIZU</span>
+        </a>
+
+        <!-- Middle Navigation Tabs (Problems Active) -->
+        <nav class="home-nav-tabs">
+          <a href="/home" class="nav-tab nav-tab-inactive" id="tab-nav-home">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            </svg>
+            <span>Home</span>
+          </a>
+
+          <a href="/problems" class="nav-tab active" id="tab-nav-problems">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Problems</span>
+          </a>
+
+          <a href="/quiz" class="nav-tab nav-tab-inactive" id="tab-nav-quiz">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="m9 14 2 2 4-4"></path>
+            </svg>
+            <span>Quiz</span>
+          </a>
+
+          <a href="/battle" class="nav-tab nav-tab-inactive" id="tab-nav-battle">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="14.5" y1="9.5" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="9.5" y2="14.5"></line>
+              <line x1="16" y1="3" x2="21" y2="8"></line>
+              <line x1="3" y1="16" x2="8" y2="21"></line>
+              <line x1="9.5" y1="9.5" x2="3" y2="3"></line>
+              <line x1="21" y1="21" x2="14.5" y2="14.5"></line>
+            </svg>
+            <span>Battle</span>
+          </a>
+        </nav>
+
+        <!-- Right User Profile Avatar & Dropdown -->
+        <div class="user-profile-menu-wrap">
+          <button type="button" class="user-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false">
+            <img src="/images/home_avatar.png" alt="User Profile Avatar" class="user-nav-avatar" />
+            <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <!-- Profile Pop-up Card -->
+          <div class="user-dropdown-menu profile-popup-card" id="user-dropdown">
+            <div class="popup-user-header">
+              <div class="popup-avatar-wrap">
+                <img src="/images/home_avatar.png" alt="Anuj Profile" class="popup-avatar-img" />
+              </div>
+              <div class="popup-user-details">
+                <h3 class="popup-user-name" id="menu-user-name">Anuj</h3>
+                <div class="popup-xp-badge">
+                  <svg class="popup-star-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  <span id="menu-user-xp">2,450 XP</span>
+                </div>
+              </div>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <div class="popup-menu-list">
+              <a href="/home" class="popup-menu-item" id="btn-menu-profile">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>My Profile</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+
+              <a href="/problems" class="popup-menu-item" id="btn-menu-leaderboard">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                  </svg>
+                  <span>Leaderboard</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+
+              <button type="button" class="popup-menu-item" id="btn-menu-theme">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                  </svg>
+                  <span>Theme Mode</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <button type="button" class="popup-menu-item" id="btn-menu-settings">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                  <span>Settings</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <a href="/sign-in" class="popup-logout-btn" id="btn-logout">
+              <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Sign Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Problem/Quests Layout -->
+    <main class="problems-main-layout">
+      <div class="container problems-split-grid">
+        <!-- Left Sidebar Navigation -->
+        <aside class="problems-sidebar">
+          <nav class="sidebar-nav-list">
+            <a href="/problems" class="sidebar-nav-item" id="side-tab-qlibrary">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              <span>QLibrary</span>
+            </a>
+
+            <!-- Active Quests Tab -->
+            <a href="/problem/quest" class="sidebar-nav-item active" id="side-tab-quests">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                <line x1="4" y1="22" x2="4" y2="15"></line>
+              </svg>
+              <span>Quests</span>
+            </a>
+
+            <a href="/problem/contest" class="sidebar-nav-item" id="side-tab-contests">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+              <span>Contests</span>
+            </a>
+
+            <a href="/problem/leaderboard" class="sidebar-nav-item" id="side-tab-leaderboard">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              <span>Leaderboard</span>
+            </a>
+          </nav>
+        </aside>
+
+        <!-- Right Quest Content Column -->
+        <section class="problems-content-area quest-content-area">
+          <!-- Quest Header Row -->
+          <div class="quest-header-row">
+            <div class="quest-header-left">
+              <div class="quest-flag-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                  <line x1="4" y1="22" x2="4" y2="15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
+                </svg>
+              </div>
+              <div class="quest-header-titles">
+                <h1 class="quest-page-title">Quest Path</h1>
+                <p class="quest-page-subtitle">Complete quests to unlock the next challenge</p>
+              </div>
+            </div>
+
+            <!-- Quest Status Card / Progress Pill -->
+            <div class="quest-progress-pill">
+              <div class="quest-progress-left">
+                <div class="quest-progress-label">
+                  <span class="quest-progress-highlight">2 / 8</span> quests completed
+                </div>
+                <div class="quest-progress-bar-track" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="8">
+                  <div class="quest-progress-bar-fill" style="width: 25%;"></div>
+                </div>
+              </div>
+
+              <div class="quest-progress-divider" aria-hidden="true"></div>
+
+              <div class="quest-xp-earned-wrap">
+                <svg class="quest-star-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <div class="quest-xp-text">
+                  <span class="quest-xp-highlight">+180 XP</span> earned
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quest Interactive Landscape Map Card -->
+          <div class="quest-map-scroll-wrapper">
+            <div class="quest-landscape-card" id="quest-landscape-map">
+              <!-- SVG Wiring Path connecting all 8 Nodes -->
+              <svg class="quest-wiring-svg" viewBox="0 0 1345 680" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                  <linearGradient id="activeWiringGrad" x1="235" y1="410" x2="395" y2="275" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#F59E0B" />
+                    <stop offset="1" stop-color="#3B82F6" />
+                  </linearGradient>
+                </defs>
+
+                <!-- Segment 1: Node 1 to Node 2 (Completed - Emerald Green dashed line) -->
+                <path
+                  d="M 105 515 C 145 515, 195 440, 235 410"
+                  stroke="#10B981"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                  stroke-dasharray="8 8"
+                  class="wiring-segment wiring-completed"
+                />
+
+                <!-- Segment 2: Node 2 to Node 3 (To Current Active - Radiant Blue dashed line) -->
+                <path
+                  d="M 235 410 C 285 370, 340 280, 395 275"
+                  stroke="#3B82F6"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                  stroke-dasharray="8 8"
+                  class="wiring-segment wiring-active"
+                />
+
+                <!-- Segment 3 to 8: Node 3 through Node 8 (Future / Locked - Soft Lavender/Slate dashed line) -->
+                <path
+                  d="M 395 275 C 450 270, 505 255, 560 260
+                     C 615 265, 660 395, 715 400
+                     C 770 405, 815 330, 870 325
+                     C 935 320, 1000 255, 1065 250
+                     C 1130 245, 1180 155, 1230 145"
+                  stroke="#94A3B8"
+                  stroke-opacity="0.65"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-dasharray="8 8"
+                  class="wiring-segment wiring-locked"
+                />
+              </svg>
+
+              <!-- Node 1: Daily Warm-up (Completed, Green) -->
+              <div class="quest-node-anchor node-status-completed" style="left: 7.81%; top: 75.74%;" data-node="1">
+                <button type="button" class="quest-node-circle circle-green" aria-label="Quest 1: Daily Warm-up, Completed">
+                  <div class="node-halo-ring"></div>
+                  <div class="node-inner-disk">
+                    <svg class="node-icon check-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <span class="node-number-badge badge-green">1</span>
+                </button>
+                <div class="quest-node-card">
+                  <div class="node-card-title">Daily Warm-up</div>
+                  <div class="node-card-meta">
+                    <span class="meta-difficulty easy">Easy</span>
+                    <span class="meta-dot">•</span>
+                    <span class="meta-xp">10 XP</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Node 2: Array Explorer (Completed, Gold Star) -->
+              <div class="quest-node-anchor node-status-completed" style="left: 17.47%; top: 60.29%;" data-node="2">
+                <button type="button" class="quest-node-circle circle-gold" aria-label="Quest 2: Array Explorer, Completed">
+                  <div class="node-halo-ring"></div>
+                  <div class="node-inner-disk">
+                    <svg class="node-icon star-icon" viewBox="0 0 24 24" fill="white">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  </div>
+                  <span class="node-number-badge badge-gold">2</span>
+                </button>
+                <div class="quest-node-card">
+                  <div class="node-card-title">Array Explorer</div>
+                  <div class="node-card-meta">
+                    <span class="meta-difficulty easy">Easy</span>
+                    <span class="meta-dot">•</span>
+                    <span class="meta-xp">15 XP</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Node 3: String Master (ACTIVE / CURRENT, Glowing Blue) -->
+              <div class="quest-node-anchor node-status-current" style="left: 29.37%; top: 40.44%;" data-node="3">
+                <button type="button" class="quest-node-circle circle-blue active-pulse" aria-label="Quest 3: String Master, Active Challenge">
+                  <div class="node-halo-ring active-glow"></div>
+                  <div class="node-inner-disk">
+                    <svg class="node-icon code-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                  </div>
+                  <span class="node-number-badge badge-blue">3</span>
+                </button>
+                <div class="quest-node-card active-card">
+                  <div class="node-card-title">String Master</div>
+                  <div class="node-card-meta">
+                    <span class="meta-difficulty medium">Medium</span>
+                    <span class="meta-dot">•</span>
+                    <span class="meta-xp">20 XP</span>
+                  </div>
+                  <button type="button" class="quest-continue-btn" id="btn-continue-quest">
+                    <span>Continue</span>
+                    <span class="btn-arrow">→</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Node 4: Streak Keeper (Locked) -->
+              <div class="quest-node-anchor node-status-locked" style="left: 41.64%; top: 38.24%;" data-node="4">
+                <button type="button" class="quest-node-circle circle-locked" aria-label="Quest 4: Streak Keeper, Locked">
+                  <div class="node-halo-ring"></div>
+                  <div class="node-inner-disk">
+                    <svg class="node-icon lock-icon" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                      <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+                    </svg>
+                  </div>
+                  <span class="node-number-badge badge-locked">4</span>
+                </button>
+                <div class="quest-node-card">
+                  <div class="node-card-title">Streak Keeper</div>
+                  <div class="node-card-meta">
+                    <span class="meta-difficulty medium">Medium</span>
+                    <span class="meta-dot">•</span>
+                    <span class="meta-xp">25 XP</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Node 5: Contest Ready (Locked) -->
+              <div class="quest-node-anchor node-status-locked" style="left: 53.16%; top: 58.82%;" data-node="5">
+                <button type="button" class="quest-node-circle circle-locked" aria-label="Quest 5: Contest Ready, Locked">
+                  <div class="node-halo-ring"></div>
+                  <div class="node-inner-disk">
+                    <svg class="node-icon lock-icon" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                      <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+                    </svg>
+                  </div>
+                  <span class="node-number-badge badge-locked">5</span>
+                </button>
+                <div class="quest-node-card">
+                  <div class="node-card-title">Contest Ready</div>
+                  <div class="node-card-meta">
+                    <span class="meta-difficulty hard">Hard</span>
+                    <span class="meta-dot">•</span>
+                    <span class="meta-xp">30 XP</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Node 6: Problem Solver (Locked) -->
+              <div class="quest-node-anchor node-status-locked" style="left: 64.68%; top: 47.79%;" data-node="6">
+                <button type="button" class="quest-node-circle circle-locked" aria-label="Quest 6: Problem Solver, Locked">
+                  <div class="node-halo-ring"></div>
+                  <div class="node-inner-disk">
+                    <svg class="node-icon lock-icon" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                      <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+                    </svg>
+                  </div>
+                  <span class="node-number-badge badge-locked">6</span>
+                </button>
+                <div class="quest-node-card">
+                  <div class="node-card-title">Problem Solver</div>
+                  <div class="node-card-meta">
+                    <span class="meta-difficulty hard">Hard</span>
+                    <span class="meta-dot">•</span>
+                    <span class="meta-xp">40 XP</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Node 7: Code Champion (Locked) -->
+              <div class="quest-node-anchor node-status-locked" style="left: 79.18%; top: 36.76%;" data-node="7">
+                <button type="button" class="quest-node-circle circle-locked" aria-label="Quest 7: Code Champion, Locked">
+                  <div class="node-halo-ring"></div>
+                  <div class="node-inner-disk">
+                    <svg class="node-icon lock-icon" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                      <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+                    </svg>
+                  </div>
+                  <span class="node-number-badge badge-locked">7</span>
+                </button>
+                <div class="quest-node-card">
+                  <div class="node-card-title">Code Champion</div>
+                  <div class="node-card-meta">
+                    <span class="meta-difficulty expert">Expert</span>
+                    <span class="meta-dot">•</span>
+                    <span class="meta-xp">50 XP</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Node 8: Quest Legend (Locked, Crown) -->
+              <div class="quest-node-anchor node-status-locked node-status-legend" style="left: 91.45%; top: 21.32%;" data-node="8">
+                <button type="button" class="quest-node-circle circle-locked" aria-label="Quest 8: Quest Legend, Final Locked Quest">
+                  <div class="node-halo-ring"></div>
+                  <div class="node-inner-disk">
+                    <svg class="node-icon crown-icon" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"></path>
+                      <circle cx="12" cy="19" r="1"></circle>
+                    </svg>
+                  </div>
+                  <span class="node-number-badge badge-locked">8</span>
+                </button>
+                <div class="quest-node-card">
+                  <div class="node-card-title">Quest Legend</div>
+                  <div class="node-card-meta">
+                    <span class="meta-difficulty expert">Expert</span>
+                    <span class="meta-dot">•</span>
+                    <span class="meta-xp">75 XP</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Interactive Quest Challenge Modal -->
+    <div class="quest-modal-overlay" id="quest-modal" aria-hidden="true">
+      <div class="quest-modal-card">
+        <button type="button" class="quest-modal-close" id="btn-close-quest-modal" aria-label="Close modal">×</button>
+        <div class="quest-modal-header">
+          <div class="quest-modal-badge" id="modal-badge">Quest 3</div>
+          <h2 class="quest-modal-title" id="modal-title">String Master</h2>
+          <div class="quest-modal-meta">
+            <span class="modal-diff medium" id="modal-diff">Medium</span>
+            <span class="modal-dot">•</span>
+            <span class="modal-xp" id="modal-xp">20 XP</span>
+          </div>
+        </div>
+        <p class="quest-modal-desc" id="modal-desc">
+          Master the fundamentals of two-pointer string manipulation and palindrome verification. Solve the core challenge to advance along the quest path!
+        </p>
+        <div class="quest-modal-actions">
+          <button type="button" class="quest-modal-secondary-btn" id="btn-modal-cancel">Later</button>
+          <a href="/problems" class="quest-modal-primary-btn" id="btn-modal-start">Start Challenge →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Element -->
+    <div id="quest-toast" class="contest-toast" role="status" aria-live="polite"></div>
+
+    <script type="module" src="/src/quest.ts"></script>
+  </body>
+</html>

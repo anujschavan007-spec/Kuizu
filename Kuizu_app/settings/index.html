@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - KUIZU</title>
+    <meta name="description" content="Customize your KUIZU experience - manage appearance, notifications, profile visibility, learning preferences, and security." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="problems-page-body settings-page-body">
+    <!-- Top Navigation Header -->
+    <header class="home-header">
+      <div class="container home-nav-container">
+        <!-- Brand Logo -->
+        <a href="/home" class="brand-logo" aria-label="KUIZU Home">
+          <svg class="brand-icon" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12.5 3C7.5 3 3 7 3 13V22C3 28 8 33 13.5 33C17.5 33 21 30.5 22.5 26.5L24 23L25.5 26.5C27 30.5 30.5 33 34.5 33C40 33 45 28 45 22V13C45 7 40.5 3 35.5 3H12.5Z"
+              fill="url(#leadBrandGrad)"
+            />
+            <path d="M11 15H17M14 12V18" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="31.5" cy="17.5" r="2.2" fill="white" />
+            <circle cx="36.5" cy="13.5" r="2.2" fill="white" />
+            <defs>
+              <linearGradient id="leadBrandGrad" x1="3" y1="3" x2="45" y2="33" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4F46E5" />
+                <stop offset="1" stop-color="#7C3AED" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand-text">KUIZU</span>
+        </a>
+
+        <!-- Middle Navigation Tabs -->
+        <nav class="home-nav-tabs">
+          <a href="/home" class="nav-tab nav-tab-inactive" id="tab-nav-home">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            </svg>
+            <span>Home</span>
+          </a>
+
+          <a href="/problems" class="nav-tab active" id="tab-nav-problems">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Problems</span>
+          </a>
+
+          <a href="/quiz" class="nav-tab nav-tab-inactive" id="tab-nav-quiz">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="m9 14 2 2 4-4"></path>
+            </svg>
+            <span>Quiz</span>
+          </a>
+
+          <a href="/battle" class="nav-tab nav-tab-inactive" id="tab-nav-battle">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="14.5" y1="9.5" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="9.5" y2="14.5"></line>
+              <line x1="16" y1="3" x2="21" y2="8"></line>
+              <line x1="3" y1="16" x2="8" y2="21"></line>
+              <line x1="9.5" y1="9.5" x2="3" y2="3"></line>
+              <line x1="21" y1="21" x2="14.5" y2="14.5"></line>
+            </svg>
+            <span>Battle</span>
+          </a>
+        </nav>
+
+        <!-- Right User Profile Avatar & Dropdown -->
+        <div class="user-profile-menu-wrap">
+          <button type="button" class="user-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false">
+            <img src="/images/home_avatar.png" alt="User Profile Avatar" class="user-nav-avatar" />
+            <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <!-- Profile Pop-up Card Matching settings_user_side.png -->
+          <div class="user-dropdown-menu profile-popup-card" id="user-dropdown">
+            <div class="popup-user-header">
+              <div class="popup-avatar-wrap">
+                <img src="/images/home_avatar.png" alt="Google User" class="popup-avatar-img" />
+              </div>
+              <div class="popup-user-details">
+                <h3 class="popup-user-name" id="menu-user-name">Google User</h3>
+                <div class="popup-xp-badge">
+                  <span class="popup-star-glyph">★</span>
+                  <span id="menu-user-xp">2,450 XP</span>
+                </div>
+              </div>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <div class="popup-menu-list">
+              <a href="/problem/leaderboard" class="popup-menu-item" id="btn-menu-leaderboard">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                  </svg>
+                  <span>Leaderboard</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+
+              <button type="button" class="popup-menu-item" id="btn-menu-theme">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 2a4.5 4.5 0 0 0 0 9 4.5 4.5 0 0 1 0 9 1 1 0 0 0 1-1v-1a2 2 0 0 1 2-2h1a2 2 0 0 0 2-2 7 7 0 0 0-7-7z"></path>
+                    <circle cx="7.5" cy="10.5" r=".75" fill="currentColor"></circle>
+                    <circle cx="12" cy="7.5" r=".75" fill="currentColor"></circle>
+                    <circle cx="16.5" cy="10.5" r=".75" fill="currentColor"></circle>
+                  </svg>
+                  <span>Theme</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <a href="/settings" class="popup-menu-item active" id="btn-menu-settings">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                  <span>Settings</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+
+              <!-- Admin Panel (Strictly shown only if user email is anujschavan007@gmail.com) -->
+              <a href="/admin" class="popup-menu-item popup-menu-admin" id="btn-menu-admin" style="display: none;">
+                <div class="menu-item-left">
+                  <svg class="menu-icon admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <rect x="9" y="11" width="6" height="5" rx="1"></rect>
+                    <path d="M10 11V9a2 2 0 1 1 4 0v2"></path>
+                  </svg>
+                  <span>Admin Panel</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <!-- Red Logout Box Matching Screenshot -->
+            <a href="/sign-in" class="popup-logout-btn" id="btn-logout">
+              <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Logout</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Settings Page Content (Exact Clone of settings_user_side.png) -->
+    <main class="settings-main-wrapper">
+      <div class="container settings-page-container">
+        <!-- Top Settings Header Row: Left Title + Right User Mini Card -->
+        <section class="settings-header-banner">
+          <!-- Left: Big Gear Icon + Title + Subtitle -->
+          <div class="settings-header-left">
+            <div class="settings-gear-icon-box" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </div>
+            <div class="settings-header-titles">
+              <h1 class="settings-title-main">Settings</h1>
+              <p class="settings-title-sub">Customize your KUIZU experience</p>
+            </div>
+          </div>
+
+          <!-- Right: User Mini Profile Card -->
+          <div class="settings-user-card" id="settings-user-card">
+            <div class="settings-avatar-wrap">
+              <img src="/images/avatar_anuj_rank1.png" alt="Anuj Sandeep Chavan" class="settings-avatar-img" />
+            </div>
+            <div class="settings-user-info">
+              <h3 class="settings-profile-name">Anuj Sandeep Chavan</h3>
+              <p class="settings-profile-meta">#12 &bull; Level 5</p>
+            </div>
+            <button type="button" class="btn-edit-profile" id="btn-edit-profile" aria-label="Edit Profile">
+              <svg class="edit-pencil-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              <span>Edit Profile</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Main 6 Cards Grid: 3 Columns x 2 Rows -->
+        <section class="settings-cards-grid">
+          <!-- CARD 1: Appearance -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 2a4.5 4.5 0 0 0 0 9 4.5 4.5 0 0 1 0 9 1 1 0 0 0 1-1v-1a2 2 0 0 1 2-2h1a2 2 0 0 0 2-2 7 7 0 0 0-7-7z"></path>
+                  <circle cx="7.5" cy="10.5" r=".75" fill="currentColor"></circle>
+                  <circle cx="12" cy="7.5" r=".75" fill="currentColor"></circle>
+                  <circle cx="16.5" cy="10.5" r=".75" fill="currentColor"></circle>
+                </svg>
+              </div>
+              <div class="settings-card-titles">
+                <h2 class="settings-card-title">Appearance</h2>
+                <p class="settings-card-desc">Choose your preferred look and feel</p>
+              </div>
+            </div>
+
+            <!-- Theme Sub-Section -->
+            <div class="settings-group">
+              <h4 class="settings-group-label">Theme</h4>
+              <div class="theme-options-grid">
+                <!-- Light Theme Option (Selected) -->
+                <button type="button" class="theme-choice-btn active" data-theme="light" id="theme-btn-light">
+                  <div class="theme-check-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <div class="theme-btn-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="5"></circle>
+                      <line x1="12" y1="1" x2="12" y2="3"></line>
+                      <line x1="12" y1="21" x2="12" y2="23"></line>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                      <line x1="1" y1="12" x2="3" y2="12"></line>
+                      <line x1="21" y1="12" x2="23" y2="12"></line>
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                  </div>
+                  <span class="theme-btn-name">Light</span>
+                  <span class="theme-btn-sub">Clean & bright</span>
+                </button>
+
+                <!-- Dark Theme Option -->
+                <button type="button" class="theme-choice-btn" data-theme="dark" id="theme-btn-dark">
+                  <div class="theme-check-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <div class="theme-btn-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                  </div>
+                  <span class="theme-btn-name">Dark</span>
+                  <span class="theme-btn-sub">Easy on eyes</span>
+                </button>
+
+                <!-- System Theme Option -->
+                <button type="button" class="theme-choice-btn" data-theme="system" id="theme-btn-system">
+                  <div class="theme-check-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <div class="theme-btn-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                      <line x1="8" y1="21" x2="16" y2="21"></line>
+                      <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                  </div>
+                  <span class="theme-btn-name">System</span>
+                  <span class="theme-btn-sub">Follow system</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Accent Color Sub-Section -->
+            <div class="settings-group">
+              <h4 class="settings-group-label">Accent Color</h4>
+              <div class="accent-colors-row">
+                <!-- Color 1: Blue (Default Selected) -->
+                <button type="button" class="accent-circle-btn active" data-color="#2563EB" style="background-color: #2563EB;" aria-label="Blue Accent">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 2: Purple -->
+                <button type="button" class="accent-circle-btn" data-color="#7C3AED" style="background-color: #7C3AED;" aria-label="Purple Accent">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 3: Green -->
+                <button type="button" class="accent-circle-btn" data-color="#10B981" style="background-color: #10B981;" aria-label="Emerald Accent">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 4: Orange -->
+                <button type="button" class="accent-circle-btn" data-color="#F59E0B" style="background-color: #F59E0B;" aria-label="Orange Accent">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 5: Pink -->
+                <button type="button" class="accent-circle-btn" data-color="#EC4899" style="background-color: #EC4899;" aria-label="Pink Accent">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 2: Notifications -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+              </div>
+              <div class="settings-card-titles">
+                <h2 class="settings-card-title">Notifications</h2>
+                <p class="settings-card-desc">Stay updated with your progress and activities</p>
+              </div>
+            </div>
+
+            <div class="settings-toggle-list">
+              <!-- Item 1: Daily Reminders -->
+              <div class="settings-toggle-row">
+                <div class="toggle-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </div>
+                  <div class="setting-item-labels">
+                    <span class="setting-item-name">Daily Reminders</span>
+                    <span class="setting-item-sub">Get notified about your daily goals and streaks</span>
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggle-daily-reminders" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <!-- Item 2: Contest Updates -->
+              <div class="settings-toggle-row">
+                <div class="toggle-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                      <path d="M4 22h16"></path>
+                      <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                      <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                    </svg>
+                  </div>
+                  <div class="setting-item-labels">
+                    <span class="setting-item-name">Contest Updates</span>
+                    <span class="setting-item-sub">Alerts for upcoming and ongoing contests</span>
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggle-contest-updates" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <!-- Item 3: Quest Notifications -->
+              <div class="settings-toggle-row">
+                <div class="toggle-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <circle cx="12" cy="12" r="6"></circle>
+                      <circle cx="12" cy="12" r="2"></circle>
+                    </svg>
+                  </div>
+                  <div class="setting-item-labels">
+                    <span class="setting-item-name">Quest Notifications</span>
+                    <span class="setting-item-sub">Get notified when new quests are available</span>
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggle-quest-notifications" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <!-- Item 4: Achievement Alerts -->
+              <div class="settings-toggle-row">
+                <div class="toggle-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                  </div>
+                  <div class="setting-item-labels">
+                    <span class="setting-item-name">Achievement Alerts</span>
+                    <span class="setting-item-sub">Celebrate your milestones and XP gains</span>
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggle-achievement-alerts" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <!-- Item 5: Email Notifications -->
+              <div class="settings-toggle-row">
+                <div class="toggle-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                      <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                  </div>
+                  <div class="setting-item-labels">
+                    <span class="setting-item-name">Email Notifications</span>
+                    <span class="setting-item-sub">Receive important updates via email</span>
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggle-email-notifications" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 3: Profile Visibility -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </div>
+              <div class="settings-card-titles">
+                <h2 class="settings-card-title">Profile Visibility</h2>
+                <p class="settings-card-desc">Control who can see your profile and activity</p>
+              </div>
+            </div>
+
+            <!-- Radio Option Cards -->
+            <div class="visibility-options-list" role="radiogroup" aria-label="Profile Visibility Options">
+              <!-- Option 1: Public (Selected) -->
+              <div class="visibility-radio-card active" data-visibility="public" tabindex="0" role="radio" aria-checked="true">
+                <div class="custom-radio-circle">
+                  <div class="radio-inner-dot"></div>
+                </div>
+                <div class="visibility-card-text">
+                  <h4 class="visibility-name">Public</h4>
+                  <p class="visibility-desc">Anyone can view your profile, stats and activity</p>
+                </div>
+              </div>
+
+              <!-- Option 2: Friends Only -->
+              <div class="visibility-radio-card" data-visibility="friends" tabindex="0" role="radio" aria-checked="false">
+                <div class="custom-radio-circle">
+                  <div class="radio-inner-dot"></div>
+                </div>
+                <div class="visibility-card-text">
+                  <h4 class="visibility-name">Friends Only</h4>
+                  <p class="visibility-desc">Only your friends can view your profile</p>
+                </div>
+              </div>
+
+              <!-- Option 3: Private -->
+              <div class="visibility-radio-card" data-visibility="private" tabindex="0" role="radio" aria-checked="false">
+                <div class="custom-radio-circle">
+                  <div class="radio-inner-dot"></div>
+                </div>
+                <div class="visibility-card-text">
+                  <h4 class="visibility-name">Private</h4>
+                  <p class="visibility-desc">Only you can view your profile</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 4: Learning Preferences -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                  <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                </svg>
+              </div>
+              <div class="settings-card-titles">
+                <h2 class="settings-card-title">Learning Preferences</h2>
+                <p class="settings-card-desc">Customize your learning experience</p>
+              </div>
+            </div>
+
+            <div class="settings-controls-list">
+              <!-- Row 1: Default Language -->
+              <div class="settings-control-row">
+                <div class="control-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                  </div>
+                  <span class="setting-item-name">Default Language</span>
+                </div>
+                <div class="setting-select-wrap">
+                  <select class="settings-select" id="select-default-language" aria-label="Default Language">
+                    <option value="C++" selected>C++</option>
+                    <option value="Python">Python</option>
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="TypeScript">TypeScript</option>
+                    <option value="Java">Java</option>
+                    <option value="C">C</option>
+                  </select>
+                  <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Row 2: Auto Save Code -->
+              <div class="settings-control-row">
+                <div class="control-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                  </div>
+                  <div class="setting-item-labels">
+                    <span class="setting-item-name">Auto Save Code</span>
+                    <span class="setting-item-sub">Save your code automatically while coding</span>
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggle-autosave-code" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <!-- Row 3: Font Size -->
+              <div class="settings-control-row">
+                <div class="control-row-left">
+                  <div class="setting-item-icon-box font-size-icon-box">
+                    <span class="aa-icon-text">Aa</span>
+                  </div>
+                  <span class="setting-item-name">Font Size</span>
+                </div>
+                <div class="setting-select-wrap">
+                  <select class="settings-select" id="select-font-size" aria-label="Font Size">
+                    <option value="Small">Small</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="Large">Large</option>
+                  </select>
+                  <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Row 4: Code Editor Theme -->
+              <div class="settings-control-row">
+                <div class="control-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a4.5 4.5 0 0 0 0 9 4.5 4.5 0 0 1 0 9 1 1 0 0 0 1-1v-1a2 2 0 0 1 2-2h1a2 2 0 0 0 2-2 7 7 0 0 0-7-7z"></path>
+                    </svg>
+                  </div>
+                  <span class="setting-item-name">Code Editor Theme</span>
+                </div>
+                <div class="setting-select-wrap">
+                  <select class="settings-select" id="select-editor-theme" aria-label="Code Editor Theme">
+                    <option value="Monokai" selected>Monokai</option>
+                    <option value="VS Code Dark">VS Code Dark</option>
+                    <option value="GitHub Light">GitHub Light</option>
+                    <option value="Dracula">Dracula</option>
+                    <option value="One Dark">One Dark</option>
+                  </select>
+                  <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 5: Account & Security -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div class="settings-card-titles">
+                <h2 class="settings-card-title">Account & Security</h2>
+                <p class="settings-card-desc">Manage your account settings</p>
+              </div>
+            </div>
+
+            <div class="settings-actions-list">
+              <!-- Action 1: Change Password -->
+              <button type="button" class="settings-action-row" id="btn-action-password">
+                <div class="action-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                  </div>
+                  <span class="setting-item-name">Change Password</span>
+                </div>
+                <span class="action-row-chevron">›</span>
+              </button>
+
+              <!-- Action 2: Two-Factor Authentication -->
+              <button type="button" class="settings-action-row" id="btn-action-2fa">
+                <div class="action-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                  </div>
+                  <span class="setting-item-name">Two-Factor Authentication</span>
+                </div>
+                <div class="action-row-right">
+                  <span class="badge-coming-soon">Coming Soon</span>
+                  <span class="action-row-chevron">›</span>
+                </div>
+              </button>
+
+              <!-- Action 3: Connected Accounts -->
+              <button type="button" class="settings-action-row" id="btn-action-connected">
+                <div class="action-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                  </div>
+                  <span class="setting-item-name">Connected Accounts</span>
+                </div>
+                <span class="action-row-chevron">›</span>
+              </button>
+
+              <!-- Action 4: Delete Account -->
+              <button type="button" class="settings-action-row row-danger" id="btn-action-delete">
+                <div class="action-row-left">
+                  <div class="setting-item-icon-box danger-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      <line x1="10" y1="11" x2="10" y2="17"></line>
+                      <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                  </div>
+                  <span class="setting-item-name">Delete Account</span>
+                </div>
+                <span class="action-row-chevron">›</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- CARD 6: Additional Settings -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y2="3"></line>
+                  <line x1="1" y1="14" x2="7" y2="14"></line>
+                  <line x1="9" y1="8" x2="15" y2="8"></line>
+                  <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+              </div>
+              <div class="settings-card-titles">
+                <h2 class="settings-card-title">Additional Settings</h2>
+                <p class="settings-card-desc">Other useful preferences</p>
+              </div>
+            </div>
+
+            <div class="settings-controls-list">
+              <!-- Row 1: Language -->
+              <div class="settings-control-row">
+                <div class="control-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="2" y1="12" x2="22" y2="12"></line>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                  </div>
+                  <span class="setting-item-name">Language</span>
+                </div>
+                <div class="setting-select-wrap">
+                  <select class="settings-select" id="select-language" aria-label="Language">
+                    <option value="English" selected>English</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="French">French</option>
+                    <option value="German">German</option>
+                    <option value="Hindi">Hindi</option>
+                  </select>
+                  <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Row 2: Time Zone -->
+              <div class="settings-control-row">
+                <div class="control-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </div>
+                  <span class="setting-item-name">Time Zone</span>
+                </div>
+                <div class="setting-select-wrap">
+                  <select class="settings-select select-wide" id="select-timezone" aria-label="Time Zone">
+                    <option value="(GMT +05:30) India Standard Time" selected>(GMT +05:30) India Standard Time</option>
+                    <option value="(GMT +00:00) UTC">(GMT +00:00) UTC</option>
+                    <option value="(GMT -05:00) Eastern Time (US)">(GMT -05:00) Eastern Time (US)</option>
+                    <option value="(GMT -08:00) Pacific Time (US)">(GMT -08:00) Pacific Time (US)</option>
+                    <option value="(GMT +01:00) Central European Time">(GMT +01:00) Central European Time</option>
+                  </select>
+                  <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Row 3: Daily Study Goal -->
+              <div class="settings-control-row">
+                <div class="control-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                  </div>
+                  <span class="setting-item-name">Daily Study Goal</span>
+                </div>
+                <div class="setting-select-wrap">
+                  <select class="settings-select" id="select-study-goal" aria-label="Daily Study Goal">
+                    <option value="30 mins">30 mins</option>
+                    <option value="1 hour">1 hour</option>
+                    <option value="2 hours" selected>2 hours</option>
+                    <option value="3 hours">3 hours</option>
+                    <option value="4 hours">4 hours</option>
+                  </select>
+                  <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Row 4: Sound Effects -->
+              <div class="settings-control-row">
+                <div class="control-row-left">
+                  <div class="setting-item-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                      <line x1="23" y1="9" x2="17" y2="15"></line>
+                      <line x1="17" y1="9" x2="23" y2="15"></line>
+                    </svg>
+                  </div>
+                  <div class="setting-item-labels">
+                    <span class="setting-item-name">Sound Effects</span>
+                    <span class="setting-item-sub">Play sounds for actions and achievements</span>
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggle-sound-effects" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Bottom Tip Callout Banner Matching Screenshot -->
+        <section class="settings-bottom-tip-banner">
+          <div class="tip-banner-left">
+            <div class="tip-lightbulb-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+              </svg>
+            </div>
+            <div class="tip-banner-text">
+              <h4 class="tip-banner-title">Small changes make a big difference!</h4>
+              <p class="tip-banner-desc">Customize your settings to create the best learning environment for yourself.</p>
+            </div>
+          </div>
+          <div class="tip-banner-right" aria-hidden="true">
+            <img src="/images/settings_mountains.png" alt="Mountains with Flag" class="settings-mountains-art" />
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Global Toast Notification Container -->
+    <div class="settings-toast-container" id="toast-container" aria-live="polite"></div>
+
+    <!-- Edit Profile Modal -->
+    <div class="settings-modal-overlay" id="edit-profile-modal" aria-hidden="true">
+      <div class="settings-modal-box">
+        <div class="settings-modal-header">
+          <h3>Edit Profile</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-profile-modal" aria-label="Close Modal">&times;</button>
+        </div>
+        <form class="settings-modal-form" id="form-edit-profile">
+          <div class="form-avatar-picker-wrap">
+            <img src="/images/avatar_anuj_rank1.png" alt="Profile" class="modal-preview-avatar" id="modal-preview-avatar" />
+            <span class="avatar-change-hint">Avatar synchronized with your KUIZU ID</span>
+          </div>
+          <div class="form-group">
+            <label for="input-display-name">Display Name</label>
+            <input type="text" id="input-display-name" class="modal-input" value="Anuj Sandeep Chavan" required />
+          </div>
+          <div class="form-group">
+            <label for="input-bio">Bio / Motto</label>
+            <input type="text" id="input-bio" class="modal-input" value="Top Coder • Always learning algorithms" />
+          </div>
+          <div class="modal-actions-row">
+            <button type="button" class="btn-modal-cancel" id="btn-cancel-profile">Cancel</button>
+            <button type="submit" class="btn-modal-save">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="settings-modal-overlay" id="change-password-modal" aria-hidden="true">
+      <div class="settings-modal-box">
+        <div class="settings-modal-header">
+          <h3>Change Password</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-password-modal" aria-label="Close Modal">&times;</button>
+        </div>
+        <form class="settings-modal-form" id="form-change-password">
+          <div class="form-group">
+            <label for="input-curr-pwd">Current Password</label>
+            <input type="password" id="input-curr-pwd" class="modal-input" placeholder="••••••••" required />
+          </div>
+          <div class="form-group">
+            <label for="input-new-pwd">New Password</label>
+            <input type="password" id="input-new-pwd" class="modal-input" placeholder="Minimum 8 characters" required />
+          </div>
+          <div class="form-group">
+            <label for="input-confirm-pwd">Confirm New Password</label>
+            <input type="password" id="input-confirm-pwd" class="modal-input" placeholder="Re-enter new password" required />
+          </div>
+          <div class="modal-actions-row">
+            <button type="button" class="btn-modal-cancel" id="btn-cancel-password">Cancel</button>
+            <button type="submit" class="btn-modal-save">Update Password</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Connected Accounts Modal -->
+    <div class="settings-modal-overlay" id="connected-accounts-modal" aria-hidden="true">
+      <div class="settings-modal-box">
+        <div class="settings-modal-header">
+          <h3>Connected Accounts</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-connected-modal" aria-label="Close Modal">&times;</button>
+        </div>
+        <div class="connected-providers-list">
+          <div class="provider-item">
+            <div class="provider-info">
+              <span class="provider-badge google">G</span>
+              <div>
+                <strong>Google Account</strong>
+                <p>Connected as google.user@kuizu.dev</p>
+              </div>
+            </div>
+            <span class="badge-status-connected">Connected</span>
+          </div>
+          <div class="provider-item">
+            <div class="provider-info">
+              <span class="provider-badge github">GH</span>
+              <div>
+                <strong>GitHub</strong>
+                <p>Sync code submissions and repositories</p>
+              </div>
+            </div>
+            <button type="button" class="btn-connect-provider" id="btn-connect-gh">Connect</button>
+          </div>
+        </div>
+        <div class="modal-actions-row">
+          <button type="button" class="btn-modal-cancel" id="btn-close-connected">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div class="settings-modal-overlay" id="delete-account-modal" aria-hidden="true">
+      <div class="settings-modal-box modal-danger">
+        <div class="settings-modal-header">
+          <h3>Delete Account</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-delete-modal" aria-label="Close Modal">&times;</button>
+        </div>
+        <div class="danger-modal-body">
+          <p>Are you sure you want to delete your KUIZU account? This will permanently erase your progress, solved problems, battle statistics, and leaderboard standing.</p>
+        </div>
+        <div class="modal-actions-row">
+          <button type="button" class="btn-modal-cancel" id="btn-cancel-delete">Keep Account</button>
+          <button type="button" class="btn-modal-danger" id="btn-confirm-delete">Yes, Delete Account</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/settings.ts"></script>
+  </body>
+</html>

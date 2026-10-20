@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Battle • KUIZU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="battle-page-body">
+    <!-- Top Navigation Header matching img5_battle.png -->
+    <header class="home-header battle-header-clean">
+      <div class="container home-nav-container">
+        <!-- Brand Logo -->
+        <a href="/home" class="brand-logo" aria-label="KUIZU Home">
+          <svg class="brand-icon" viewBox="0 0 40 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 4C5 4 2 8 2 15C2 22 6 26 11 26C15 26 18 22 20 18C22 22 25 26 29 26C34 26 38 22 38 15C38 8 35 4 30 4H10Z" fill="#5850EC"/>
+            <path d="M8 15H14M11 12V18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="26" cy="15" r="1.5" fill="white"/>
+            <circle cx="32" cy="15" r="1.5" fill="white"/>
+            <circle cx="29" cy="12" r="1.5" fill="white"/>
+            <circle cx="29" cy="18" r="1.5" fill="white"/>
+          </svg>
+          <span class="brand-text">KUIZU</span>
+        </a>
+
+        <!-- Middle Navigation Tabs matching img5_battle.png -->
+        <nav class="home-nav-tabs battle-nav-tabs-clean">
+          <a href="/home" class="nav-tab nav-tab-inactive" id="tab-home">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10.5L12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 20v-9.5z"/>
+              <polyline points="9 21 9 12 15 12 15 21"/>
+            </svg>
+            <span>Home</span>
+          </a>
+
+          <a href="/problems" class="nav-tab nav-tab-inactive" id="tab-problems">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Problems</span>
+          </a>
+
+          <a href="/quiz" class="nav-tab nav-tab-inactive" id="tab-quiz">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="m9 14 2 2 4-4"></path>
+            </svg>
+            <span>Quiz</span>
+          </a>
+
+          <!-- Active Battle Tab with Crossed Swords icon -->
+          <a href="/battle" class="nav-tab active battle-active-tab-clean" id="tab-battle">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="14.5" y1="9.5" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="9.5" y2="14.5"></line>
+              <line x1="16" y1="3" x2="21" y2="8"></line>
+              <line x1="3" y1="16" x2="8" y2="21"></line>
+              <line x1="9.5" y1="9.5" x2="3" y2="3"></line>
+              <line x1="21" y1="21" x2="14.5" y2="14.5"></line>
+            </svg>
+            <span>Battle</span>
+          </a>
+        </nav>
+
+        <!-- Right User Profile Pill & Popup Dropdown -->
+        <div class="user-profile-menu-wrap">
+          <button type="button" class="user-avatar-btn battle-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false">
+            <img src="/images/home_avatar.png" alt="User Profile Avatar" class="user-nav-avatar" />
+            <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <!-- Profile Pop-up Card -->
+          <div class="user-dropdown-menu profile-popup-card" id="user-dropdown">
+            <div class="popup-user-header">
+              <div class="popup-avatar-wrap">
+                <img src="/images/home_avatar.png" alt="Anuj Profile" class="popup-avatar-img" />
+              </div>
+              <div class="popup-user-details">
+                <h3 class="popup-user-name" id="menu-user-name">Anuj</h3>
+                <div class="popup-xp-badge">
+                  <svg class="popup-star-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  <span id="menu-user-xp">2,450 XP</span>
+                </div>
+              </div>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <div class="popup-menu-list">
+              <!-- Leaderboard -->
+              <a href="/problems" class="popup-menu-item" id="btn-menu-leaderboard">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                  </svg>
+                  <span>Leaderboard</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+
+              <!-- Theme Mode -->
+              <button type="button" class="popup-menu-item" id="btn-theme-toggle">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                  </svg>
+                  <span>Theme Mode</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <!-- Settings -->
+              <button type="button" class="popup-menu-item" id="btn-menu-settings">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                  <span>Settings</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <!-- Admin Panel (Strictly shown only if user email is anujschavan007@gmail.com) -->
+              <a href="/admin" class="popup-menu-item popup-menu-admin" id="btn-menu-admin" style="display: none;">
+                <div class="menu-item-left">
+                  <svg class="menu-icon admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <rect x="9" y="11" width="6" height="5" rx="1"></rect>
+                    <path d="M10 11V9a2 2 0 1 1 4 0v2"></path>
+                  </svg>
+                  <span>Admin Panel</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <!-- Sign Out Button -->
+            <a href="/sign-in" class="popup-logout-btn" id="btn-logout">
+              <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Sign Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Battle Arena Hub (Exact Clone of img5_battle.png) -->
+    <main class="battle-main-content">
+      <div class="container battle-cards-container">
+        <!-- Join Battle Card (Mint Theme) -->
+        <button type="button" class="battle-card card-join-battle" id="btn-join-battle" aria-label="Join Battle">
+          <div class="battle-card-icon-wrap mint-icon-wrap">
+            <svg class="battle-card-icon mint-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Radiance Rays matching icon_join_crop -->
+              <line x1="50" y1="15" x2="50" y2="25" stroke="#10B981" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="40" y1="19" x2="45" y2="27" stroke="#10B981" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="60" y1="19" x2="55" y2="27" stroke="#10B981" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="22" y1="48" x2="30" y2="48" stroke="#10B981" stroke-width="3.5" stroke-linecap="round"/>
+
+              <!-- Left Sword (points to top-right) -->
+              <g stroke="#10B981" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M37 63L65 35L75 32L72 42L44 70Z" fill="white"/>
+                <line x1="33" y1="57" x2="43" y2="67"/>
+                <line x1="38" y1="62" x2="28" y2="72"/>
+                <circle cx="27" cy="73" r="2.5" fill="#10B981"/>
+              </g>
+
+              <!-- Right Sword (points to top-left) -->
+              <g stroke="#10B981" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M63 63L35 35L25 32L28 42L56 70Z" fill="white"/>
+                <line x1="67" y1="57" x2="57" y2="67"/>
+                <line x1="62" y1="62" x2="72" y2="72"/>
+                <circle cx="73" cy="73" r="2.5" fill="#10B981"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="battle-card-info">
+            <h2 class="battle-card-title">Join Battle</h2>
+            <p class="battle-card-subtitle">Enter a room and compete with others</p>
+          </div>
+
+          <div class="battle-card-arrow mint-arrow">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="16" x2="26" y2="16"></line>
+              <polyline points="18 8 26 16 18 24"></polyline>
+            </svg>
+          </div>
+        </button>
+
+        <!-- Create Battle Card (Lavender Theme) -->
+        <button type="button" class="battle-card card-create-battle" id="btn-create-battle" aria-label="Create Battle">
+          <div class="battle-card-icon-wrap lavender-icon-wrap">
+            <svg class="battle-card-icon lavender-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Gamepad Controller Body matching icon_create_crop -->
+              <path
+                d="M32 36C22 36 18 42 18 52C18 64 24 72 32 72C38 72 42 66 45 61L48 56H52L55 61C58 66 62 72 68 72C76 72 82 64 82 52C82 42 78 36 68 36H32Z"
+                fill="white"
+                stroke="#6366F1"
+                stroke-width="5"
+                stroke-linejoin="round"
+              />
+              <!-- Top Right Shoulder Bump / Notification Indicator -->
+              <circle cx="73" cy="34" r="7" fill="#6366F1" stroke="white" stroke-width="2.5"/>
+
+              <!-- Left Plus D-Pad -->
+              <g stroke="#6366F1" stroke-width="4.5" stroke-linecap="round">
+                <line x1="28" y1="52" x2="38" y2="52"/>
+                <line x1="33" y1="47" x2="33" y2="57"/>
+              </g>
+
+              <!-- Right Plus Action Buttons -->
+              <g stroke="#6366F1" stroke-width="4.5" stroke-linecap="round">
+                <line x1="62" y1="52" x2="72" y2="52"/>
+                <line x1="67" y1="47" x2="67" y2="57"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="battle-card-info">
+            <h2 class="battle-card-title">Create Battle</h2>
+            <p class="battle-card-subtitle">Start your own room and invite friends</p>
+          </div>
+
+          <div class="battle-card-arrow lavender-arrow">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="16" x2="26" y2="16"></line>
+              <polyline points="18 8 26 16 18 24"></polyline>
+            </svg>
+          </div>
+        </button>
+      </div>
+    </main>
+
+    <!-- Modal: Join Battle Dialog -->
+    <div class="battle-modal-overlay" id="modal-join-battle" aria-hidden="true">
+      <div class="battle-modal-card">
+        <div class="battle-modal-header">
+          <div class="modal-title-wrap">
+            <div class="modal-title-icon mint-icon-wrap-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.5 17.5L3 6V3h3l11.5 11.5"></path>
+                <path d="M13 19l6 2 2-6-4-4"></path>
+                <path d="M9.5 17.5L21 6V3h-3L6.5 14.5"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="modal-heading">Join Battle Room</h3>
+              <p class="modal-sub">Enter room code or pick an active public room</p>
+            </div>
+          </div>
+          <button type="button" class="btn-modal-close" id="btn-close-join-modal" aria-label="Close dialog">&times;</button>
+        </div>
+
+        <form id="form-join-code" class="modal-form">
+          <label class="modal-label" for="input-room-code">Room Code</label>
+          <div class="room-code-input-group">
+            <input
+              type="text"
+              id="input-room-code"
+              class="room-code-input"
+              placeholder="e.g. KZ-4921"
+              maxlength="10"
+              autocomplete="off"
+              required
+            />
+            <button type="submit" class="btn-primary btn-join-action" id="btn-submit-join">
+              <span>Join Room</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+          <p class="input-hint" id="join-error-msg" style="display: none; color: #EF4444; margin-top: 8px;"></p>
+        </form>
+
+        <div class="modal-divider">
+          <span>Active Public Rooms</span>
+        </div>
+
+        <div class="public-rooms-list" id="public-rooms-container">
+          <!-- Dynamically populated from battleService -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Create Battle Dialog -->
+    <div class="battle-modal-overlay" id="modal-create-battle" aria-hidden="true">
+      <div class="battle-modal-card">
+        <div class="battle-modal-header">
+          <div class="modal-title-wrap">
+            <div class="modal-title-icon lavender-icon-wrap-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="6" width="20" height="12" rx="4"></rect>
+                <line x1="6" y1="12" x2="10" y2="12"></line>
+                <line x1="8" y1="10" x2="8" y2="14"></line>
+                <circle cx="16" cy="11" r="1"></circle>
+                <circle cx="18" cy="13" r="1"></circle>
+              </svg>
+            </div>
+            <div>
+              <h3 class="modal-heading">Create Battle Room</h3>
+              <p class="modal-sub">Customize settings and invite other challengers</p>
+            </div>
+          </div>
+          <button type="button" class="btn-modal-close" id="btn-close-create-modal" aria-label="Close dialog">&times;</button>
+        </div>
+
+        <form id="form-create-room" class="modal-form">
+          <div class="form-group">
+            <label class="modal-label" for="input-room-title">Room Title</label>
+            <input
+              type="text"
+              id="input-room-title"
+              class="modal-text-input"
+              placeholder="e.g. Speed Algorithms Duel"
+              value="Live Arena Duel"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="modal-label">Challenge Topic</label>
+            <div class="chips-selector" id="topic-chips">
+              <button type="button" class="chip active" data-topic="Math & Primes">Math & Primes</button>
+              <button type="button" class="chip" data-topic="Data Structures">Data Structures</button>
+              <button type="button" class="chip" data-topic="Algorithms">Algorithms</button>
+              <button type="button" class="chip" data-topic="Web Tech">Web Tech</button>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="modal-label">Question Count</label>
+              <div class="pill-group" id="qcount-pills">
+                <button type="button" class="pill active" data-count="5">5 Qs</button>
+                <button type="button" class="pill" data-count="10">10 Qs</button>
+                <button type="button" class="pill" data-count="15">15 Qs</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="modal-label">Timer Per Q</label>
+              <div class="pill-group" id="timer-pills">
+                <button type="button" class="pill active" data-timer="24">24s</button>
+                <button type="button" class="pill" data-timer="30">30s</button>
+                <button type="button" class="pill" data-timer="45">45s</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label class="modal-label" for="select-create-max-players">Max Members Limit</label>
+            <div class="modal-select-wrap" style="position: relative;">
+              <select id="select-create-max-players" class="modal-text-input" style="cursor: pointer; appearance: none; -webkit-appearance: none; padding-right: 36px; background-color: #ffffff; font-weight: 600; color: #1e1b4b;">
+                <option value="2">2 Players (1v1 Duel)</option>
+                <option value="4" selected>4 Players (Squad Match)</option>
+                <option value="6">6 Players (Party Clash)</option>
+                <option value="8">8 Players (Team Rumble)</option>
+                <option value="10">10 Players (Decathlon)</option>
+                <option value="16">16 Players (Mega Bracket)</option>
+                <option value="32">32 Players (Grand Tournament)</option>
+                <option value="50">50 Players (Open Arena)</option>
+              </select>
+              <svg style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; pointer-events: none; color: #6366f1;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="btn-cancel-create">Cancel</button>
+            <button type="submit" class="btn-primary btn-lavender-action" id="btn-submit-create">
+              <span>Create Room</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Room Lobby (Waiting Room with Live Code) -->
+    <div class="battle-modal-overlay" id="modal-room-lobby" aria-hidden="true">
+      <div class="battle-modal-card lobby-card">
+        <div class="battle-modal-header">
+          <div>
+            <span class="lobby-badge" id="lobby-room-status">WAITING FOR PLAYERS</span>
+            <h3 class="modal-heading" id="lobby-room-title">Live Arena Duel</h3>
+          </div>
+          <button type="button" class="btn-modal-close" id="btn-close-lobby" aria-label="Close dialog">&times;</button>
+        </div>
+
+        <div class="lobby-code-box">
+          <span class="lobby-code-label">SHARE ROOM CODE</span>
+          <div class="lobby-code-display">
+            <span class="lobby-code-text" id="lobby-room-code">KZ-4921</span>
+            <button type="button" class="btn-copy-code" id="btn-copy-code" title="Copy Room Code">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span id="copy-text-label">Copy</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="lobby-players-wrap">
+          <h4 class="lobby-section-title">Participants (<span id="lobby-player-count">1</span>/<span id="lobby-max-player-count">4</span>)</h4>
+          <div class="lobby-players-list" id="lobby-players-container">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <div class="modal-actions lobby-actions">
+          <button type="button" class="btn-secondary" id="btn-leave-lobby">Leave Room</button>
+          <button type="button" class="btn-primary btn-lavender-action" id="btn-start-battle-match">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Enter Match</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive In-Battle Question Arena Modal (Clone of img6_battle_Qpage.png) -->
+    <div class="battle-arena-overlay" id="modal-battle-arena" aria-hidden="true">
+      <div class="battle-arena-window">
+        <!-- Top bar with Back and Status -->
+        <div class="battle-arena-topbar">
+          <button type="button" class="btn-arena-exit" id="btn-exit-arena">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Leave Battle</span>
+          </button>
+
+          <div class="arena-match-status">
+            <span class="arena-live-dot"></span>
+            <span id="arena-match-status-label">Live Battle</span>
+          </div>
+
+          <!-- Arena Active Participants Bar -->
+          <div class="arena-participants-bar" id="arena-participants-bar">
+            <!-- Dynamically populated participant avatars & names -->
+          </div>
+
+          <div class="arena-score-badge">
+            <span>Score: <strong id="arena-player-score">0</strong></span>
+          </div>
+        </div>
+
+        <!-- Question Header Box matching img6_battle_Qpage.png -->
+        <div class="arena-question-header-card">
+          <div class="arena-q-left">
+            <div class="arena-q-tag">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <span>QUESTION</span>
+            </div>
+            <h2 class="arena-q-title" id="arena-q-prompt">Which of these are prime numbers?</h2>
+          </div>
+
+          <!-- Timer Pill matching img6_battle_Qpage.png -->
+          <div class="arena-timer-pill" id="arena-timer-box">
+            <div class="timer-sparkle">✨</div>
+            <svg class="arena-clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span class="arena-timer-text" id="arena-timer-display">00:24</span>
+          </div>
+        </div>
+
+        <!-- Numbers Grid matching img6_battle_Qpage.png -->
+        <div class="arena-numbers-grid" id="arena-numbers-container">
+          <!-- Dynamically populated number cards (1, 2, 3, 4, 5 / 6, 7, 8, 9, 11, 12) -->
+        </div>
+
+        <!-- Drop / Selection Zone matching img6_battle_Qpage.png -->
+        <div class="arena-drop-zone-wrap">
+          <div class="arena-curved-arrow-left">
+            <svg viewBox="0 0 40 40" fill="none" stroke="#818CF8" stroke-width="2.5" stroke-linecap="round">
+              <path d="M10 10 Q 25 15 28 32"></path>
+              <polyline points="22 28 28 32 32 24"></polyline>
+            </svg>
+          </div>
+
+          <div class="arena-drop-zone" id="arena-drop-zone">
+            <div class="drop-zone-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v12"></path>
+                <path d="m8 11 4 4 4-4"></path>
+                <path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"></path>
+              </svg>
+            </div>
+            <div class="drop-zone-title">DROP CORRECT ANSWERS HERE</div>
+            <div class="drop-zone-selected-chips" id="drop-zone-chips"></div>
+          </div>
+
+          <div class="arena-curved-arrow-right">
+            <svg viewBox="0 0 40 40" fill="none" stroke="#818CF8" stroke-width="2.5" stroke-linecap="round">
+              <path d="M30 10 Q 15 15 12 32"></path>
+              <polyline points="18 28 12 32 8 24"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Instructions pill bottom -->
+        <div class="arena-footer-instruction">
+          <div class="drag-dots-icon">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </div>
+          <span>Click or drag and drop your answers</span>
+        </div>
+
+        <!-- Submit & Result Actions -->
+        <div class="arena-submit-row">
+          <button type="button" class="btn-primary btn-submit-arena" id="btn-submit-arena-answer">
+            <span>Submit Solution</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Battle Result Dialog -->
+    <div class="battle-modal-overlay" id="modal-battle-result" aria-hidden="true">
+      <div class="battle-modal-card result-card">
+        <div class="result-trophy-wrap">
+          <div class="trophy-circle">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: #f59e0b;">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+              <path d="M4 22h16"></path>
+              <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+            </svg>
+          </div>
+        </div>
+        <h3 class="modal-heading result-heading" id="result-status-title">VICTORY!</h3>
+        <p class="modal-sub result-subtitle" id="result-status-sub">You identified all prime numbers correctly!</p>
+
+        <div class="result-stats-row">
+          <div class="result-stat-box">
+            <span class="stat-number" id="result-stat-score">+120</span>
+            <span class="stat-caption">Score</span>
+          </div>
+          <div class="result-stat-box">
+            <span class="stat-number" id="result-stat-time">14s</span>
+            <span class="stat-caption">Time Taken</span>
+          </div>
+          <div class="result-stat-box">
+            <span class="stat-number" id="result-stat-xp">+50 XP</span>
+            <span class="stat-caption">Reward</span>
+          </div>
+        </div>
+
+        <div style="margin: 16px 0 4px 0;">
+          <button type="button" id="btn-view-3d-battle-badge" style="
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+          ">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+              <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline>
+              <line x1="13" y1="19" x2="19" y2="13"></line>
+              <line x1="16" y1="16" x2="20" y2="20"></line>
+              <line x1="19" y1="21" x2="21" y2="19"></line>
+              <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"></polyline>
+              <line x1="5" y1="14" x2="11" y2="20"></line>
+            </svg>
+            <span>Inspect 3D Battle Badge</span>
+          </button>
+        </div>
+
+        <div class="modal-actions result-actions">
+          <button type="button" class="btn-secondary" id="btn-result-back-lobby">Back to Battle Hub</button>
+          <button type="button" class="btn-primary btn-lavender-action" id="btn-result-play-again">Play Again</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/battle.ts"></script>
+  </body>
+</html>

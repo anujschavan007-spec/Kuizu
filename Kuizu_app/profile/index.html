@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile - KUIZU</title>
+    <meta name="description" content="Track your progress, achievements and keep growing on KUIZU." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="problems-page-body profile-page-body">
+    <!-- Top Navigation Header -->
+    <header class="home-header">
+      <div class="container home-nav-container">
+        <!-- Brand Logo -->
+        <a href="/home" class="brand-logo" aria-label="KUIZU Home">
+          <svg class="brand-icon" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12.5 3C7.5 3 3 7 3 13V22C3 28 8 33 13.5 33C17.5 33 21 30.5 22.5 26.5L24 23L25.5 26.5C27 30.5 30.5 33 34.5 33C40 33 45 28 45 22V13C45 7 40.5 3 35.5 3H12.5Z"
+              fill="url(#leadBrandGrad)"
+            />
+            <path d="M11 15H17M14 12V18" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="31.5" cy="17.5" r="2.2" fill="white" />
+            <circle cx="36.5" cy="13.5" r="2.2" fill="white" />
+            <defs>
+              <linearGradient id="leadBrandGrad" x1="3" y1="3" x2="45" y2="33" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4F46E5" />
+                <stop offset="1" stop-color="#7C3AED" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand-text">KUIZU</span>
+        </a>
+
+        <!-- Middle Navigation Tabs -->
+        <nav class="home-nav-tabs">
+          <a href="/home" class="nav-tab active" id="tab-nav-home">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            </svg>
+            <span>Home</span>
+          </a>
+
+          <a href="/problems" class="nav-tab nav-tab-inactive" id="tab-nav-problems">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Problems</span>
+          </a>
+
+          <a href="/quiz" class="nav-tab nav-tab-inactive" id="tab-nav-quiz">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="m9 14 2 2 4-4"></path>
+            </svg>
+            <span>Quiz</span>
+          </a>
+
+          <a href="/battle" class="nav-tab nav-tab-inactive" id="tab-nav-battle">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="14.5" y1="9.5" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="9.5" y2="14.5"></line>
+              <line x1="16" y1="3" x2="21" y2="8"></line>
+              <line x1="3" y1="16" x2="8" y2="21"></line>
+              <line x1="9.5" y1="9.5" x2="3" y2="3"></line>
+              <line x1="21" y1="21" x2="14.5" y2="14.5"></line>
+            </svg>
+            <span>Battle</span>
+          </a>
+        </nav>
+
+        <!-- Right Header Elements: Notification Bell & Profile Dropdown -->
+        <div class="profile-header-right">
+          <!-- Notification Bell Icon -->
+          <button type="button" class="profile-nav-bell-btn" aria-label="Notifications" title="Notifications">
+            <svg class="nav-bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+
+          <!-- User Profile Avatar & Dropdown -->
+          <div class="user-profile-menu-wrap">
+            <button type="button" class="user-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false">
+              <img src="/images/home_avatar.png" alt="User Profile Avatar" class="user-nav-avatar" />
+              <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <!-- Profile Pop-up Card Matching user request & user_profile.png -->
+            <div class="user-dropdown-menu profile-popup-card" id="user-dropdown">
+              <div class="popup-user-header" id="popup-user-header-card" style="cursor: pointer;" title="Go to My Profile">
+                <div class="popup-avatar-wrap">
+                  <img src="/images/home_avatar.png" alt="Google User" class="popup-avatar-img" />
+                </div>
+                <div class="popup-user-details">
+                  <h3 class="popup-user-name" id="menu-user-name">Google User</h3>
+                  <div class="popup-xp-badge">
+                    <span class="popup-star-glyph">★</span>
+                    <span id="menu-user-xp">2,450 XP</span>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="popup-divider" />
+
+              <div class="popup-menu-list">
+                <a href="/problem/leaderboard" class="popup-menu-item" id="btn-menu-leaderboard">
+                  <div class="menu-item-left">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                      <path d="M4 22h16"></path>
+                      <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                      <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                    </svg>
+                    <span>Leaderboard</span>
+                  </div>
+                  <span class="menu-item-chevron">›</span>
+                </a>
+
+                <button type="button" class="popup-menu-item" id="btn-menu-theme">
+                  <div class="menu-item-left">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a4.5 4.5 0 0 0 0 9 4.5 4.5 0 0 1 0 9 1 1 0 0 0 1-1v-1a2 2 0 0 1 2-2h1a2 2 0 0 0 2-2 7 7 0 0 0-7-7z"></path>
+                      <circle cx="7.5" cy="10.5" r=".75" fill="currentColor"></circle>
+                      <circle cx="12" cy="7.5" r=".75" fill="currentColor"></circle>
+                      <circle cx="16.5" cy="10.5" r=".75" fill="currentColor"></circle>
+                    </svg>
+                    <span>Theme</span>
+                  </div>
+                  <span class="menu-item-chevron">›</span>
+                </button>
+
+                <a href="/settings" class="popup-menu-item" id="btn-menu-settings">
+                  <div class="menu-item-left">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    <span>Settings</span>
+                  </div>
+                  <span class="menu-item-chevron">›</span>
+                </a>
+
+                <!-- Admin Panel (Strictly shown only if user email is anujschavan007@gmail.com) -->
+                <a href="/admin" class="popup-menu-item popup-menu-admin" id="btn-menu-admin" style="display: none;">
+                  <div class="menu-item-left">
+                    <svg class="menu-icon admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                      <rect x="9" y="11" width="6" height="5" rx="1"></rect>
+                      <path d="M10 11V9a2 2 0 1 1 4 0v2"></path>
+                    </svg>
+                    <span>Admin Panel</span>
+                  </div>
+                  <span class="menu-item-chevron">›</span>
+                </a>
+              </div>
+
+              <div class="popup-logout-wrap">
+                <a href="/sign-in" class="popup-logout-btn" id="btn-menu-logout">
+                  <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                  </svg>
+                  <span>Logout</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Profile Page Container -->
+    <main class="profile-main-wrapper">
+      <div class="profile-container">
+        <!-- Top Title Bar -->
+        <div class="profile-header-banner">
+          <div>
+            <h1 class="profile-page-title">My Profile</h1>
+            <p class="profile-page-subtitle">Track your progress, achievements and keep growing!</p>
+          </div>
+          <button type="button" class="btn-edit-profile-action" id="btn-edit-profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+            </svg>
+            <span>Edit Profile</span>
+          </button>
+        </div>
+
+        <!-- 1. Hero Identity & High-Level Stats Card -->
+        <section class="profile-hero-card" aria-label="User Information">
+          <!-- Col 1: Identity -->
+          <div class="profile-hero-identity">
+            <div class="profile-hero-avatar-wrap">
+              <img src="/images/home_avatar.png" alt="Anuj Sandeep Chavan" class="profile-hero-avatar" />
+            </div>
+            <div class="profile-hero-meta">
+              <h2 class="profile-hero-name" id="profile-user-name">Anuj Sandeep Chavan</h2>
+              <div class="profile-hero-contact-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                </svg>
+                <span id="profile-user-email">anujchavan123@gmail.com</span>
+              </div>
+              <div class="profile-hero-contact-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                  <path d="M3 9h18"></path>
+                  <path d="M9 21V9"></path>
+                </svg>
+                <span id="profile-user-id">STU00123</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Col 2: Rank -->
+          <div class="profile-hero-stat-block">
+            <div class="hero-stat-icon-wrap icon-trophy">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+            </div>
+            <div class="hero-stat-details">
+              <span class="hero-stat-label">Rank</span>
+              <span class="hero-stat-value" id="profile-stat-rank">#1</span>
+            </div>
+          </div>
+
+          <!-- Col 3: XP -->
+          <div class="profile-hero-stat-block">
+            <div class="hero-stat-icon-wrap icon-xp">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+            <div class="hero-stat-details">
+              <span class="hero-stat-label">XP</span>
+              <span class="hero-stat-value" id="profile-stat-xp">0</span>
+            </div>
+          </div>
+
+          <!-- Col 4: Streak -->
+          <div class="profile-hero-stat-block">
+            <div class="hero-stat-icon-wrap icon-streak">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+              </svg>
+            </div>
+            <div class="hero-stat-details">
+              <span class="hero-stat-label">Streak</span>
+              <span class="hero-stat-value" id="profile-stat-streak">0 days</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. "My Progress" Section -->
+        <section class="profile-progress-section" aria-label="My Progress">
+          <div class="section-title-wrap">
+            <svg class="section-title-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <h2 class="section-title-text">My Progress</h2>
+          </div>
+
+          <div class="progress-cards-layout">
+            <!-- Left Card: Attendance with circular ring chart -->
+            <div class="profile-attendance-card">
+              <div class="attendance-card-header">
+                <svg class="attendance-header-icon" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="attendance-header-title">Attendance</span>
+              </div>
+
+              <div class="attendance-gauge-wrap">
+                <!-- Circular Gauge -->
+                <div class="gauge-ring-container">
+                  <svg class="gauge-ring-svg" viewBox="0 0 100 100">
+                    <circle class="gauge-ring-bg" cx="50" cy="50" r="40" />
+                    <circle class="gauge-ring-progress" id="progress-ring-circle" cx="50" cy="50" r="40" />
+                  </svg>
+                  <div class="gauge-percent-label" id="profile-att-percent">92%</div>
+                </div>
+
+                <!-- Number details -->
+                <div class="attendance-stat-details">
+                  <div class="attendance-big-score" id="profile-att-count">46 / 50</div>
+                  <div class="attendance-sub-label">classes attended</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right 6 Mini Stat Cards (2 columns x 3 rows) -->
+            <div class="profile-stats-grid">
+              <!-- Item 1: Classwork (CW) -->
+              <div class="profile-stat-box" role="button" tabindex="0">
+                <div class="stat-box-left">
+                  <div class="stat-box-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="stat-box-title">Classwork (CW)</span>
+                    <div class="stat-box-val">18 / 20</div>
+                    <span class="stat-box-sub">completed</span>
+                  </div>
+                </div>
+                <span class="stat-box-chevron">›</span>
+              </div>
+
+              <!-- Item 2: Homework (HW) -->
+              <div class="profile-stat-box" role="button" tabindex="0">
+                <div class="stat-box-left">
+                  <div class="stat-box-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="stat-box-title">Homework (HW)</span>
+                    <div class="stat-box-val">16 / 20</div>
+                    <span class="stat-box-sub">completed</span>
+                  </div>
+                </div>
+                <span class="stat-box-chevron">›</span>
+              </div>
+
+              <!-- Item 3: LeetCode Solved -->
+              <div class="profile-stat-box" role="button" tabindex="0">
+                <div class="stat-box-left">
+                  <div class="stat-box-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="stat-box-title">LeetCode Solved</span>
+                    <div class="stat-box-val">342</div>
+                    <span class="stat-box-sub">problems</span>
+                  </div>
+                </div>
+                <span class="stat-box-chevron">›</span>
+              </div>
+
+              <!-- Item 4: Quiz Level -->
+              <div class="profile-stat-box" role="button" tabindex="0">
+                <div class="stat-box-left">
+                  <div class="stat-box-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="20" x2="18" y2="10"></line>
+                      <line x1="12" y1="20" x2="12" y2="4"></line>
+                      <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="stat-box-title">Quiz Level</span>
+                    <div class="stat-box-val">4</div>
+                    <span class="stat-box-sub">current level</span>
+                  </div>
+                </div>
+                <span class="stat-box-chevron">›</span>
+              </div>
+
+              <!-- Item 5: Problems Solved -->
+              <div class="profile-stat-box" role="button" tabindex="0">
+                <div class="stat-box-left">
+                  <div class="stat-box-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="stat-box-title">Problems Solved</span>
+                    <div class="stat-box-val">86</div>
+                    <span class="stat-box-sub">total</span>
+                  </div>
+                </div>
+                <span class="stat-box-chevron">›</span>
+              </div>
+
+              <!-- Item 6: Daily KUIZU -->
+              <div class="profile-stat-box" role="button" tabindex="0">
+                <div class="stat-box-left">
+                  <div class="stat-box-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="5"></circle>
+                      <line x1="12" y1="1" x2="12" y2="3"></line>
+                      <line x1="12" y1="21" x2="12" y2="23"></line>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                      <line x1="1" y1="12" x2="3" y2="12"></line>
+                      <line x1="21" y1="12" x2="23" y2="12"></line>
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="stat-box-title">Daily KUIZU</span>
+                    <div class="badge-active-tag">Active</div>
+                  </div>
+                </div>
+                <span class="stat-box-chevron">›</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Bottom Split Tables: My Contests & My Quests -->
+        <section class="profile-tables-grid" aria-label="Contests and Quests Activity">
+          <!-- Left Table Card: My Contests -->
+          <div class="profile-activity-card">
+            <div class="activity-card-header">
+              <div class="activity-title-group">
+                <svg class="activity-title-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                  <path d="M4 22h16"></path>
+                  <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                  <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                </svg>
+                <h3 class="activity-heading">My Contests</h3>
+              </div>
+              <a href="/problem/contest" class="activity-view-all-link">
+                <span>View All</span>
+                <span class="view-all-arrow">→</span>
+              </a>
+            </div>
+
+            <div class="activity-table-wrapper">
+              <table class="activity-table">
+                <thead>
+                  <tr>
+                    <th style="width: 8%;">#</th>
+                    <th style="width: 44%;">Contest Name</th>
+                    <th style="width: 26%;">Date</th>
+                    <th style="width: 22%; text-align: right;">Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="contest-item-row" tabindex="0">
+                    <td class="col-num">1</td>
+                    <td class="contest-name-cell">Weekly Coding Contest</td>
+                    <td class="date-cell">Apr 21, 2025</td>
+                    <td style="text-align: right;">
+                      <div class="score-cell-wrap">
+                        <span class="contest-score-cell">85 / 100</span>
+                        <span class="table-row-chevron">›</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="contest-item-row" tabindex="0">
+                    <td class="col-num">2</td>
+                    <td class="contest-name-cell">Monthly Algo Challenge</td>
+                    <td class="date-cell">Mar 15, 2025</td>
+                    <td style="text-align: right;">
+                      <div class="score-cell-wrap">
+                        <span class="contest-score-cell">78 / 100</span>
+                        <span class="table-row-chevron">›</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right Table Card: My Quests -->
+          <div class="profile-activity-card">
+            <div class="activity-card-header">
+              <div class="activity-title-group">
+                <svg class="activity-title-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <circle cx="12" cy="12" r="6"></circle>
+                  <circle cx="12" cy="12" r="2"></circle>
+                </svg>
+                <h3 class="activity-heading">My Quests</h3>
+              </div>
+              <a href="/problem/quest" class="activity-view-all-link">
+                <span>View All</span>
+                <span class="view-all-arrow">→</span>
+              </a>
+            </div>
+
+            <div class="activity-table-wrapper">
+              <table class="activity-table">
+                <thead>
+                  <tr>
+                    <th style="width: 8%;">#</th>
+                    <th style="width: 42%;">Quest Name</th>
+                    <th style="width: 24%;">Status</th>
+                    <th style="width: 26%; text-align: right;">Submitted Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="quest-item-row" tabindex="0">
+                    <td class="col-num">1</td>
+                    <td class="quest-name-cell">
+                      <span class="quest-name-title">Daily Coding Streak</span>
+                      <span class="quest-name-sub">Solve 5 problems in a day</span>
+                    </td>
+                    <td>
+                      <span class="badge-status-completed">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>Completed</span>
+                      </span>
+                    </td>
+                    <td style="text-align: right;">
+                      <div class="date-cell-wrap">
+                        <span class="date-cell">Apr 12, 2025</span>
+                        <span class="table-row-chevron">›</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="quest-item-row" tabindex="0">
+                    <td class="col-num">2</td>
+                    <td class="quest-name-cell">
+                      <span class="quest-name-title">LeetCode Sprint</span>
+                      <span class="quest-name-sub">Solve 15 LeetCode problems</span>
+                    </td>
+                    <td>
+                      <span class="badge-status-completed">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>Completed</span>
+                      </span>
+                    </td>
+                    <td style="text-align: right;">
+                      <div class="date-cell-wrap">
+                        <span class="date-cell">Apr 5, 2025</span>
+                        <span class="table-row-chevron">›</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Profile Footer Note Matching Design -->
+        <footer class="profile-page-footer">
+          <div class="footer-left-quote">
+            <span class="footer-sparkle">✨</span>
+            <span>Better Learning</span>
+            <span class="footer-bullet">•</span>
+            <span>Bigger Dreams</span>
+          </div>
+          <div class="footer-right-brand">
+            <svg class="footer-wave-icon" viewBox="0 0 32 12" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M1 6C4 2 8 2 11 6C14 10 18 10 21 6C24 2 28 2 31 6"></path>
+            </svg>
+            <span class="footer-brand-name">KUIZU</span>
+          </div>
+        </footer>
+      </div>
+    </main>
+
+    <!-- Edit Profile Modal Dialog -->
+    <div class="settings-modal-overlay" id="edit-profile-modal" aria-hidden="true">
+      <div class="settings-modal-box">
+        <div class="settings-modal-header">
+          <h3>Edit Profile Information</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-edit-modal" aria-label="Close Modal">&times;</button>
+        </div>
+        <form id="edit-profile-form">
+          <div class="modal-form-body">
+            <div class="modal-input-field">
+              <label for="edit-input-name">Full Name</label>
+              <input type="text" id="edit-input-name" required placeholder="e.g. Anuj Sandeep Chavan" />
+            </div>
+            <div class="modal-input-field">
+              <label for="edit-input-email">Email Address</label>
+              <input type="email" id="edit-input-email" required placeholder="e.g. anujchavan123@gmail.com" />
+            </div>
+            <div class="modal-input-field">
+              <label for="edit-input-id">Student ID</label>
+              <input type="text" id="edit-input-id" required placeholder="e.g. STU00123" />
+            </div>
+          </div>
+          <div class="modal-actions-row">
+            <button type="button" class="btn-modal-cancel" id="btn-cancel-edit">Cancel</button>
+            <button type="submit" class="btn-modal-submit" id="btn-save-profile">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="/src/profile.ts"></script>
+  </body>
+</html>

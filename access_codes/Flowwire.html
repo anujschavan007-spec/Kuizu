@@ -1,0 +1,1900 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuizu • Visual App Flow & Wireframe Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0f17;
+  --grid: #1e293b;
+  --card: #151d2a;
+  --card-hover: #1c2638;
+  --ink: #f1f5f9;
+  --mute: #94a3b8;
+  --line: #2d3b4e;
+  --wire: #6366f1;
+  --wire-student: #10b981;
+  --wire-admin: #ec4899;
+  --wire-auth: #38bdf8;
+  --tag: #f59e0b;
+  --tagink: #0f172a;
+  --bar: #0f172a;
+  --student-badge: #059669;
+  --admin-badge: #db2777;
+  --auth-badge: #0284c7;
+  --ref-badge: #7c3aed;
+  box-sizing: border-box;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  font: 14px/1.4 "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* TOP TOOLBAR */
+#bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bar);
+  border-bottom: 1px solid var(--line);
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 12px;
+}
+.brand-wrap b {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.brand-pill {
+  background: rgba(99,102,241,0.2);
+  color: #a5b4fc;
+  border: 1px solid rgba(99,102,241,0.3);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+#bar i.divider {
+  width: 1px;
+  height: 22px;
+  background: var(--line);
+  margin: 0 4px;
+}
+
+/* BUTTONS */
+button {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+button:hover {
+  background: var(--card-hover);
+  border-color: var(--wire);
+  color: #fff;
+}
+button.pri {
+  background: #4f46e5;
+  color: #fff;
+  border-color: #6366f1;
+}
+button.pri:hover {
+  background: #4338ca;
+}
+button.active-filter {
+  background: var(--wire);
+  color: #fff;
+  border-color: var(--wire);
+}
+button.success {
+  background: rgba(16,185,129,0.15);
+  border-color: #10b981;
+  color: #34d399;
+}
+button.success:hover {
+  background: #10b981;
+  color: #fff;
+}
+
+/* SEARCH INPUT */
+.search-box {
+  position: relative;
+  margin-left: auto;
+}
+.search-box input {
+  background: #111827;
+  border: 1px solid var(--line);
+  color: #fff;
+  padding: 6px 12px 6px 28px;
+  border-radius: 8px;
+  font-size: 12px;
+  width: 180px;
+  transition: width 0.2s;
+}
+.search-box input:focus {
+  width: 240px;
+  outline: none;
+  border-color: var(--wire);
+}
+.search-box span.icon {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--mute);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/* CANVAS */
+#canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  background-image: radial-gradient(var(--grid) 1.2px, transparent 1.4px);
+  background-size: 24px 24px;
+}
+#canvas:active { cursor: grabbing; }
+#world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+#wires {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+  color: var(--wire);
+  pointer-events: none;
+}
+#wires path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  transition: stroke 0.2s;
+}
+#wires path.wire-student {
+  stroke: var(--wire-student);
+}
+#wires path.wire-admin {
+  stroke: var(--wire-admin);
+}
+#wires path.wire-auth {
+  stroke: var(--wire-auth);
+}
+#tmp {
+  stroke-dasharray: 6 5;
+  stroke: #f59e0b !important;
+}
+
+/* NODE CARDS */
+.node {
+  position: absolute;
+  width: 280px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  user-select: none;
+}
+.node:hover {
+  border-color: rgba(99,102,241,0.5);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+}
+.node.hot {
+  outline: 3px solid #f59e0b;
+}
+.node.highlighted {
+  outline: 3px solid #38bdf8;
+  box-shadow: 0 0 25px rgba(56,189,248,0.5);
+}
+.node.dimmed {
+  opacity: 0.25;
+}
+
+/* Node Header */
+.hd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: move;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px 12px 0 0;
+}
+.badge {
+  min-width: 34px;
+  height: 24px;
+  padding: 0 6px;
+  background: var(--tag);
+  color: var(--tagink);
+  font-weight: 800;
+  font-size: 11px;
+  font-family: 'Space Grotesk', sans-serif;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  letter-spacing: 0.02em;
+}
+.badge.badge-student {
+  background: #10b981;
+  color: #fff;
+}
+.badge.badge-admin {
+  background: #ec4899;
+  color: #fff;
+}
+.badge.badge-auth {
+  background: #0284c7;
+  color: #fff;
+}
+.badge.badge-ref {
+  background: #8b5cf6;
+  color: #fff;
+}
+
+.ttl {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 3px 5px;
+  border-radius: 4px;
+}
+.ttl:focus {
+  background: #0f172a;
+  outline: 2px solid var(--wire);
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.btn-icon {
+  padding: 4px 6px;
+  border: 0;
+  background: transparent;
+  color: var(--mute);
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-icon:hover {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+/* Image in card */
+.img-wrap {
+  position: relative;
+  margin: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #090d14;
+  cursor: pointer;
+}
+.img-wrap:hover .zoom-hint {
+  opacity: 1;
+}
+.node img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 240px;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+.zoom-hint {
+  position: absolute;
+  inset: 0;
+  background: rgba(15,23,42,0.7);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+/* Notes in card */
+.note {
+  display: block;
+  width: calc(100% - 20px);
+  margin: 0 10px 10px;
+  resize: vertical;
+  min-height: 48px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.25);
+  color: #cbd5e1;
+  font-size: 11.5px;
+  line-height: 1.45;
+  padding: 6px 8px;
+  font-family: inherit;
+}
+.note:focus {
+  border-color: var(--wire);
+  outline: none;
+  background: #090d14;
+}
+
+/* WIRE PORTS */
+.port {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  border-radius: 50%;
+  background: var(--wire);
+  border: 3px solid var(--card);
+  box-shadow: 0 0 8px rgba(99,102,241,0.6);
+  transition: transform 0.15s, background 0.15s;
+}
+.port:hover {
+  transform: scale(1.3);
+}
+.port.in { left: -10px; }
+.port.out { right: -10px; cursor: crosshair; }
+.port.out::after { content: ""; position: absolute; inset: -12px; }
+
+/* EDGE LABELS */
+.elabel {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  background: #0f172a;
+  border: 1px solid var(--wire);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+  border-radius: 999px;
+  padding: 1px 4px 1px 10px;
+  z-index: 5;
+}
+.elabel input {
+  width: 145px;
+  border: 0;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 0;
+}
+.elabel input:focus { outline: none; }
+.elabel button {
+  border: 0;
+  background: transparent;
+  padding: 0 6px;
+  color: var(--mute);
+  font-size: 14px;
+}
+.elabel button:hover { color: #f87171; }
+
+/* EMPTY STATE */
+#empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  pointer-events: none;
+  color: var(--mute);
+  padding: 24px;
+}
+#empty[hidden] { display: none; }
+#empty div {
+  max-width: 420px;
+  border: 2px dashed var(--line);
+  border-radius: 14px;
+  padding: 32px;
+  background: rgba(15,23,42,0.8);
+}
+#empty strong {
+  display: block;
+  color: var(--ink);
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+/* ZOOM CONTROLS */
+#zoom {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  gap: 6px;
+  background: rgba(15,23,42,0.9);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  z-index: 10;
+}
+#zoom button {
+  padding: 6px 12px;
+}
+
+/* TOAST */
+#toast {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  background: #1e293b;
+  border: 1px solid var(--wire);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  z-index: 100;
+}
+#toast.on {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-6px);
+}
+
+/* LIGHTBOX MODAL */
+#lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: none;
+  flex-direction: column;
+  padding: 20px;
+}
+#lightbox.open { display: flex; }
+.lb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+.lb-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lb-body {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  overflow: hidden;
+}
+.lb-img-wrap {
+  flex: 2;
+  background: #090d14;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  padding: 16px;
+}
+.lb-img-wrap img {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+}
+.lb-meta {
+  flex: 1;
+  max-width: 360px;
+  background: #111827;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.lb-meta h4 { margin: 0; color: #a5b4fc; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
+.lb-meta p { margin: 0; font-size: 13px; color: #cbd5e1; line-height: 1.5; }
+.lb-meta .meta-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
+.lb-meta .meta-list li { display: flex; align-items: flex-start; gap: 6px; }
+.lb-meta .badge-sm { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700; background: var(--wire); color: #fff; }
+
+/* IMAGE GALLERY DRAWER */
+#drawer {
+  position: fixed;
+  top: 54px;
+  right: -420px;
+  width: 400px;
+  bottom: 0;
+  background: #0f172a;
+  border-left: 1px solid var(--line);
+  z-index: 50;
+  box-shadow: -8px 0 25px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#drawer.open { right: 0; }
+.drawer-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.drawer-header h3 { margin: 0; font-size: 15px; color: #fff; }
+.drawer-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #1e293b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.drawer-item:hover {
+  border-color: var(--wire);
+  background: #253347;
+}
+.drawer-thumb {
+  width: 55px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #000;
+}
+.drawer-info {
+  flex: 1;
+  min-width: 0;
+}
+.drawer-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.drawer-role {
+  font-size: 11px;
+  color: var(--mute);
+}
+
+/* LEGEND PILL */
+.legend-bar {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15,23,42,0.92);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: var(--mute);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  z-index: 10;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-auth { background: var(--wire-auth); }
+.dot-student { background: var(--wire-student); }
+.dot-admin { background: var(--wire-admin); }
+.dot-wire { background: var(--wire); }
+</style>
+</head>
+<body>
+
+<!-- TOP TOOLBAR -->
+<div id="bar">
+  <div class="brand-wrap">
+    <b>Flowwire</b>
+    <span class="brand-pill">Kuizu Map</span>
+  </div>
+
+  <button class="active-filter" id="f-all">All (29)</button>
+  <button id="f-auth">🔐 Landing & Login</button>
+  <button id="f-student">🎓 Student Track</button>
+  <button id="f-admin">👨‍🏫 Faculty & Admin</button>
+
+  <i class="divider"></i>
+
+  <button class="success" id="btn-default-flow" title="Load complete pre-wired Kuizu screen flow">↺ Load Kuizu Flow</button>
+  <button id="btn-gallery">🖼️ Screens Gallery</button>
+  <button class="pri" id="add">+ Add Images</button>
+
+  <i class="divider"></i>
+
+  <button id="copy" title="Copy flow summary for AI and documentation">📋 Copy AI Brief</button>
+  <button id="spng" title="Export entire flow canvas as high-res PNG">📸 Save Flow PNG</button>
+  <button id="sjson">💾 Save JSON</button>
+  <button id="ojson">📂 Open JSON</button>
+  <button id="clear">Clear</button>
+
+  <div class="search-box">
+    <span class="icon">🔍</span>
+    <input type="text" id="quick-search" placeholder="Search page (e.g. avatar, login, quiz)...">
+  </div>
+
+  <input type="file" id="fi" accept="image/*" multiple hidden>
+  <input type="file" id="fj" accept=".json,application/json" hidden>
+</div>
+
+<!-- CANVAS WORKSPACE -->
+<div id="canvas">
+  <div id="world">
+    <svg id="wires" width="1" height="1">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10z" fill="currentColor" stroke="none"/>
+        </marker>
+      </defs>
+      <g id="g"></g>
+      <path id="tmp" d=""/>
+    </svg>
+  </div>
+
+  <div id="empty">
+    <div>
+      <strong>No Screens on Canvas</strong>
+      Click <b>"↺ Load Kuizu Flow"</b> to instantly load all 29 Kuizu screens with pre-configured wiring, or click <b>"+ Add Images"</b> to drop your own screenshots.
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend-bar">
+    <span style="font-weight:700; color:#fff;">Legend:</span>
+    <div class="legend-item"><span class="legend-dot dot-auth"></span> Landing & Auth Gate</div>
+    <div class="legend-item"><span class="legend-dot dot-student"></span> Student Experience</div>
+    <div class="legend-item"><span class="legend-dot dot-admin"></span> Faculty & Authority</div>
+    <div class="legend-item"><span class="legend-dot dot-wire"></span> User Flow Action</div>
+  </div>
+
+  <!-- Zoom Controls -->
+  <div id="zoom">
+    <button id="zo" aria-label="Zoom out">−</button>
+    <button id="zf">Fit All</button>
+    <button id="zi" aria-label="Zoom in">+</button>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" role="status"></div>
+</div>
+
+<!-- LIGHTBOX MODAL -->
+<div id="lightbox">
+  <div class="lb-header">
+    <h2 id="lb-title"><span class="badge" id="lb-badge">S1</span> <span id="lb-name">Screen Preview</span></h2>
+    <button class="btn-icon" id="lb-close" style="font-size:24px; padding:6px 12px;">✕</button>
+  </div>
+  <div class="lb-body">
+    <div class="lb-img-wrap">
+      <img id="lb-img" src="" alt="Full Screen Preview">
+    </div>
+    <div class="lb-meta">
+      <h4>Page Description & Behavior</h4>
+      <p id="lb-note">Notes will appear here...</p>
+
+      <h4>Incoming Actions (From)</h4>
+      <ul class="meta-list" id="lb-incoming"></ul>
+
+      <h4>Outgoing Actions (To)</h4>
+      <ul class="meta-list" id="lb-outgoing"></ul>
+
+      <div style="margin-top:auto; display:flex; gap:8px;">
+        <button class="pri" style="width:100%; justify-content:center;" id="lb-jump">Focus on Canvas</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREENS GALLERY DRAWER -->
+<div id="drawer">
+  <div class="drawer-header">
+    <h3>🖼️ All Kuizu Screens (<span id="drawer-count">29</span>)</h3>
+    <button class="btn-icon" id="drawer-close" style="font-size:18px;">✕</button>
+  </div>
+  <div class="drawer-list" id="drawer-list"></div>
+</div>
+
+<script>
+(()=>{
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const canvas = $('#canvas'), world = $('#world'), g = $('#g'), tmp = $('#tmp'), empty = $('#empty'), toastEl = $('#toast');
+
+// State
+const S = { nodes: [], edges: [], view: { x: 380, y: 40, k: 0.58 } };
+const els = { n: {}, e: {} };
+const NW = 280;
+let uid = 0;
+const nid = p => p + (++uid);
+const N = i => S.nodes.find(n => n.id === i);
+const NS = 'http://www.w3.org/2000/svg';
+let activeFilter = 'all';
+
+// Toast helper
+function toast(m){
+  toastEl.textContent = m;
+  toastEl.classList.add('on');
+  clearTimeout(toast.t);
+  toast.t = setTimeout(() => toastEl.classList.remove('on'), 2800);
+}
+
+// Canvas Transforms
+function applyView(){
+  const v = S.view;
+  world.style.transform = `translate(${v.x}px,${v.y}px) scale(${v.k})`;
+  const s = 24 * v.k;
+  canvas.style.backgroundSize = `${s}px ${s}px`;
+  canvas.style.backgroundPosition = `${v.x}px ${v.y}px`;
+}
+function toWorld(cx, cy){
+  const r = canvas.getBoundingClientRect();
+  return { x: (cx - r.left - S.view.x) / S.view.k, y: (cy - r.top - S.view.y) / S.view.k };
+}
+function dims(n){
+  const e = els.n[n.id];
+  return e ? { w: e.offsetWidth, h: e.offsetHeight } : { w: NW, h: 320 };
+}
+function anchor(n, side){
+  const d = dims(n);
+  return side === 'out' ? { x: n.x + d.w, y: n.y + d.h / 2 } : { x: n.x, y: n.y + d.h / 2 };
+}
+function curve(x1, y1, x2, y2){
+  const dx = Math.max(60, Math.abs(x2 - x1) / 2);
+  return `M${x1} ${y1} C${x1 + dx} ${y1} ${x2 - dx} ${y2} ${x2} ${y2}`;
+}
+
+// Add Node Function
+function addNode(d){
+  const n = Object.assign({
+    id: nid('n'),
+    badge: 'S1',
+    role: 'student', // 'student' | 'admin' | 'auth' | 'ref'
+    title: '',
+    note: '',
+    x: 0,
+    y: 0,
+    file: 'screen.png',
+    src: '',
+    nw: 1,
+    nh: 1
+  }, d);
+
+  S.nodes.push(n);
+
+  const el = document.createElement('div');
+  el.className = `node role-${n.role}`;
+  el.dataset.id = n.id;
+  el.dataset.role = n.role;
+  el.style.left = n.x + 'px';
+  el.style.top = n.y + 'px';
+
+  let badgeClass = 'badge-student';
+  if (n.role === 'admin') badgeClass = 'badge-admin';
+  else if (n.role === 'auth') badgeClass = 'badge-auth';
+  else if (n.role === 'ref') badgeClass = 'badge-ref';
+
+  el.innerHTML = `
+    <div class="hd">
+      <span class="badge ${badgeClass}">${n.badge || 'S'}</span>
+      <input class="ttl" value="${n.title}" placeholder="Screen title" aria-label="Screen title">
+      <div class="card-actions">
+        <button class="btn-icon btn-inspect" title="Enlarge screenshot">🔍</button>
+        <button class="btn-icon x" title="Remove screen">✕</button>
+      </div>
+    </div>
+    <div class="img-wrap" title="Click to open full view">
+      <img src="${n.src}" alt="${n.title}" draggable="false" loading="lazy">
+      <div class="zoom-hint">Click to enlarge 🔍</div>
+    </div>
+    <textarea class="note" placeholder="What the user sees or does here...">${n.note || ''}</textarea>
+    <div class="port in" title="Incoming connection target"></div>
+    <div class="port out" title="Drag to another screen to wire them"></div>
+  `;
+
+  const img = el.querySelector('img');
+  img.onload = () => { n.nw = img.naturalWidth || 1; n.nh = img.naturalHeight || 1; sync(); };
+  img.onerror = () => {
+    img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect width="100%" height="100%" fill="%231e293b"/><text x="50%" y="50%" fill="%2394a3b8" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14">Image: ' + encodeURIComponent(n.file) + '</text></svg>';
+  };
+
+  const t = el.querySelector('.ttl');
+  t.oninput = () => { n.title = t.value; persist(); };
+
+  const no = el.querySelector('.note');
+  no.oninput = () => { n.note = no.value; persist(); };
+
+  el.querySelector('.img-wrap').onclick = () => openLightbox(n);
+  el.querySelector('.btn-inspect').onclick = () => openLightbox(n);
+
+  el.querySelector('.x').onclick = () => {
+    S.edges.filter(e => e.from === n.id || e.to === n.id).forEach(rmEdge);
+    el.remove();
+    delete els.n[n.id];
+    S.nodes = S.nodes.filter(q => q !== n);
+    sync();
+    persist();
+  };
+
+  world.appendChild(el);
+  els.n[n.id] = el;
+  return n;
+}
+
+// Edge functions
+function rmEdge(e){
+  const el = els.e[e.id];
+  if(el){ el._p.remove(); el.remove(); delete els.e[e.id]; }
+  S.edges = S.edges.filter(q => q !== e);
+  sync();
+  persist();
+}
+function addEdge(d){
+  const e = Object.assign({ id: nid('e'), from: '', to: '', label: '', role: 'wire' }, d);
+  S.edges.push(e);
+
+  const el = document.createElement('div');
+  el.className = 'elabel';
+  el.innerHTML = `
+    <input placeholder="Action (e.g. tap Start)" value="${e.label || ''}">
+    <button title="Remove connection">✕</button>
+  `;
+  const i = el.querySelector('input');
+  i.oninput = () => { e.label = i.value; persist(); };
+  el.querySelector('button').onclick = () => rmEdge(e);
+
+  el._p = document.createElementNS(NS, 'path');
+  el._p.setAttribute('marker-end', 'url(#ah)');
+  if(e.role === 'student') el._p.classList.add('wire-student');
+  else if(e.role === 'admin') el._p.classList.add('wire-admin');
+  else if(e.role === 'auth') el._p.classList.add('wire-auth');
+
+  g.appendChild(el._p);
+  world.appendChild(el);
+  els.e[e.id] = el;
+  sync();
+  return e;
+}
+
+// Sync positions & wires
+function sync(){
+  S.nodes.forEach(n => {
+    const el = els.n[n.id];
+    if(el) {
+      el.style.left = n.x + 'px';
+      el.style.top = n.y + 'px';
+    }
+  });
+
+  S.edges.forEach(e => {
+    const a = N(e.from), b = N(e.to);
+    if (!a || !b) return;
+    const A = anchor(a, 'out'), B = anchor(b, 'in'), el = els.e[e.id];
+    if(el && el._p) {
+      el._p.setAttribute('d', curve(A.x, A.y, B.x, B.y));
+      el.style.left = ((A.x + B.x) / 2) + 'px';
+      el.style.top = ((A.y + B.y) / 2) + 'px';
+    }
+  });
+
+  empty.hidden = S.nodes.length > 0;
+  $('#drawer-count').textContent = S.nodes.length;
+}
+
+// Canvas pointer tracking
+function track(e, move, up){
+  e.preventDefault();
+  const u = ev => {
+    removeEventListener('pointermove', move);
+    removeEventListener('pointerup', u);
+    removeEventListener('pointercancel', u);
+    up && up(ev);
+  };
+  addEventListener('pointermove', move);
+  addEventListener('pointerup', u);
+  addEventListener('pointercancel', u);
+}
+
+canvas.addEventListener('pointerdown', e => {
+  if (e.button > 0) return;
+  const out = e.target.closest('.out'), hd = e.target.closest('.hd');
+  if (out) { wire(e, out.closest('.node').dataset.id); return; }
+  if (hd && !e.target.closest('input,button')) { drag(e, hd.closest('.node').dataset.id); return; }
+  if (e.target.closest('.node,.elabel,#zoom,#lightbox,#drawer')) return;
+
+  const v = S.view, sx = e.clientX, sy = e.clientY, ox = v.x, oy = v.y;
+  track(e, ev => {
+    v.x = ox + ev.clientX - sx;
+    v.y = oy + ev.clientY - sy;
+    applyView();
+  });
+});
+
+function drag(e, id){
+  const n = N(id), p0 = toWorld(e.clientX, e.clientY), ox = n.x, oy = n.y, el = els.n[id];
+  el.parentNode.appendChild(el);
+  track(e, ev => {
+    const p = toWorld(ev.clientX, ev.clientY);
+    n.x = ox + p.x - p0.x;
+    n.y = oy + p.y - p0.y;
+    el.style.left = n.x + 'px';
+    el.style.top = n.y + 'px';
+    sync();
+  }, () => {
+    persist();
+  });
+}
+
+function nodeAt(x, y, notId){
+  const t = document.elementFromPoint(x, y)?.closest('.node');
+  return (t && t.dataset.id !== notId) ? t : null;
+}
+
+function wire(e, from){
+  const fn = N(from);
+  let hot = null;
+  track(e, ev => {
+    const p = toWorld(ev.clientX, ev.clientY), a = anchor(fn, 'out');
+    tmp.setAttribute('d', curve(a.x, a.y, p.x, p.y));
+    const h = nodeAt(ev.clientX, ev.clientY, from);
+    if (h !== hot) {
+      hot && hot.classList.remove('hot');
+      hot = h;
+      hot && hot.classList.add('hot');
+    }
+  }, ev => {
+    tmp.setAttribute('d', '');
+    hot && hot.classList.remove('hot');
+    const t = nodeAt(ev.clientX, ev.clientY, from);
+    if (t && !S.edges.some(q => q.from === from && q.to === t.dataset.id)) {
+      const ed = addEdge({ from, to: t.dataset.id, role: fn.role });
+      els.e[ed.id].querySelector('input').focus();
+      persist();
+    }
+  });
+}
+
+// Zoom controls
+function zoomAt(f, cx, cy){
+  const v = S.view, k = Math.min(2.5, Math.max(0.12, v.k * f)), r = canvas.getBoundingClientRect(), px = cx - r.left, py = cy - r.top;
+  v.x = px - (px - v.x) * (k / v.k);
+  v.y = py - (py - v.y) * (k / v.k);
+  v.k = k;
+  applyView();
+}
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoomAt(Math.exp(-e.deltaY * 0.0015), e.clientX, e.clientY);
+}, { passive: false });
+
+function cz(f){
+  const r = canvas.getBoundingClientRect();
+  zoomAt(f, r.left + r.width / 2, r.top + r.height / 2);
+}
+$('#zi').onclick = () => cz(1.25);
+$('#zo').onclick = () => cz(1 / 1.25);
+
+function fit(filterRole){
+  const nodes = filterRole ? S.nodes.filter(n => n.role === filterRole) : S.nodes;
+  if (!nodes.length) return;
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  nodes.forEach(n => {
+    const d = dims(n);
+    x0 = Math.min(x0, n.x);
+    y0 = Math.min(y0, n.y);
+    x1 = Math.max(x1, n.x + d.w);
+    y1 = Math.max(y1, n.y + d.h);
+  });
+  const r = canvas.getBoundingClientRect(), pad = 70;
+  const k = Math.min(1.2, Math.max(0.18, Math.min((r.width - pad * 2) / (x1 - x0), (r.height - pad * 2) / (y1 - y0))));
+  S.view.k = k;
+  S.view.x = (r.width - (x1 - x0) * k) / 2 - x0 * k;
+  S.view.y = (r.height - (y1 - y0) * k) / 2 - y0 * k;
+  applyView();
+}
+$('#zf').onclick = () => fit();
+
+// Local Storage Persistence
+function persist(){
+  try {
+    localStorage.setItem('kuizu_flowwire_data_v3', JSON.stringify({
+      nodes: S.nodes,
+      edges: S.edges,
+      view: S.view
+    }));
+  } catch(e){}
+}
+
+function reset(){
+  S.nodes.forEach(n => els.n[n.id]?.remove());
+  S.edges.forEach(e => { els.e[e.id]?._p.remove(); els.e[e.id]?.remove(); });
+  S.nodes = [];
+  S.edges = [];
+  Object.keys(els.n).forEach(k => delete els.n[k]);
+  Object.keys(els.e).forEach(k => delete els.e[k]);
+  sync();
+}
+
+// LIGHTBOX
+function openLightbox(node){
+  let badgeClass = 'badge-student';
+  if (node.role === 'admin') badgeClass = 'badge-admin';
+  else if (node.role === 'auth') badgeClass = 'badge-auth';
+  else if (node.role === 'ref') badgeClass = 'badge-ref';
+
+  $('#lb-title').innerHTML = `<span class="badge ${badgeClass}">${node.badge}</span> ${node.title}`;
+  $('#lb-img').src = node.src;
+  $('#lb-note').textContent = node.note || 'No notes entered for this screen.';
+
+  const inEdges = S.edges.filter(e => e.to === node.id);
+  const outEdges = S.edges.filter(e => e.from === node.id);
+
+  const inList = $('#lb-incoming');
+  inList.innerHTML = inEdges.length ? '' : '<li style="color:var(--mute)">No incoming actions (Start page)</li>';
+  inEdges.forEach(e => {
+    const fromN = N(e.from);
+    if(fromN) inList.innerHTML += `<li><span class="badge-sm">${fromN.badge}</span> <b>${fromN.title}</b> — <i style="color:#a5b4fc">"${e.label || 'Action'}"</i></li>`;
+  });
+
+  const outList = $('#lb-outgoing');
+  outList.innerHTML = outEdges.length ? '' : '<li style="color:var(--mute)">No outgoing actions (Terminal page)</li>';
+  outEdges.forEach(e => {
+    const toN = N(e.to);
+    if(toN) outList.innerHTML += `<li><i style="color:#a5b4fc">"${e.label || 'Action'}"</i> → <span class="badge-sm">${toN.badge}</span> <b>${toN.title}</b></li>`;
+  });
+
+  $('#lb-jump').onclick = () => {
+    closeLightbox();
+    focusNode(node.id);
+  };
+
+  $('#lightbox').classList.add('open');
+}
+function closeLightbox(){
+  $('#lightbox').classList.remove('open');
+}
+$('#lb-close').onclick = closeLightbox;
+$('#lightbox').onclick = e => { if (e.target === $('#lightbox')) closeLightbox(); };
+addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeDrawer(); } });
+
+// Focus on a specific node
+function focusNode(id){
+  const n = N(id);
+  if (!n) return;
+  const r = canvas.getBoundingClientRect();
+  S.view.k = 0.85;
+  S.view.x = r.width / 2 - (n.x + NW / 2) * S.view.k;
+  S.view.y = r.height / 2 - (n.y + 150) * S.view.k;
+  applyView();
+
+  const el = els.n[id];
+  if(el){
+    el.classList.add('highlighted');
+    setTimeout(() => el.classList.remove('highlighted'), 2200);
+  }
+}
+
+// DRAWER (Screens Gallery)
+function renderDrawer(){
+  const list = $('#drawer-list');
+  list.innerHTML = '';
+  S.nodes.forEach(n => {
+    const item = document.createElement('div');
+    item.className = 'drawer-item';
+    let roleName = '🎓 Student Track';
+    if(n.role === 'admin') roleName = '👨‍🏫 Faculty / Admin';
+    else if(n.role === 'auth') roleName = '🔐 Landing & Auth';
+    else if(n.role === 'ref') roleName = '🎨 UI Reference';
+
+    item.innerHTML = `
+      <img class="drawer-thumb" src="${n.src}" alt="${n.title}">
+      <div class="drawer-info">
+        <div class="drawer-title">${n.badge}: ${n.title}</div>
+        <div class="drawer-role">${roleName}</div>
+      </div>
+    `;
+    item.onclick = () => {
+      closeDrawer();
+      focusNode(n.id);
+    };
+    list.appendChild(item);
+  });
+}
+function openDrawer(){
+  renderDrawer();
+  $('#drawer').classList.add('open');
+}
+function closeDrawer(){
+  $('#drawer').classList.remove('open');
+}
+$('#btn-gallery').onclick = openDrawer;
+$('#drawer-close').onclick = closeDrawer;
+
+// FILTERING
+function applyFilter(role){
+  activeFilter = role;
+  $$('#bar button').forEach(b => b.classList.remove('active-filter'));
+  if (role === 'all') $('#f-all').classList.add('active-filter');
+  else if (role === 'auth') $('#f-auth').classList.add('active-filter');
+  else if (role === 'student') $('#f-student').classList.add('active-filter');
+  else if (role === 'admin') $('#f-admin').classList.add('active-filter');
+
+  S.nodes.forEach(n => {
+    const el = els.n[n.id];
+    if(!el) return;
+    if(role === 'all' || n.role === role){
+      el.classList.remove('dimmed');
+    } else {
+      el.classList.add('dimmed');
+    }
+  });
+  fit(role === 'all' ? null : role);
+}
+$('#f-all').onclick = () => applyFilter('all');
+$('#f-auth').onclick = () => applyFilter('auth');
+$('#f-student').onclick = () => applyFilter('student');
+$('#f-admin').onclick = () => applyFilter('admin');
+
+// QUICK SEARCH
+$('#quick-search').oninput = e => {
+  const q = e.target.value.toLowerCase().trim();
+  if(!q){
+    S.nodes.forEach(n => els.n[n.id]?.classList.remove('dimmed', 'highlighted'));
+    return;
+  }
+  let matchFirst = null;
+  S.nodes.forEach(n => {
+    const match = n.title.toLowerCase().includes(q) || (n.note && n.note.toLowerCase().includes(q)) || n.badge.toLowerCase().includes(q);
+    const el = els.n[n.id];
+    if(match){
+      el?.classList.remove('dimmed');
+      el?.classList.add('highlighted');
+      if(!matchFirst) matchFirst = n;
+    } else {
+      el?.classList.add('dimmed');
+      el?.classList.remove('highlighted');
+    }
+  });
+  if(matchFirst && q.length >= 3){
+    focusNode(matchFirst.id);
+  }
+};
+
+// ============================================================================
+// COMPLETE KUIZU SCREENS & FLOW DEFINITION (29 Screens)
+// ============================================================================
+const KUIZU_PRESET = {
+  nodes: [
+    // --- 🔐 LANDING & AUTH TRACK ---
+    {
+      id: "n_landing",
+      badge: "L0",
+      role: "auth",
+      title: "Public Landing Page",
+      file: "landing_page.png",
+      src: "images/landing_page.png",
+      x: -360,
+      y: 80,
+      note: "Visitor orientation & onboarding page: gamified hero presentation, live challenge mechanics breakdown, platform feature previews, and high-visibility 'Get Started / Sign In' triggers."
+    },
+    {
+      id: "n_auth",
+      badge: "AUTH",
+      role: "auth",
+      title: "Login & Whitelist Gate",
+      file: "signup_popup.png",
+      src: "images/signup_popup.png",
+      x: -360,
+      y: 560,
+      note: "Identity verification gateway: Mobile number and college email authentication with whitelist enforcement. Automatically routes verified students to Student Dashboard (S1) and faculty to Faculty Overview (A1)."
+    },
+
+    // --- 🎓 STUDENT TRACK ---
+    {
+      id: "n_s1",
+      badge: "S1",
+      role: "student",
+      title: "Student Home / Dashboard",
+      file: "img1_homepage.png",
+      src: "images/img1_homepage.png",
+      x: 60,
+      y: 80,
+      note: "Primary student mission center: Current Streak counter with Freeze protection, live XP wallet, today's daily micro-quiz call-to-action, active quests list, Avatar Studio shortcut, and quick access to Coding Library, Team Battles, and Contests."
+    },
+    {
+      id: "n_s2",
+      badge: "S2",
+      role: "student",
+      title: "Daily Quiz Micro-Challenge",
+      file: "img3_quiz.png",
+      src: "images/img3_quiz.png",
+      x: 440,
+      y: 40,
+      note: "3–5 questions per day on syllabus topics taught this week. Single-attempt daily XP reward (+15 completion, +5 per correct answer). Locked solution engine unlocks comprehensive English/Hinglish explanations upon submission."
+    },
+    {
+      id: "n_s3",
+      badge: "S3",
+      role: "student",
+      title: "Coding Problems Directory",
+      file: "img2_prblms.png",
+      src: "images/img2_prblms.png",
+      x: 440,
+      y: 520,
+      note: "Curated library of verified practice problems categorized by topic (Arrays, Recursion, Trees, Graphs) and difficulty badges (Easy 10 XP, Medium 20 XP, Hard 40 XP). Capped at max 10/day to prevent XP farming."
+    },
+    {
+      id: "n_s4",
+      badge: "S4",
+      role: "student",
+      title: "Problem Solver & Compiler",
+      file: "img7_problem_Qlibrary_compiler.png",
+      src: "images/img7_problem_Qlibrary_compiler.png",
+      x: 820,
+      y: 520,
+      note: "In-browser coding workspace with syntax highlighter, sample test cases, custom stdin runner, automated correctness grading, and verified XP award upon passing all test suites."
+    },
+    {
+      id: "n_s5",
+      badge: "S5",
+      role: "student",
+      title: "Level Progression & XP Ledger",
+      file: "img4_level_page.png",
+      src: "images/img4_level_page.png",
+      x: 440,
+      y: 1000,
+      note: "Transparent XP ledger and level ladder (Novice to Master). Granular breakdown of earned XP (Attendance 30%, Quizzes 50%, Homework 20%) proving academic validity with itemized timestamps."
+    },
+    {
+      id: "n_s6",
+      badge: "S6",
+      role: "student",
+      title: "Team Battles Lobby",
+      file: "img5_battle.png",
+      src: "images/img5_battle.png",
+      x: 440,
+      y: 1480,
+      note: "Section vs Section and Campus vs Campus live event lobby (e.g. CS-A vs CS-B). Live countdown timer, registered squad roster, team XP multiplier rules, and spectator portal."
+    },
+    {
+      id: "n_s7",
+      badge: "S7",
+      role: "student",
+      title: "Live Battle Question Arena",
+      file: "img6_battle_Qpage.png",
+      src: "images/img6_battle_Qpage.png",
+      x: 820,
+      y: 1480,
+      note: "High-adrenaline synchronous battle arena. Real-time scoreboard updates within 2 seconds across 300+ concurrent students, question timer, and team score contribution meters."
+    },
+    {
+      id: "n_s8",
+      badge: "S8",
+      role: "student",
+      title: "Quests & Milestone Badges",
+      file: "quest_user_side.png",
+      src: "images/quest_user_side.png",
+      x: 440,
+      y: 1960,
+      note: "Topic quests (e.g. 'Recursion Master: complete 5 Tree problems'), milestone badges, and inclusivity improvement badges (e.g. '+15% on last test') ensuring lower-quartile students win rewards."
+    },
+    {
+      id: "n_s9",
+      badge: "S9",
+      role: "student",
+      title: "Weekend Contests & Sprints",
+      file: "contests_page.png",
+      src: "images/contests_page.png",
+      x: 440,
+      y: 2440,
+      note: "Competitive coding contests and bi-weekly challenge rounds. Synchronous ranking, prize XP pools, detailed post-contest analysis, and official test score mapping (Score % ÷ 2)."
+    },
+    {
+      id: "n_s10",
+      badge: "S10",
+      role: "student",
+      title: "Leagues & Weekly Cohorts",
+      file: "leaderboard_page.png",
+      src: "images/leaderboard_page.png",
+      x: 440,
+      y: 2920,
+      note: "Fair competition leagues: ~20 students at similar skill levels (Bronze, Silver, Gold, Diamond) with weekly promotion/relegation zones. Resets weekly so new joiners and late starters can compete."
+    },
+    {
+      id: "n_s11",
+      badge: "S11",
+      role: "student",
+      title: "Coding Problems Leaderboard",
+      file: "leaderboard_problem_user_side.png",
+      src: "images/leaderboard_problem_user_side.png",
+      x: 820,
+      y: 2920,
+      note: "Algorithmic practice rankings showing verified problem counts, accepted submission streaks, and difficulty distribution."
+    },
+    {
+      id: "n_s12",
+      badge: "S12",
+      role: "student",
+      title: "Student Profile & History",
+      file: "profile_user.png",
+      src: "images/profile_user.png",
+      x: 440,
+      y: 3400,
+      note: "Comprehensive student dossier: total verified XP, global & league rank, earned badge showcase, active days streak calendar, OTP-guarded contact update flow, and gateway to Avatar Studio."
+    },
+    {
+      id: "n_s13",
+      badge: "S13",
+      role: "student",
+      title: "User Settings & Anonymous Mode",
+      file: "settings_user_side.png",
+      src: "images/settings_user_side.png",
+      x: 820,
+      y: 3400,
+      note: "Privacy controls: 1-click Anonymous Mode toggle hiding real student identity on all leaderboards, theme switcher (Dark/Pastel), and notification preference management."
+    },
+    {
+      id: "n_avatar",
+      badge: "S14",
+      role: "student",
+      title: "Avatar Studio & Forge",
+      file: "avatar_studio.png",
+      src: "images/avatar_studio.png",
+      x: 820,
+      y: 3880,
+      note: "Gamified student identity customization: unlockable cyberpunk & fantasy avatars, badges, borders, accessories, and honorific titles unlocked via XP milestones and winning streaks."
+    },
+
+    // --- 👨‍🏫 FACULTY & ADMIN TRACK ---
+    {
+      id: "n_a1",
+      badge: "A1",
+      role: "admin",
+      title: "Faculty & Admin Overview",
+      file: "admin_homepage.png",
+      src: "images/admin_homepage.png",
+      x: 1300,
+      y: 80,
+      note: "Command Center: Class engagement analytics, DAU tracking, Struggling Topics heatmaps (e.g. 'AVL Trees: 36% accuracy'), and 'Gone Quiet for 5+ Days' automated alert monitor."
+    },
+    {
+      id: "n_a2",
+      badge: "A2",
+      role: "admin",
+      title: "Student Directory & Whitelist",
+      file: "admin_userspage.png",
+      src: "images/admin_userspage.png",
+      x: 1680,
+      y: 40,
+      note: "Security authority roster: Master Whitelist of approved phone numbers and college emails. Non-registered guest logins are blocked at the perimeter gate."
+    },
+    {
+      id: "n_a3",
+      badge: "A3",
+      role: "admin",
+      title: "Student Detail & XP Audit",
+      file: "admin_studentsDetails.png",
+      src: "images/admin_studentsDetails.png",
+      x: 2060,
+      y: 40,
+      note: "Granular audit inspector: Attendance verification, question attempt logs, quiet student WhatsApp nudges, and Faculty Override tool to void suspicious XP spikes with mandatory logged reason."
+    },
+    {
+      id: "n_a4",
+      badge: "A4",
+      role: "admin",
+      title: "Quiz Ingestion & AI Generator",
+      file: "admin_uploadquiz.png",
+      src: "images/admin_uploadquiz.png",
+      x: 1680,
+      y: 520,
+      note: "Ingest faculty syllabus documents (.pdf, .docx, .txt, .json) or prompt AI to synthesize 3–5 daily micro-challenge questions aligned with the current week's lesson plan."
+    },
+    {
+      id: "n_a5",
+      badge: "A5",
+      role: "admin",
+      title: "Quiz Approval Queue & Editor",
+      file: "admin_create_quiz_page.png",
+      src: "images/admin_create_quiz_page.png",
+      x: 2060,
+      y: 520,
+      note: "Faculty validation gateway: Inspect generated question stems, edit distractors, precompute English/Hinglish reasoning, and publish to the live question bank."
+    },
+    {
+      id: "n_a6",
+      badge: "A6",
+      role: "admin",
+      title: "Problem Library Uploader",
+      file: "admin_upload_problems_questions.png",
+      src: "images/admin_upload_problems_questions.png",
+      x: 1680,
+      y: 1000,
+      note: "Create verified coding practice problems: set sample test cases, hidden test cases, time/memory limits, language templates, and assign difficulty XP multipliers (10/20/40)."
+    },
+    {
+      id: "n_a7",
+      badge: "A7",
+      role: "admin",
+      title: "Quests Management Table",
+      file: "admin_quests.png",
+      src: "images/admin_quests.png",
+      x: 1680,
+      y: 1480,
+      note: "Monitor active topic quests across cohorts, track student completion rates, and manage milestone badge reward rules."
+    },
+    {
+      id: "n_a8",
+      badge: "A8",
+      role: "admin",
+      title: "Create Topic Quest / Badge",
+      file: "admin_create_quest.png",
+      src: "images/admin_create_quest.png",
+      x: 2060,
+      y: 1480,
+      note: "Author new milestone quests (e.g. 'Finish all Recursion problems'), target specific cohorts or struggling topics, set expiry countdowns, and grant custom achievement badges."
+    },
+    {
+      id: "n_a9",
+      badge: "A9",
+      role: "admin",
+      title: "Battle Arenas Schedule",
+      file: "admin_battles.png",
+      src: "images/admin_battles.png",
+      x: 1680,
+      y: 1960,
+      note: "Overview of scheduled and ongoing campus/section battles. Real-time spectator dashboard, participant load monitor, and bracket organizers."
+    },
+    {
+      id: "n_a10",
+      badge: "A10",
+      role: "admin",
+      title: "Create Team Battle Event",
+      file: "admin_create_battle.png",
+      src: "images/admin_create_battle.png",
+      x: 2060,
+      y: 1960,
+      note: "Configure inter-campus / section showdown: select competing cohorts, curate battle problem roster, set time limits, and allocate bonus pool XP."
+    },
+    {
+      id: "n_a11",
+      badge: "A11",
+      role: "admin",
+      title: "Contest Administration",
+      file: "admin_contests.png",
+      src: "images/admin_contests.png",
+      x: 1680,
+      y: 2440,
+      note: "Schedule weekly hackathons, manage bi-weekly test score sync, publish official rank lists, and export performance reports."
+    },
+    {
+      id: "n_a12",
+      badge: "A12",
+      role: "admin",
+      title: "Create Bi-Weekly Contest",
+      file: "admin_create_cotest.png",
+      src: "images/admin_create_cotest.png",
+      x: 2060,
+      y: 2440,
+      note: "Form to configure new competitive exam sprint: problem set weighting, start & end windows, strict anti-cheat proctoring rules, and badge rewards."
+    },
+
+    // --- 🎨 REFERENCE CARD ---
+    {
+      id: "n_ref",
+      badge: "REF",
+      role: "ref",
+      title: "Pastel UI Theme Concept",
+      file: "Pastel KUIZU Learning Dashboard.png",
+      src: "images/Pastel KUIZU Learning Dashboard.png",
+      x: 880,
+      y: 80,
+      note: "Visual design language reference: Soft pastel surfaces, high-contrast dark accents, rounded pill badges, and clean gamified cards."
+    }
+  ],
+
+  edges: [
+    // Landing & Auth Flow
+    { id: "e_l1", from: "n_landing", to: "n_auth", label: "Click Get Started / Sign In", role: "auth" },
+    { id: "e_l2", from: "n_auth", to: "n_s1", label: "Student Authenticated", role: "student" },
+    { id: "e_l3", from: "n_auth", to: "n_a1", label: "Faculty / Admin Authenticated", role: "admin" },
+
+    // Student Actions
+    { id: "e1", from: "n_s1", to: "n_s2", label: "Take Daily Quiz (3-5 Qs)", role: "student" },
+    { id: "e2", from: "n_s1", to: "n_s3", label: "Solve Practice Problems", role: "student" },
+    { id: "e3", from: "n_s3", to: "n_s4", label: "Open Code Workspace", role: "student" },
+    { id: "e4", from: "n_s1", to: "n_s5", label: "View XP Ledger & Levels", role: "student" },
+    { id: "e5", from: "n_s1", to: "n_s6", label: "Enter Battles Lobby", role: "student" },
+    { id: "e6", from: "n_s6", to: "n_s7", label: "Join Live Duel Arena", role: "student" },
+    { id: "e7", from: "n_s1", to: "n_s8", label: "Check Quests & Badges", role: "student" },
+    { id: "e8", from: "n_s1", to: "n_s9", label: "Join Weekend Contest", role: "student" },
+    { id: "e9", from: "n_s1", to: "n_s10", label: "Check League Standing", role: "student" },
+    { id: "e10", from: "n_s10", to: "n_s11", label: "Filter by Coding Rank", role: "student" },
+    { id: "e11", from: "n_s1", to: "n_s12", label: "View Student Profile", role: "student" },
+    { id: "e12", from: "n_s12", to: "n_s13", label: "Settings / Anonymous Mode", role: "student" },
+    { id: "e13", from: "n_s12", to: "n_avatar", label: "Customize Avatar & Gear", role: "student" },
+    { id: "e14", from: "n_s1", to: "n_avatar", label: "Open Avatar Studio", role: "student" },
+
+    // Admin & Faculty Actions
+    { id: "ea1", from: "n_a1", to: "n_a2", label: "Inspect Student Roster", role: "admin" },
+    { id: "ea2", from: "n_a2", to: "n_a3", label: "Audit Student XP / Override", role: "admin" },
+    { id: "ea3", from: "n_a1", to: "n_a4", label: "Upload Syllabus / Gen Quiz", role: "admin" },
+    { id: "ea4", from: "n_a4", to: "n_a5", label: "Review & Approve Quiz", role: "admin" },
+    { id: "ea5", from: "n_a1", to: "n_a6", label: "Upload Coding Problems", role: "admin" },
+    { id: "ea6", from: "n_a1", to: "n_a7", label: "Manage Batch Quests", role: "admin" },
+    { id: "ea7", from: "n_a7", to: "n_a8", label: "Create Topic Quest", role: "admin" },
+    { id: "ea8", from: "n_a1", to: "n_a9", label: "Manage Team Battles", role: "admin" },
+    { id: "ea9", from: "n_a9", to: "n_a10", label: "Schedule Inter-Campus Duel", role: "admin" },
+    { id: "ea10", from: "n_a11", to: "n_a12", label: "Host Bi-Weekly Contest", role: "admin" },
+    { id: "ea11", from: "n_a1", to: "n_a11", label: "Manage Contests & Sprints", role: "admin" }
+  ]
+};
+
+function loadPreset(preset){
+  reset();
+  preset.nodes.forEach(n => addNode(n));
+  preset.edges.forEach(e => addEdge(e));
+  sync();
+  setTimeout(() => { sync(); fit(); }, 200);
+  persist();
+  toast('Kuizu complete 29-screen architecture loaded!');
+}
+
+$('#btn-default-flow').onclick = () => loadPreset(KUIZU_PRESET);
+
+// File Adding & Dropping
+const readURL = f => new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(f); });
+async function addFiles(files, at){
+  const list = [...files].filter(f => f.type.startsWith('image/'));
+  if (!list.length) { toast('Only image files can be added.'); return; }
+  let last = S.nodes[S.nodes.length - 1], x, y;
+  if (at) { x = at.x - NW / 2; y = at.y - 20; }
+  else if (last) { x = last.x + NW + 80; y = last.y; }
+  else { const p = toWorld(canvas.getBoundingClientRect().left + 60, canvas.getBoundingClientRect().top + 60); x = p.x; y = p.y; }
+
+  for (const f of list) {
+    const src = await readURL(f), im = new Image();
+    im.src = src;
+    await im.decode().catch(() => {});
+    addNode({
+      src,
+      file: f.name || 'custom.png',
+      badge: 'C' + (S.nodes.length + 1),
+      role: 'student',
+      title: (f.name || 'Custom Screen').replace(/\.[^.]+$/, ''),
+      x, y,
+      nw: im.naturalWidth || 1, nh: im.naturalHeight || 1
+    });
+    x += NW + 80;
+  }
+  sync();
+  requestAnimationFrame(() => { sync(); fit(); });
+  persist();
+}
+
+$('#add').onclick = () => $('#fi').click();
+$('#fi').onchange = e => { addFiles(e.target.files); e.target.value = ''; };
+canvas.addEventListener('dragover', e => e.preventDefault());
+canvas.addEventListener('drop', e => { e.preventDefault(); addFiles(e.dataTransfer.files, toWorld(e.clientX, e.clientY)); });
+addEventListener('paste', e => {
+  const fs = [...(e.clipboardData?.files || [])];
+  if (fs.length && !e.target.closest?.('input,textarea')) {
+    e.preventDefault();
+    addFiles(fs);
+  }
+});
+
+// AI Brief Generation
+function brief(){
+  const T = S.nodes, id = n => n.badge + ' (' + n.title.trim() + ')', lab = e => e.label.trim() || '(next)';
+  let o = `# Kuizu Platform Wireframe & User Flow Architecture\n\n`;
+  o += `Total Screens: ${T.length} | Connections: ${S.edges.length}\n\n`;
+
+  o += `## 🔐 Landing & Auth Gateway Flow\n`;
+  T.filter(n => n.role === 'auth').forEach(n => {
+    const out = S.edges.filter(e => e.from === n.id);
+    o += `\n### [${n.badge}] ${n.title}\n`;
+    o += `- Image Asset: \`${n.file}\`\n`;
+    if (n.note) o += `- Specs & Features: ${n.note.trim()}\n`;
+    out.forEach(e => {
+      const t = N(e.to);
+      if(t) o += `- ⚡ User Action: **${lab(e)}** ➔ [${t.badge}] ${t.title}\n`;
+    });
+  });
+
+  o += `\n## 🎓 Student Experience Flow\n`;
+  T.filter(n => n.role === 'student').forEach(n => {
+    const out = S.edges.filter(e => e.from === n.id);
+    o += `\n### [${n.badge}] ${n.title}\n`;
+    o += `- Image Asset: \`${n.file}\`\n`;
+    if (n.note) o += `- Specs & Features: ${n.note.trim()}\n`;
+    out.forEach(e => {
+      const t = N(e.to);
+      if(t) o += `- ⚡ User Action: **${lab(e)}** ➔ [${t.badge}] ${t.title}\n`;
+    });
+  });
+
+  o += `\n## 👨‍🏫 Faculty & Authority Experience Flow\n`;
+  T.filter(n => n.role === 'admin').forEach(n => {
+    const out = S.edges.filter(e => e.from === n.id);
+    o += `\n### [${n.badge}] ${n.title}\n`;
+    o += `- Image Asset: \`${n.file}\`\n`;
+    if (n.note) o += `- Specs & Features: ${n.note.trim()}\n`;
+    out.forEach(e => {
+      const t = N(e.to);
+      if(t) o += `- ⚡ User Action: **${lab(e)}** ➔ [${t.badge}] ${t.title}\n`;
+    });
+  });
+
+  o += `\n## Full Connections Graph\n\`\`\`\n`;
+  S.edges.forEach(e => {
+    const a = N(e.from), b = N(e.to);
+    if(a && b) o += `${a.badge} [${a.title}] --(${e.label || 'Action'})--> ${b.badge} [${b.title}]\n`;
+  });
+  o += `\`\`\`\n`;
+  return o;
+}
+
+$('#copy').onclick = async () => {
+  if (!S.nodes.length) return toast('Add or load screens first.');
+  try {
+    await navigator.clipboard.writeText(brief());
+    toast('Architecture brief copied to clipboard!');
+  } catch(_) {
+    toast('Clipboard unavailable.');
+  }
+};
+
+// Save Project JSON
+$('#sjson').onclick = () => {
+  if (!S.nodes.length) return toast('Nothing to save.');
+  const blob = new Blob([JSON.stringify({ v: 3, nodes: S.nodes, edges: S.edges, view: S.view }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'kuizu-flowwire-project.json';
+  a.click();
+  toast('Project downloaded as JSON.');
+};
+
+// Open Project JSON
+$('#ojson').onclick = () => $('#fj').click();
+$('#fj').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!Array.isArray(d.nodes)) throw 0;
+    reset();
+    d.nodes.forEach(n => addNode(n));
+    (d.edges || []).forEach(ed => addEdge(ed));
+    sync();
+    setTimeout(() => { sync(); fit(); }, 200);
+    persist();
+    toast('Project loaded successfully.');
+  } catch(_) {
+    toast('Invalid Flowwire JSON file.');
+  }
+};
+
+// Clear Button
+$('#clear').onclick = function(){
+  if (!S.nodes.length) return;
+  if (this.dataset.arm) {
+    reset();
+    this.textContent = 'Clear';
+    delete this.dataset.arm;
+    localStorage.removeItem('kuizu_flowwire_data_v3');
+    toast('Canvas cleared.');
+    return;
+  }
+  this.dataset.arm = '1';
+  this.textContent = 'Click again to confirm';
+  setTimeout(() => { this.textContent = 'Clear'; delete this.dataset.arm; }, 3000);
+};
+
+// Save Flow PNG
+$('#spng').onclick = async () => {
+  if (!S.nodes.length) return toast('No screens on canvas.');
+  toast('Generating high-res PNG flow diagram...');
+
+  const W = NW, pad = 100;
+  await Promise.all(S.nodes.map(n => new Promise(r => {
+    const i = new Image();
+    i.onload = () => { n._i = i; r(); };
+    i.onerror = () => { r(); };
+    i.src = n.src;
+  })));
+
+  S.nodes.forEach(n => {
+    const h = (W - 20) * ((n.nh || 1) / (n.nw || 1));
+    n._h = Math.min(500, Math.max(300, 100 + h));
+  });
+
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  S.nodes.forEach(n => {
+    x0 = Math.min(x0, n.x); y0 = Math.min(y0, n.y);
+    x1 = Math.max(x1, n.x + W); y1 = Math.max(y1, n.y + n._h);
+  });
+
+  const w = x1 - x0 + pad * 2, h = y1 - y0 + pad * 2;
+  const sc = Math.min(1.5, 7000 / Math.max(w, h));
+  const c = document.createElement('canvas');
+  c.width = Math.round(w * sc);
+  c.height = Math.round(h * sc);
+  const x = c.getContext('2d');
+  x.scale(sc, sc);
+
+  // Background
+  x.fillStyle = '#0b0f17';
+  x.fillRect(0, 0, w, h);
+  x.translate(pad - x0, pad - y0);
+
+  // Draw Wires
+  S.edges.forEach(e => {
+    const a = N(e.from), b = N(e.to);
+    if (!a || !b) return;
+    const A = { x: a.x + W, y: a.y + a._h / 2 };
+    const B = { x: b.x, y: b.y + b._h / 2 };
+    const dx = Math.max(60, Math.abs(B.x - A.x) / 2);
+
+    if (e.role === 'admin') x.strokeStyle = '#ec4899';
+    else if (e.role === 'auth') x.strokeStyle = '#38bdf8';
+    else if (e.role === 'student') x.strokeStyle = '#10b981';
+    else x.strokeStyle = '#6366f1';
+
+    x.lineWidth = 3;
+    x.beginPath();
+    x.moveTo(A.x, A.y);
+    x.bezierCurveTo(A.x + dx, A.y, B.x - dx, B.y, B.x - 8, B.y);
+    x.stroke();
+
+    // Arrowhead
+    x.fillStyle = x.strokeStyle;
+    x.beginPath();
+    x.moveTo(B.x, B.y);
+    x.lineTo(B.x - 12, B.y - 7);
+    x.lineTo(B.x - 12, B.y + 7);
+    x.fill();
+  });
+
+  // Draw Cards
+  S.nodes.forEach(n => {
+    x.fillStyle = '#151d2a';
+    x.strokeStyle = '#2d3b4e';
+    x.lineWidth = 1.5;
+    x.beginPath();
+    x.roundRect(n.x, n.y, W, n._h, 12);
+    x.fill();
+    x.stroke();
+
+    // Header badge
+    if (n.role === 'admin') x.fillStyle = '#ec4899';
+    else if (n.role === 'auth') x.fillStyle = '#0284c7';
+    else if (n.role === 'ref') x.fillStyle = '#8b5cf6';
+    else x.fillStyle = '#10b981';
+
+    x.beginPath();
+    x.roundRect(n.x + 10, n.y + 10, 36, 22, 6);
+    x.fill();
+    x.fillStyle = '#ffffff';
+    x.font = 'bold 11px sans-serif';
+    x.textAlign = 'center';
+    x.fillText(n.badge, n.x + 28, n.y + 25);
+
+    // Title
+    x.textAlign = 'left';
+    x.fillStyle = '#ffffff';
+    x.font = 'bold 13px sans-serif';
+    x.fillText(n.title.slice(0, 24), n.x + 52, n.y + 26);
+
+    // Image
+    if (n._i) {
+      const imgH = Math.min(220, n._h - 110);
+      x.drawImage(n._i, n.x + 10, n.y + 42, W - 20, imgH);
+    }
+  });
+
+  c.toBlob(b => {
+    if(!b) return toast('Failed to create image.');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(b);
+    a.download = 'kuizu-visual-architecture-flow.png';
+    a.click();
+    toast('Flow diagram PNG downloaded!');
+  }, 'image/png');
+};
+
+// INITIALIZATION
+function init(){
+  const saved = localStorage.getItem('kuizu_flowwire_data_v3');
+  if (saved) {
+    try {
+      const d = JSON.parse(saved);
+      if (Array.isArray(d.nodes) && d.nodes.length >= 29) {
+        d.nodes.forEach(n => addNode(n));
+        (d.edges || []).forEach(e => addEdge(e));
+        if (d.view) S.view = d.view;
+        sync();
+        applyView();
+        return;
+      }
+    } catch(e){}
+  }
+  // Default to KUIZU_PRESET if no saved data or older cache
+  loadPreset(KUIZU_PRESET);
+}
+
+addEventListener('resize', sync);
+init();
+
+})();
+</script>
+</body>
+</html>

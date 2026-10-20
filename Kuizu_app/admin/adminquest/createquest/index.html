@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" class="admin-html">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Quest - Admin KUIZU</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      
+      <!-- Left Sidebar (Fixed, Non-scrollable) -->
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-top">
+          <!-- Brand Logo -->
+          <a href="/admin" class="admin-sidebar-brand" style="text-decoration:none;">
+            <svg class="admin-logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 6C10 4.89543 10.8954 4 12 4C13.1046 4 14 4.89543 14 6V30C14 31.1046 13.1046 32 12 32C10.8954 32 10 31.1046 10 30V6Z" fill="#2563EB"/>
+              <path d="M26.2929 7.29289C27.083 6.50275 28.3637 6.50275 29.1539 7.29289C29.944 8.08304 29.944 9.3637 29.1539 10.1539L18.8077 20.5L29.1539 30.8461C29.944 31.6363 29.944 32.917 29.1539 33.7071C28.3637 34.4973 27.083 34.4973 26.2929 33.7071L14.5161 21.9304C13.726 21.1402 13.726 19.8598 14.5161 19.0696L26.2929 7.29289Z" fill="#3B82F6"/>
+            </svg>
+            <span class="admin-brand-name">KUIZU</span>
+          </a>
+
+          <!-- Nav Menu Items (Quests is Active) -->
+          <nav class="admin-nav-menu">
+            <a href="/admin" class="admin-nav-item" id="nav-admin-home">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Home</span>
+            </a>
+
+            <a href="/admin/user" class="admin-nav-item" id="nav-admin-users">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Users</span>
+            </a>
+
+            <a href="/admin/uploadquiz" class="admin-nav-item" id="nav-admin-quiz">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m16 16-4-4-4 4"></path>
+              </svg>
+              <span>Upload Quiz</span>
+            </a>
+
+            <a href="/admin/dailykuizu" class="admin-nav-item" id="nav-admin-dailykuizu">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <path d="m9 16 2 2 4-4"></path>
+              </svg>
+              <span>Daily Kuizu</span>
+            </a>
+
+            <a href="/admin/uploadproblem" class="admin-nav-item" id="nav-admin-problem">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Upload Problem</span>
+            </a>
+
+            <a href="/admin/adminbattle" class="admin-nav-item" id="nav-admin-battles">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline>
+                <line x1="13" y1="19" x2="19" y2="13"></line>
+                <line x1="16" y1="16" x2="20" y2="20"></line>
+                <line x1="19" y1="21" x2="21" y2="19"></line>
+                <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"></polyline>
+                <line x1="5" y1="14" x2="11" y2="20"></line>
+              </svg>
+              <span>Battles</span>
+            </a>
+
+            <a href="/admin/admincontest" class="admin-nav-item" id="nav-admin-contests">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+              <span>Contests</span>
+            </a>
+
+            <a href="/admin/adminquest" class="admin-nav-item active" id="nav-admin-quest">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+              <span>Quests</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="admin-sidebar-footer">
+          <div class="admin-user-info" id="admin-user-profile-btn" title="Admin Profile">
+            <div class="admin-avatar-circle">
+              <img src="/images/admin_avatar.png" alt="Admin" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" />
+            </div>
+            <span class="admin-user-name">Admin</span>
+          </div>
+          <a href="/admin/settings" class="admin-gear-btn" title="Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Right Main Content (Scrollable) -->
+      <main class="admin-main">
+        
+        <!-- Topbar with Back Arrow -->
+        <header class="admin-topbar">
+          <div class="admin-topbar-left-wrap">
+            <a href="/admin/adminquest" class="admin-back-btn" title="Back to Quests">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </a>
+            <div>
+              <h1 class="admin-dashboard-title">Create Quest</h1>
+              <div class="admin-breadcrumbs">
+                <a href="/admin/adminquest">Quests</a>
+                <span class="sep">/</span>
+                <span class="current">Create Quest</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="admin-save-quiz-top-btn" id="save-quest-top-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            <span>Save Quest</span>
+          </button>
+        </header>
+
+        <form id="create-quest-form" class="admin-create-problem-form">
+          
+          <!-- Quest Details Container Card -->
+          <div class="admin-card admin-form-card" style="padding: 32px 36px; display: flex; flex-direction: column; gap: 26px;">
+            
+            <!-- Field 1: Quest Title * -->
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <div class="admin-label-icon-flex" style="margin-bottom: 8px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <label class="admin-form-label" for="quest-title" style="margin-bottom: 0;">Quest Title <span class="required-star">*</span></label>
+              </div>
+              <input 
+                type="text" 
+                id="quest-title" 
+                class="admin-text-input" 
+                placeholder="Enter quest title..." 
+                required 
+              />
+            </div>
+
+            <!-- Field 2: Select Questions / Problems (Multiple & Manual) -->
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <div class="admin-section-header-flex" style="margin-bottom: 10px;">
+                <div class="admin-label-icon-flex">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                  <label class="admin-form-label" style="margin-bottom: 0;">Quest Questions / Problems <span class="required-star">*</span></label>
+                  <span class="admin-quest-count-badge" id="quest-questions-count">2 questions added</span>
+                </div>
+                <div class="admin-quest-action-btns">
+                  <button type="button" class="admin-btn-outline" id="btn-toggle-manual-question">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>+ Add Question Manually</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Multi-question container box with tags & search -->
+              <div class="admin-problems-select-box" id="quest-problems-box">
+                <!-- Selected Questions Tag Chips -->
+                <div class="admin-problem-tags-container" id="quest-selected-questions-list">
+                  <span class="admin-choice-tag quest-question-chip" data-title="Two Sum" data-diff="Easy">
+                    <span class="chip-number">1</span>
+                    <span class="chip-title">Two Sum</span>
+                    <span class="chip-diff-badge easy">Easy</span>
+                    <button type="button" class="btn-remove-tag" data-title="Two Sum" title="Remove question">✕</button>
+                  </span>
+                  <span class="admin-choice-tag quest-question-chip" data-title="Reverse Linked List" data-diff="Easy">
+                    <span class="chip-number">2</span>
+                    <span class="chip-title">Reverse Linked List</span>
+                    <span class="chip-diff-badge easy">Easy</span>
+                    <button type="button" class="btn-remove-tag" data-title="Reverse Linked List" title="Remove question">✕</button>
+                  </span>
+                </div>
+
+                <!-- Search Input Row -->
+                <div class="admin-problems-search-row">
+                  <div class="admin-problems-search-left">
+                    <svg class="admin-search-inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input 
+                      type="text" 
+                      id="quest-problem-search" 
+                      class="admin-problem-search-field" 
+                      placeholder="Search question bank or select to add..." 
+                      autocomplete="off"
+                    />
+                  </div>
+                  <svg class="admin-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+
+                <!-- Available Problems Dropdown -->
+                <div class="admin-problems-dropdown" id="quest-problems-dropdown">
+                  <div class="admin-dropdown-header-row">Select from Problem Bank</div>
+                  <div class="admin-problem-opt flex-between" data-title="Two Sum" data-diff="Easy">
+                    <span>Two Sum</span>
+                    <span class="chip-diff-badge easy">Easy</span>
+                  </div>
+                  <div class="admin-problem-opt flex-between" data-title="Valid Parentheses" data-diff="Easy">
+                    <span>Valid Parentheses</span>
+                    <span class="chip-diff-badge easy">Easy</span>
+                  </div>
+                  <div class="admin-problem-opt flex-between" data-title="Merge Two Sorted Lists" data-diff="Easy">
+                    <span>Merge Two Sorted Lists</span>
+                    <span class="chip-diff-badge easy">Easy</span>
+                  </div>
+                  <div class="admin-problem-opt flex-between" data-title="Add Two Numbers" data-diff="Medium">
+                    <span>Add Two Numbers</span>
+                    <span class="chip-diff-badge medium">Medium</span>
+                  </div>
+                  <div class="admin-problem-opt flex-between" data-title="Longest Substring Without Repeating Characters" data-diff="Medium">
+                    <span>Longest Substring Without Repeating Characters</span>
+                    <span class="chip-diff-badge medium">Medium</span>
+                  </div>
+                  <div class="admin-problem-opt flex-between" data-title="3Sum" data-diff="Medium">
+                    <span>3Sum</span>
+                    <span class="chip-diff-badge medium">Medium</span>
+                  </div>
+                  <div class="admin-problem-opt flex-between" data-title="Binary Search" data-diff="Easy">
+                    <span>Binary Search</span>
+                    <span class="chip-diff-badge easy">Easy</span>
+                  </div>
+                  <div class="admin-problem-opt flex-between" data-title="Trapping Rain Water" data-diff="Hard">
+                    <span>Trapping Rain Water</span>
+                    <span class="chip-diff-badge hard">Hard</span>
+                  </div>
+                  <div class="admin-problem-opt flex-between" data-title="Median of Two Sorted Arrays" data-diff="Hard">
+                    <span>Median of Two Sorted Arrays</span>
+                    <span class="chip-diff-badge hard">Hard</span>
+                  </div>
+                  <div class="admin-dropdown-footer-btn" id="dropdown-add-manual-trigger">
+                    <span>✨ Can't find it? Add Custom Question Manually</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Manual Question Creator Box (Collapsible Card) -->
+              <div class="admin-manual-question-card" id="manual-question-panel" style="display: none;">
+                <div class="admin-manual-card-header">
+                  <div class="admin-manual-card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <span>Add Custom Question Manually</span>
+                  </div>
+                  <button type="button" class="admin-close-manual-btn" id="btn-close-manual-panel" title="Close panel">✕</button>
+                </div>
+
+                <div class="admin-manual-fields-grid">
+                  <!-- Custom Title -->
+                  <div class="admin-form-group">
+                    <label class="admin-form-label" for="manual-q-title">Question Title / Name <span class="required-star">*</span></label>
+                    <input type="text" id="manual-q-title" class="admin-text-input" placeholder="e.g. Reverse an Array in Place" />
+                  </div>
+
+                  <!-- Difficulty -->
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Difficulty <span class="required-star">*</span></label>
+                    <div class="admin-diff-selector-row">
+                      <label class="admin-diff-pill-label active" data-diff="Easy">
+                        <input type="radio" name="manual_diff" value="Easy" checked style="display:none;" />
+                        <span>Easy</span>
+                      </label>
+                      <label class="admin-diff-pill-label" data-diff="Medium">
+                        <input type="radio" name="manual_diff" value="Medium" style="display:none;" />
+                        <span>Medium</span>
+                      </label>
+                      <label class="admin-diff-pill-label" data-diff="Hard">
+                        <input type="radio" name="manual_diff" value="Hard" style="display:none;" />
+                        <span>Hard</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Points / XP -->
+                  <div class="admin-form-group">
+                    <label class="admin-form-label" for="manual-q-xp">Points / XP Awarded</label>
+                    <input type="text" id="manual-q-xp" class="admin-text-input" placeholder="e.g. 50 XP" value="50 XP" />
+                  </div>
+
+                  <!-- Custom Statement / Instructions -->
+                  <div class="admin-form-group span-2">
+                    <label class="admin-form-label" for="manual-q-desc">Problem Statement or Instructions <span class="optional-label">(Optional)</span></label>
+                    <textarea id="manual-q-desc" class="admin-textarea-input" placeholder="Briefly describe the task or constraints for the student..." rows="2"></textarea>
+                  </div>
+                </div>
+
+                <div class="admin-manual-actions-row">
+                  <button type="button" class="admin-btn-outline" id="btn-cancel-manual-q">Cancel</button>
+                  <button type="button" class="admin-create-quiz-top-btn" id="btn-submit-manual-q">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Add to Quest</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Field 3: Quest Number * -->
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <div class="admin-label-icon-flex" style="margin-bottom: 8px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="9" x2="20" y2="9"></line>
+                  <line x1="4" y1="15" x2="20" y2="15"></line>
+                  <line x1="10" y1="3" x2="8" y2="21"></line>
+                  <line x1="16" y1="3" x2="14" y2="21"></line>
+                </svg>
+                <label class="admin-form-label" for="quest-number" style="margin-bottom: 0;">Quest Number <span class="required-star">*</span></label>
+              </div>
+              <div style="max-width: 280px;">
+                <input 
+                  type="text" 
+                  id="quest-number" 
+                  class="admin-text-input" 
+                  placeholder="Enter quest number..." 
+                  required 
+                />
+              </div>
+            </div>
+
+            <!-- Field 4: Description -->
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <div class="admin-label-icon-flex" style="margin-bottom: 8px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <label class="admin-form-label" for="quest-desc" style="margin-bottom: 0;">Description</label>
+              </div>
+              <textarea 
+                id="quest-desc" 
+                class="admin-textarea-input" 
+                placeholder="Enter quest description..." 
+                rows="5"
+                style="padding: 14px 16px;"
+              ></textarea>
+            </div>
+
+          </div>
+
+          <!-- Bottom Actions Row -->
+          <div class="admin-bottom-actions-row" style="margin-top: 24px;">
+            <a href="/admin/adminquest" class="admin-cancel-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              <span>Cancel</span>
+            </a>
+
+            <button type="submit" class="admin-save-quiz-top-btn" id="save-quest-bottom-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              <span>Save Quest</span>
+            </button>
+          </div>
+
+        </form>
+
+      </main>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="admin-toast" class="admin-toast"></div>
+
+    <script type="module" src="/src/adminCreateQuest.ts"></script>
+  </body>
+</html>

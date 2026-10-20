@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en" class="admin-html">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Details - Admin KUIZU</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      
+      <!-- Left Sidebar (Fixed, Non-scrollable) -->
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-top">
+          <!-- Brand Logo -->
+          <a href="/admin" class="admin-sidebar-brand" style="text-decoration:none;">
+            <svg class="admin-logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 6C10 4.89543 10.8954 4 12 4C13.1046 4 14 4.89543 14 6V30C14 31.1046 13.1046 32 12 32C10.8954 32 10 31.1046 10 30V6Z" fill="#2563EB"/>
+              <path d="M26.2929 7.29289C27.083 6.50275 28.3637 6.50275 29.1539 7.29289C29.944 8.08304 29.944 9.3637 29.1539 10.1539L18.8077 20.5L29.1539 30.8461C29.944 31.6363 29.944 32.917 29.1539 33.7071C28.3637 34.4973 27.083 34.4973 26.2929 33.7071L14.5161 21.9304C13.726 21.1402 13.726 19.8598 14.5161 19.0696L26.2929 7.29289Z" fill="#3B82F6"/>
+            </svg>
+            <span class="admin-brand-name">KUIZU</span>
+          </a>
+
+          <!-- Nav Menu Items (Users is Active) -->
+          <nav class="admin-nav-menu">
+            <a href="/admin" class="admin-nav-item" id="nav-admin-home">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Home</span>
+            </a>
+
+            <a href="/admin/user" class="admin-nav-item active" id="nav-admin-users">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Users</span>
+            </a>
+
+            <a href="/admin/uploadquiz" class="admin-nav-item" id="nav-admin-quiz">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m16 16-4-4-4 4"></path>
+              </svg>
+              <span>Upload Quiz</span>
+            </a>
+
+            <a href="/admin/dailykuizu" class="admin-nav-item" id="nav-admin-dailykuizu">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <path d="m9 16 2 2 4-4"></path>
+              </svg>
+              <span>Daily Kuizu</span>
+            </a>
+
+            <a href="/admin/uploadproblem" class="admin-nav-item" id="nav-admin-problem">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Upload Problem</span>
+            </a>
+
+            <a href="/admin/adminbattle" class="admin-nav-item" id="nav-admin-battles">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline>
+                <line x1="13" y1="19" x2="19" y2="13"></line>
+                <line x1="16" y1="16" x2="20" y2="20"></line>
+                <line x1="19" y1="21" x2="21" y2="19"></line>
+                <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"></polyline>
+                <line x1="5" y1="14" x2="11" y2="20"></line>
+              </svg>
+              <span>Battles</span>
+            </a>
+
+            <a href="/admin/admincontest" class="admin-nav-item" id="nav-admin-contests">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+              <span>Contests</span>
+            </a>
+
+            <a href="/admin/adminquest" class="admin-nav-item" id="nav-admin-quest">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+              <span>Quests</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="admin-sidebar-footer">
+          <div class="admin-user-info" id="admin-user-profile-btn" title="Admin Profile">
+            <div class="admin-avatar-circle">
+              <img src="/images/admin_avatar.png" alt="Admin" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" />
+            </div>
+            <span class="admin-user-name">Admin</span>
+          </div>
+          <a href="/admin/settings" class="admin-gear-btn" title="Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Right Main Content (Scrollable) -->
+      <main class="admin-main">
+        
+        <!-- Header with Back Button and Edit Profile -->
+        <header class="admin-details-topbar">
+          <div class="admin-details-header-left">
+            <a href="/admin/user" class="admin-back-btn" title="Back to Users">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </a>
+            <h1 class="admin-dashboard-title" style="margin:0;">Student Details</h1>
+          </div>
+
+          <button class="admin-edit-profile-btn" id="edit-profile-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+            </svg>
+            <span>Edit Profile</span>
+          </button>
+        </header>
+
+        <!-- Student Hero Banner Card -->
+        <section class="admin-student-hero-card">
+          <div class="admin-hero-left">
+            <div class="admin-hero-avatar-wrap">
+              <div class="admin-hero-avatar" id="student-hero-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <span class="admin-hero-online-dot"></span>
+            </div>
+
+            <div class="admin-hero-info">
+              <h2 class="admin-hero-name" id="student-name">-</h2>
+              <div class="admin-hero-meta">
+                <span class="admin-hero-email">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </svg>
+                  <span id="student-email">-</span>
+                </span>
+                <span class="admin-hero-id">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                    <path d="M7 7h3v3H7z"></path>
+                    <path d="M14 7h3"></path>
+                    <path d="M14 11h3"></path>
+                    <path d="M7 17h10"></path>
+                  </svg>
+                  <span id="student-id">-</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Metrics (Rank, XP, Streak) -->
+          <div class="admin-hero-metrics">
+            <div class="admin-hero-metric-item">
+              <div class="admin-metric-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                  <path d="M4 22h16"></path>
+                  <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                  <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                </svg>
+              </div>
+              <div class="admin-metric-content">
+                <span class="admin-metric-label">Rank</span>
+                <span class="admin-metric-val" id="student-rank">-</span>
+              </div>
+            </div>
+
+            <div class="admin-metric-divider"></div>
+
+            <div class="admin-hero-metric-item">
+              <div class="admin-metric-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </div>
+              <div class="admin-metric-content">
+                <span class="admin-metric-label">XP</span>
+                <span class="admin-metric-val" id="student-xp">-</span>
+              </div>
+            </div>
+
+            <div class="admin-metric-divider"></div>
+
+            <div class="admin-hero-metric-item">
+              <div class="admin-metric-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3.5z"></path>
+                </svg>
+              </div>
+              <div class="admin-metric-content">
+                <span class="admin-metric-label">Streak</span>
+                <span class="admin-metric-val" id="student-streak">-</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Middle Section: Attendance Card + 6 Stats Cards -->
+        <section class="admin-student-middle-grid">
+          
+          <!-- Attendance Card -->
+          <div class="admin-card admin-attendance-card">
+            <div class="admin-attendance-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <h3 class="admin-card-title">Attendance</h3>
+            </div>
+
+            <div class="admin-attendance-body">
+              <!-- Radial Donut Ring -->
+              <div class="admin-radial-wrap">
+                <svg class="admin-radial-svg" viewBox="0 0 120 120">
+                  <circle class="admin-radial-bg" cx="60" cy="60" r="50" stroke-width="10"></circle>
+                  <circle class="admin-radial-bar" cx="60" cy="60" r="50" stroke-width="10" stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+                </svg>
+                <div class="admin-radial-label">
+                  <span class="admin-radial-percent" id="att-percent">-</span>
+                </div>
+              </div>
+
+              <!-- Attendance Metrics -->
+              <div class="admin-attendance-counts">
+                <span class="admin-att-label">Present</span>
+                <div class="admin-att-ratio">
+                  <span class="admin-att-val" id="att-present">-</span>
+                  <span class="admin-att-slash">/</span>
+                  <span class="admin-att-total" id="att-total">-</span>
+                </div>
+                <span class="admin-att-sub">classes</span>
+              </div>
+            </div>
+
+            <div class="admin-attendance-actions">
+              <button class="admin-edit-attendance-btn" id="edit-attendance-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+                <span>Edit Attendance</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 6 Stat Cards Grid -->
+          <div class="admin-stats-grid">
+            
+            <!-- Classwork (CW) -->
+            <div class="admin-card admin-stat-box" id="card-cw">
+              <div class="admin-stat-top">
+                <div class="admin-stat-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </div>
+                <div class="admin-stat-arrow">›</div>
+              </div>
+              <div class="admin-stat-bottom">
+                <span class="admin-stat-name">Classwork <span class="sub">(CW)</span></span>
+                <div class="admin-stat-value-row">
+                  <span class="admin-stat-primary" id="cw-count">-</span>
+                </div>
+                <span class="admin-stat-desc">completed</span>
+              </div>
+            </div>
+
+            <!-- Homework (HW) -->
+            <div class="admin-card admin-stat-box" id="card-hw">
+              <div class="admin-stat-top">
+                <div class="admin-stat-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                </div>
+                <div class="admin-stat-arrow">›</div>
+              </div>
+              <div class="admin-stat-bottom">
+                <span class="admin-stat-name">Homework <span class="sub">(HW)</span></span>
+                <div class="admin-stat-value-row">
+                  <span class="admin-stat-primary" id="hw-count">-</span>
+                </div>
+                <span class="admin-stat-desc">completed</span>
+              </div>
+            </div>
+
+            <!-- LeetCode Solved -->
+            <div class="admin-card admin-stat-box" id="card-lc">
+              <div class="admin-stat-top">
+                <div class="admin-stat-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                </div>
+                <div class="admin-stat-arrow">›</div>
+              </div>
+              <div class="admin-stat-bottom">
+                <span class="admin-stat-name">LeetCode Solved</span>
+                <div class="admin-stat-value-row">
+                  <span class="admin-stat-primary" id="lc-count">-</span>
+                </div>
+                <span class="admin-stat-desc">problems</span>
+              </div>
+            </div>
+
+            <!-- Quiz Level -->
+            <div class="admin-card admin-stat-box" id="card-quiz-lvl">
+              <div class="admin-stat-top">
+                <div class="admin-stat-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </div>
+                <div class="admin-stat-arrow">›</div>
+              </div>
+              <div class="admin-stat-bottom">
+                <span class="admin-stat-name">Quiz Level</span>
+                <div class="admin-stat-value-row">
+                  <span class="admin-stat-primary" id="quiz-lvl-count">-</span>
+                </div>
+                <span class="admin-stat-desc">current level</span>
+              </div>
+            </div>
+
+            <!-- Problems Solved -->
+            <div class="admin-card admin-stat-box" id="card-probs">
+              <div class="admin-stat-top">
+                <div class="admin-stat-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                  </svg>
+                </div>
+                <div class="admin-stat-arrow">›</div>
+              </div>
+              <div class="admin-stat-bottom">
+                <span class="admin-stat-name">Problems Solved</span>
+                <div class="admin-stat-value-row">
+                  <span class="admin-stat-primary" id="probs-count">-</span>
+                </div>
+                <span class="admin-stat-desc">total</span>
+              </div>
+            </div>
+
+            <!-- Daily KUIZU -->
+            <div class="admin-card admin-stat-box" id="card-daily">
+              <div class="admin-stat-top">
+                <div class="admin-stat-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path d="M12 2v2"></path>
+                    <path d="M12 20v2"></path>
+                    <path d="m4.93 4.93 1.41 1.41"></path>
+                    <path d="m17.66 17.66 1.41 1.41"></path>
+                    <path d="M2 12h2"></path>
+                    <path d="M20 12h2"></path>
+                    <path d="m6.34 17.66-1.41 1.41"></path>
+                    <path d="m19.07 4.93-1.41 1.41"></path>
+                  </svg>
+                </div>
+                <div class="admin-stat-arrow">›</div>
+              </div>
+              <div class="admin-stat-bottom">
+                <span class="admin-stat-name">Daily KUIZU</span>
+                <div class="admin-stat-value-row" id="daily-kuizu-container" style="margin-top: 6px;">
+                  <span class="admin-stat-primary">-</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- Bottom Section: Contests & Quests -->
+        <section class="admin-student-bottom-grid">
+          
+          <!-- Attended Contests Card -->
+          <div class="admin-card admin-table-card">
+            <div class="admin-table-card-header">
+              <div class="admin-table-title-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                  <path d="M4 22h16"></path>
+                  <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                  <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                </svg>
+                <h3 class="admin-card-title">Attended Contests</h3>
+              </div>
+              <button class="admin-view-all-link" id="view-all-contests">View All</button>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 48px;">#</th>
+                    <th>Contest Name</th>
+                    <th>Date</th>
+                    <th>Score</th>
+                    <th style="width: 32px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="attended-contests-tbody">
+                  <tr>
+                    <td colspan="5" style="text-align: center; padding: 28px; color: #94a3b8; font-size: 16px; font-weight: 500;">
+                      -
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Submitted Quests Card -->
+          <div class="admin-card admin-table-card">
+            <div class="admin-table-card-header">
+              <div class="admin-table-title-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <circle cx="12" cy="12" r="6"></circle>
+                  <circle cx="12" cy="12" r="2"></circle>
+                </svg>
+                <h3 class="admin-card-title">Submitted Quests</h3>
+              </div>
+              <button class="admin-view-all-link" id="view-all-quests">View All</button>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 48px;">#</th>
+                    <th>Quest Name</th>
+                    <th>Status</th>
+                    <th>Submitted Date</th>
+                    <th style="width: 32px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="submitted-quests-tbody">
+                  <tr>
+                    <td colspan="5" style="text-align: center; padding: 28px; color: #94a3b8; font-size: 16px; font-weight: 500;">
+                      -
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="admin-modal-backdrop" style="display:none;">
+      <div class="admin-modal-dialog">
+        <div class="admin-modal-header">
+          <h3 class="admin-modal-title">Edit Student Profile</h3>
+          <button class="admin-modal-close" id="close-profile-modal">✕</button>
+        </div>
+        <form id="edit-profile-form" class="admin-modal-form">
+          <div class="admin-form-group">
+            <label for="input-student-name">Full Name</label>
+            <input type="text" id="input-student-name" class="admin-form-input" value="Anuj Sandeep Chavan" required />
+          </div>
+          <div class="admin-form-group">
+            <label for="input-student-email">Email Address</label>
+            <input type="email" id="input-student-email" class="admin-form-input" value="anujchavan123@gmail.com" required />
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="input-student-id">Student ID</label>
+              <input type="text" id="input-student-id" class="admin-form-input" value="STU00123" required />
+            </div>
+            <div class="admin-form-group">
+              <label for="input-student-rank">Rank</label>
+              <input type="text" id="input-student-rank" class="admin-form-input" value="#12" required />
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="input-student-xp">XP Points</label>
+              <input type="number" id="input-student-xp" class="admin-form-input" value="12450" required />
+            </div>
+            <div class="admin-form-group">
+              <label for="input-student-streak">Streak (Days)</label>
+              <input type="number" id="input-student-streak" class="admin-form-input" value="7" required />
+            </div>
+          </div>
+          <div class="admin-modal-actions">
+            <button type="button" class="admin-btn-secondary" id="cancel-profile-btn">Cancel</button>
+            <button type="submit" class="admin-btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Attendance Modal (Admin Only) -->
+    <div id="edit-attendance-modal" class="admin-modal-backdrop" style="display:none;">
+      <div class="admin-modal-dialog">
+        <div class="admin-modal-header">
+          <h3 class="admin-modal-title">Edit Attendance (Admin Only)</h3>
+          <button class="admin-modal-close" id="close-attendance-modal">✕</button>
+        </div>
+        <form id="edit-attendance-form" class="admin-modal-form">
+          <div class="admin-form-group">
+            <label for="input-att-present">Classes Attended</label>
+            <input type="number" id="input-att-present" class="admin-form-input" value="46" min="0" max="1000" required />
+          </div>
+          <div class="admin-form-group">
+            <label for="input-att-total">Total Classes</label>
+            <input type="number" id="input-att-total" class="admin-form-input" value="50" min="1" max="1000" required />
+          </div>
+          <div class="admin-modal-actions">
+            <button type="button" class="admin-btn-secondary" id="cancel-attendance-btn">Cancel</button>
+            <button type="submit" class="admin-btn-primary">Update Attendance</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Card Links & Metrics Modal (Classwork, Homework, LeetCode, Quiz, Problems) -->
+    <div id="edit-card-modal" class="admin-modal-backdrop" style="display:none;">
+      <div class="admin-modal-dialog">
+        <div class="admin-modal-header">
+          <h3 class="admin-modal-title" id="edit-card-modal-title">Edit Card</h3>
+          <button class="admin-modal-close" id="close-card-modal">✕</button>
+        </div>
+        <form id="edit-card-form" class="admin-modal-form">
+          <input type="hidden" id="edit-card-type" value="" />
+          
+          <div id="card-form-link-group" class="admin-form-group">
+            <label for="input-card-link" id="label-card-link">Profile / Contest Link URL</label>
+            <input type="url" id="input-card-link" class="admin-form-input" placeholder="https://..." />
+            <span style="font-size:12px; color:#94a3b8; margin-top:4px; display:block;" id="help-card-link">
+              Clicking this card will open this external platform link in a new tab.
+            </span>
+          </div>
+
+          <div id="card-form-count-row" class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="input-card-completed" id="label-card-completed">Completed / Solved</label>
+              <input type="number" id="input-card-completed" class="admin-form-input" min="0" />
+            </div>
+            <div class="admin-form-group" id="group-card-total">
+              <label for="input-card-total">Total</label>
+              <input type="number" id="input-card-total" class="admin-form-input" min="1" />
+            </div>
+          </div>
+
+          <div class="admin-modal-actions" style="display:flex; justify-content:space-between; align-items:center;">
+            <a href="#" target="_blank" id="btn-open-external-link" class="admin-btn-secondary" style="text-decoration:none; display:none; align-items:center; gap:6px;">
+              <span>Open Link ↗</span>
+            </a>
+            <div style="display:flex; gap:10px; margin-left:auto;">
+              <button type="button" class="admin-btn-secondary" id="cancel-card-btn">Cancel</button>
+              <button type="submit" class="admin-btn-primary">Save Changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="admin-toast" class="admin-toast"></div>
+
+    <script type="module" src="/src/adminStudentDetails.ts"></script>
+  </body>
+</html>

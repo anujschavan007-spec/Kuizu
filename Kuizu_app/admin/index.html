@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en" class="admin-html">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - KUIZU</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      
+      <!-- Left Sidebar -->
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-top">
+          
+          <!-- Brand Logo -->
+          <div class="admin-sidebar-brand">
+            <svg class="admin-logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 6C10 4.89543 10.8954 4 12 4C13.1046 4 14 4.89543 14 6V30C14 31.1046 13.1046 32 12 32C10.8954 32 10 31.1046 10 30V6Z" fill="#2563EB"/>
+              <path d="M26.2929 7.29289C27.083 6.50275 28.3637 6.50275 29.1539 7.29289C29.944 8.08304 29.944 9.3637 29.1539 10.1539L18.8077 20.5L29.1539 30.8461C29.944 31.6363 29.944 32.917 29.1539 33.7071C28.3637 34.4973 27.083 34.4973 26.2929 33.7071L14.5161 21.9304C13.726 21.1402 13.726 19.8598 14.5161 19.0696L26.2929 7.29289Z" fill="#3B82F6"/>
+            </svg>
+            <span class="admin-brand-name">KUIZU</span>
+          </div>
+
+          <!-- Nav Menu Items -->
+          <nav class="admin-nav-menu">
+            <a href="/admin" class="admin-nav-item active" id="nav-admin-home">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Home</span>
+            </a>
+
+            <a href="/admin/user" class="admin-nav-item" id="nav-admin-users">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Users</span>
+            </a>
+
+            <a href="/admin/uploadquiz" class="admin-nav-item" id="nav-admin-quiz">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m16 16-4-4-4 4"></path>
+              </svg>
+              <span>Upload Quiz</span>
+            </a>
+
+            <a href="/admin/dailykuizu" class="admin-nav-item" id="nav-admin-dailykuizu">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <path d="m9 16 2 2 4-4"></path>
+              </svg>
+              <span>Daily Kuizu</span>
+            </a>
+
+            <a href="/admin/uploadproblem" class="admin-nav-item" id="nav-admin-problem">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Upload Problem</span>
+            </a>
+
+            <a href="/admin/adminbattle" class="admin-nav-item" id="nav-admin-battles">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline>
+                <line x1="13" y1="19" x2="19" y2="13"></line>
+                <line x1="16" y1="16" x2="20" y2="20"></line>
+                <line x1="19" y1="21" x2="21" y2="19"></line>
+                <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"></polyline>
+                <line x1="5" y1="14" x2="11" y2="20"></line>
+              </svg>
+              <span>Battles</span>
+            </a>
+
+            <a href="/admin/admincontest" class="admin-nav-item" id="nav-admin-contests">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+              <span>Contests</span>
+            </a>
+
+            <a href="/admin/adminquest" class="admin-nav-item" id="nav-admin-quest">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+              <span>Quests</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Sidebar Bottom: Admin Profile Row -->
+        <div class="admin-sidebar-footer">
+          <div class="admin-user-info" id="admin-user-profile-btn" title="Admin Profile">
+            <div class="admin-avatar-circle">
+              <img src="/images/admin_avatar.png" alt="Admin" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" />
+            </div>
+            <span class="admin-user-name">Admin</span>
+          </div>
+          <a href="/admin/settings" class="admin-gear-btn" id="btn-admin-settings" title="Admin Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Dashboard Content -->
+      <main class="admin-main">
+        
+        <!-- Header Section -->
+        <header class="admin-topbar">
+          <div class="admin-topbar-left">
+            <h1 class="admin-dashboard-title">Dashboard</h1>
+            <p class="admin-dashboard-subtitle">Overview of student activity and platform performance</p>
+          </div>
+
+          <div class="admin-topbar-right">
+            <!-- Date Filter Dropdown Button -->
+            <div class="admin-date-picker-wrap">
+              <button type="button" class="admin-date-picker-btn" id="btn-admin-date">
+                <svg class="date-cal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span id="admin-current-date-range">Apr 21, 2025 – Apr 27, 2025</span>
+                <svg class="date-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              
+              <!-- Date Range Options Menu -->
+              <div class="admin-date-menu" id="admin-date-menu">
+                <div class="date-menu-item active" data-range="Apr 21, 2025 – Apr 27, 2025">Last 7 Days (Apr 21 - Apr 27)</div>
+                <div class="date-menu-item" data-range="Apr 01, 2025 – Apr 30, 2025">This Month (April 2025)</div>
+                <div class="date-menu-item" data-range="Mar 28, 2025 – Apr 27, 2025">Last 30 Days</div>
+                <div class="date-menu-item" data-range="Jan 01, 2025 – Apr 27, 2025">Year to Date (2025)</div>
+                <div class="date-menu-item" data-range="All Time">All Time</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Metric KPI Cards Row (4 Columns) -->
+        <section class="admin-kpi-grid">
+          
+          <!-- Card 1: Total Students -->
+          <div class="admin-kpi-card" id="card-total-students">
+            <div class="kpi-icon-wrap kpi-icon-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div class="kpi-text-block">
+              <span class="kpi-label">Total Students</span>
+              <div class="kpi-value" id="kpi-val-students">1,248</div>
+              <div class="kpi-trend">
+                <span class="kpi-trend-positive">↗ +12%</span>
+                <span class="kpi-trend-sub">vs. last week</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Active Today -->
+          <div class="admin-kpi-card" id="card-active-today">
+            <div class="kpi-icon-wrap kpi-icon-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="kpi-text-block">
+              <span class="kpi-label">Active Today</span>
+              <div class="kpi-value" id="kpi-val-active">836</div>
+              <div class="kpi-trend">
+                <span class="kpi-trend-positive">↗ +8%</span>
+                <span class="kpi-trend-sub">vs. yesterday</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Quizzes Completed -->
+          <div class="admin-kpi-card" id="card-quizzes-completed">
+            <div class="kpi-icon-wrap kpi-icon-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <div class="kpi-text-block">
+              <span class="kpi-label">Quizzes Completed</span>
+              <div class="kpi-value" id="kpi-val-quizzes">3,492</div>
+              <div class="kpi-trend">
+                <span class="kpi-trend-positive">↗ +14%</span>
+                <span class="kpi-trend-sub">vs. last week</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: Problems Solved -->
+          <div class="admin-kpi-card" id="card-problems-solved">
+            <div class="kpi-icon-wrap kpi-icon-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+            </div>
+            <div class="kpi-text-block">
+              <span class="kpi-label">Problems Solved</span>
+              <div class="kpi-value" id="kpi-val-problems">8,760</div>
+              <div class="kpi-trend">
+                <span class="kpi-trend-positive">↗ +18%</span>
+                <span class="kpi-trend-sub">vs. last week</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- Top Students Ranking Row (4 Columns) -->
+        <section class="admin-ranking-grid">
+          
+          <!-- Column 1: Top Students by XP -->
+          <div class="admin-ranking-card">
+            <div class="ranking-card-header">
+              <div class="ranking-header-title">
+                <svg class="ranking-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                <h3>Top Students by XP</h3>
+              </div>
+              <button type="button" class="ranking-view-all" data-target="xp">View all</button>
+            </div>
+
+            <table class="ranking-table">
+              <thead>
+                <tr>
+                  <th style="width: 24px;">#</th>
+                  <th>Student</th>
+                  <th style="text-align: right;">XP</th>
+                </tr>
+              </thead>
+              <tbody id="ranking-tbody-xp">
+                <tr>
+                  <td class="ranking-num">1</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Anuj Chavan</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">12,450</div>
+                    <div class="val-sub">XP</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ranking-num">2</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Pravin Ghodake</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">1,450</div>
+                    <div class="val-sub">XP</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ranking-num">3</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Pranav</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">620</div>
+                    <div class="val-sub">XP</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Column 2: Top Student by LeetCode -->
+          <div class="admin-ranking-card">
+            <div class="ranking-card-header">
+              <div class="ranking-header-title">
+                <svg class="ranking-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2">
+                  <polyline points="16 18 22 12 16 6"></polyline>
+                  <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                <h3>Top Student by LeetCode</h3>
+              </div>
+              <button type="button" class="ranking-view-all" data-target="leetcode">View all</button>
+            </div>
+
+            <table class="ranking-table">
+              <thead>
+                <tr>
+                  <th style="width: 24px;">#</th>
+                  <th>Student</th>
+                  <th style="text-align: right;">Solved</th>
+                </tr>
+              </thead>
+              <tbody id="ranking-tbody-leetcode">
+                <tr>
+                  <td class="ranking-num">1</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Anuj Chavan</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">342</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ranking-num">2</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Pravin Ghodake</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">45</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ranking-num">3</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Pranav</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">28</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Column 3: Top Student by CW (Classwork) -->
+          <div class="admin-ranking-card">
+            <div class="ranking-card-header">
+              <div class="ranking-header-title">
+                <svg class="ranking-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <h3>Top Student by CW</h3>
+              </div>
+              <button type="button" class="ranking-view-all" data-target="cw">View all</button>
+            </div>
+
+            <table class="ranking-table">
+              <thead>
+                <tr>
+                  <th style="width: 24px;">#</th>
+                  <th>Student</th>
+                  <th style="text-align: right;">Completed</th>
+                </tr>
+              </thead>
+              <tbody id="ranking-tbody-cw">
+                <tr>
+                  <td class="ranking-num">1</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Anuj Chavan</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">18</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ranking-num">2</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Pravin Ghodake</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">12</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ranking-num">3</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Pranav</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">8</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Column 4: Top Student by HW (Homework) -->
+          <div class="admin-ranking-card">
+            <div class="ranking-card-header">
+              <div class="ranking-header-title">
+                <svg class="ranking-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                <h3>Top Student by HW</h3>
+              </div>
+              <button type="button" class="ranking-view-all" data-target="hw">View all</button>
+            </div>
+
+            <table class="ranking-table">
+              <thead>
+                <tr>
+                  <th style="width: 24px;">#</th>
+                  <th>Student</th>
+                  <th style="text-align: right;">Completed</th>
+                </tr>
+              </thead>
+              <tbody id="ranking-tbody-hw">
+                <tr>
+                  <td class="ranking-num">1</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Anuj Chavan</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">16</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ranking-num">2</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Pravin Ghodake</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">10</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ranking-num">3</td>
+                  <td class="ranking-student">
+                    <div class="student-avatar-wrap">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="student-name">Pranav</span>
+                  </td>
+                  <td class="ranking-val">
+                    <div class="val-bold">7</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+        <!-- Bottom Grid: Recent Activity & Student Engagement -->
+        <section class="admin-bottom-grid">
+          
+          <!-- Recent Activity Card -->
+          <div class="admin-bottom-card admin-activity-card">
+            <div class="bottom-card-header">
+              <div class="bottom-header-title">
+                <svg class="activity-header-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                <h3>Recent Activity</h3>
+              </div>
+              <button type="button" class="ranking-view-all" id="btn-view-all-activity">View all</button>
+            </div>
+
+            <!-- Activity Table Header -->
+            <div class="activity-table-head">
+              <div class="col-head-time">Time</div>
+              <div class="col-head-type">Type</div>
+              <div class="col-head-details">Details</div>
+            </div>
+
+            <!-- Activity Rows List -->
+            <div class="activity-rows-list">
+              
+              <!-- Row 1: User Registration -->
+              <div class="activity-row" data-activity="Pravin Ghodake registered as a new student">
+                <div class="activity-time-cell">
+                  <span class="time-bullet">•</span>
+                  <span>Apr 27, 10:42 AM</span>
+                </div>
+                <div class="activity-type-cell">
+                  <span class="activity-pill pill-user">🔵 User</span>
+                </div>
+                <div class="activity-details-cell">
+                  <div class="activity-main-text">New student registered</div>
+                  <div class="activity-sub-text">Pravin Ghodake</div>
+                </div>
+                <div class="activity-arrow-cell">›</div>
+              </div>
+
+              <!-- Row 2: Quiz Completion -->
+              <div class="activity-row" data-activity="Anuj Chavan completed Quiz with 100%">
+                <div class="activity-time-cell">
+                  <span class="time-bullet">•</span>
+                  <span>Apr 27, 09:16 AM</span>
+                </div>
+                <div class="activity-type-cell">
+                  <span class="activity-pill pill-quiz">🟣 Quiz</span>
+                </div>
+                <div class="activity-details-cell">
+                  <div class="activity-main-text">Quiz completed</div>
+                  <div class="activity-sub-text">Anuj Chavan • 100%</div>
+                </div>
+                <div class="activity-arrow-cell">›</div>
+              </div>
+
+              <!-- Row 3: Problem Uploaded -->
+              <div class="activity-row" data-activity="Problem uploaded by Admin">
+                <div class="activity-time-cell">
+                  <span class="time-bullet">•</span>
+                  <span>Apr 27, 08:53 AM</span>
+                </div>
+                <div class="activity-type-cell">
+                  <span class="activity-pill pill-problem">🟢 Problem</span>
+                </div>
+                <div class="activity-details-cell">
+                  <div class="activity-main-text">Problem uploaded</div>
+                  <div class="activity-sub-text">Admin</div>
+                </div>
+                <div class="activity-arrow-cell">›</div>
+              </div>
+
+              <!-- Row 4: Battle Created -->
+              <div class="activity-row" data-activity="Team Alpha created a new Battle room">
+                <div class="activity-time-cell">
+                  <span class="time-bullet">•</span>
+                  <span>Apr 26, 07:21 PM</span>
+                </div>
+                <div class="activity-type-cell">
+                  <span class="activity-pill pill-battle">🔵 Battle</span>
+                </div>
+                <div class="activity-details-cell">
+                  <div class="activity-main-text">Battle created</div>
+                  <div class="activity-sub-text">Team Alpha</div>
+                </div>
+                <div class="activity-arrow-cell">›</div>
+              </div>
+
+              <!-- Row 5: Contest Started -->
+              <div class="activity-row" data-activity="Weekly Coding Challenge contest started">
+                <div class="activity-time-cell">
+                  <span class="time-bullet">•</span>
+                  <span>Apr 26, 04:12 PM</span>
+                </div>
+                <div class="activity-type-cell">
+                  <span class="activity-pill pill-contest">🟠 Contest</span>
+                </div>
+                <div class="activity-details-cell">
+                  <div class="activity-main-text">Contest started</div>
+                  <div class="activity-sub-text">Weekly Coding Challenge</div>
+                </div>
+                <div class="activity-arrow-cell">›</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Student Engagement Card with Interactive Chart -->
+          <div class="admin-bottom-card admin-engagement-card">
+            <div class="bottom-card-header">
+              <div class="bottom-header-title">
+                <svg class="engagement-header-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <h3>Student Engagement</h3>
+              </div>
+
+              <!-- Days Range Pills -->
+              <div class="engagement-range-toggles">
+                <button type="button" class="range-btn active" data-days="7">7 days</button>
+                <button type="button" class="range-btn" data-days="30">30 days</button>
+                <button type="button" class="range-btn" data-days="90">90 days</button>
+              </div>
+            </div>
+
+            <div class="engagement-subtitle">Daily active students</div>
+
+            <!-- SVG Chart Canvas Container -->
+            <div class="engagement-chart-wrap" id="engagement-chart-container">
+              
+              <!-- Interactive SVG Graph -->
+              <svg class="engagement-svg" viewBox="0 0 600 240" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="chartLineGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#3B82F6" />
+                    <stop offset="100%" stop-color="#2563EB" />
+                  </linearGradient>
+                </defs>
+
+                <!-- Horizontal Dotted Grid Lines -->
+                <line x1="40" y1="30" x2="580" y2="30" stroke="#f1f5f9" stroke-width="1.2" />
+                <line x1="40" y1="75" x2="580" y2="75" stroke="#f1f5f9" stroke-width="1.2" />
+                <line x1="40" y1="120" x2="580" y2="120" stroke="#f1f5f9" stroke-width="1.2" />
+                <line x1="40" y1="165" x2="580" y2="165" stroke="#f1f5f9" stroke-width="1.2" />
+                <line x1="40" y1="210" x2="580" y2="210" stroke="#f1f5f9" stroke-width="1.2" />
+
+                <!-- Y-Axis Labels -->
+                <text x="32" y="34" class="chart-axis-label" text-anchor="end">1,000</text>
+                <text x="32" y="79" class="chart-axis-label" text-anchor="end">750</text>
+                <text x="32" y="124" class="chart-axis-label" text-anchor="end">500</text>
+                <text x="32" y="169" class="chart-axis-label" text-anchor="end">250</text>
+                <text x="32" y="214" class="chart-axis-label" text-anchor="end">0</text>
+
+                <!-- Connected Trend Polyline -->
+                <polyline
+                  id="engagement-chart-line"
+                  fill="none"
+                  stroke="url(#chartLineGrad)"
+                  stroke-width="2.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  points="60,172 143,148 226,174 309,158 392,143 475,128 558,80"
+                />
+
+                <!-- Interactive Data Point Circles -->
+                <g id="chart-data-points">
+                  <circle cx="60" cy="172" r="4.5" class="chart-point" data-date="Apr 21" data-val="360" />
+                  <circle cx="143" cy="148" r="4.5" class="chart-point" data-date="Apr 22" data-val="492" />
+                  <circle cx="226" cy="174" r="4.5" class="chart-point" data-date="Apr 23" data-val="348" />
+                  <circle cx="309" cy="158" r="4.5" class="chart-point" data-date="Apr 24" data-val="440" />
+                  <circle cx="392" cy="143" r="4.5" class="chart-point" data-date="Apr 25" data-val="524" />
+                  <circle cx="475" cy="128" r="4.5" class="chart-point" data-date="Apr 26" data-val="610" />
+                  <circle cx="558" cy="80" r="5" class="chart-point active-point" data-date="Apr 27" data-val="836" />
+                </g>
+              </svg>
+
+              <!-- X-Axis Labels Row -->
+              <div class="chart-x-labels" id="chart-x-labels-row">
+                <span>Apr 21</span>
+                <span>Apr 22</span>
+                <span>Apr 23</span>
+                <span>Apr 24</span>
+                <span>Apr 25</span>
+                <span>Apr 26</span>
+                <span>Apr 27</span>
+              </div>
+
+              <!-- Floating Tooltip -->
+              <div class="chart-tooltip" id="chart-tooltip" style="display: none;"></div>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+    <!-- View All Modal for Rankings & Activity -->
+    <div class="admin-modal-overlay" id="admin-modal-overlay">
+      <div class="admin-modal-card">
+        <div class="admin-modal-header">
+          <h3 id="admin-modal-title">Top Students</h3>
+          <button type="button" class="admin-modal-close" id="btn-admin-modal-close">&times;</button>
+        </div>
+        <div class="admin-modal-body" id="admin-modal-body">
+          <!-- Dynamic ranking list -->
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/admin.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QLibrary • Problems • KUIZU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="problems-page-body">
+
+    <!-- Top Navigation Header -->
+    <header class="home-header">
+      <div class="container home-nav-container">
+        
+        <!-- Brand Logo -->
+        <a href="/home" class="brand-logo" aria-label="KUIZU Home">
+          <svg class="brand-icon" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.5 3C7.5 3 3 7 3 13V22C3 28 8 33 13.5 33C17.5 33 21 30.5 22.5 26.5L24 23L25.5 26.5C27 30.5 30.5 33 34.5 33C40 33 45 28 45 22V13C45 7 40.5 3 35.5 3H12.5Z" fill="url(#probsBrandGrad)" />
+            <path d="M11 15H17M14 12V18" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="31.5" cy="17.5" r="2.2" fill="white" />
+            <circle cx="36.5" cy="13.5" r="2.2" fill="white" />
+            <defs>
+              <linearGradient id="probsBrandGrad" x1="3" y1="3" x2="45" y2="33" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4F46E5" />
+                <stop offset="1" stop-color="#7C3AED" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand-text">KUIZU</span>
+        </a>
+
+        <!-- Middle Navigation Tabs -->
+        <nav class="home-nav-tabs">
+          <a href="/home" class="nav-tab nav-tab-inactive" id="tab-nav-home">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            <span>Home</span>
+          </a>
+
+          <a href="/problems" class="nav-tab active" id="tab-nav-problems">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Problems</span>
+          </a>
+
+          <a href="/quiz" class="nav-tab nav-tab-inactive" id="tab-nav-quiz">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="m9 14 2 2 4-4"></path>
+            </svg>
+            <span>Quiz</span>
+          </a>
+
+          <a href="/battle" class="nav-tab nav-tab-inactive" id="tab-nav-battle">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="14.5" y1="9.5" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="9.5" y2="14.5"></line>
+              <line x1="16" y1="3" x2="21" y2="8"></line>
+              <line x1="3" y1="16" x2="8" y2="21"></line>
+              <line x1="9.5" y1="9.5" x2="3" y2="3"></line>
+              <line x1="21" y1="21" x2="14.5" y2="14.5"></line>
+            </svg>
+            <span>Battle</span>
+          </a>
+        </nav>
+
+        <!-- Right User Profile Pill & Dropdown -->
+        <div class="user-profile-menu-wrap">
+          <button type="button" class="user-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false">
+            <img src="/images/home_avatar.png" alt="User Profile Avatar" class="user-nav-avatar" />
+            <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <!-- Exact Profile Pop-up Card -->
+          <div class="user-dropdown-menu profile-popup-card" id="user-dropdown">
+            <div class="popup-user-header">
+              <div class="popup-avatar-wrap">
+                <img src="/images/home_avatar.png" alt="Anuj Profile" class="popup-avatar-img" />
+              </div>
+              <div class="popup-user-details">
+                <h3 class="popup-user-name" id="menu-user-name">Anuj</h3>
+                <div class="popup-xp-badge">
+                  <svg class="popup-star-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  <span id="menu-user-xp">2,450 XP</span>
+                </div>
+              </div>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <div class="popup-menu-list">
+              <button type="button" class="popup-menu-item" id="btn-menu-leaderboard">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                  </svg>
+                  <span>Leaderboard</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <button type="button" class="popup-menu-item" id="btn-menu-theme">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+                  </svg>
+                  <span>Theme</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <button type="button" class="popup-menu-item" id="btn-menu-settings">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <span>Settings</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <!-- 4. Admin Panel (Strictly shown only if user email is anujschavan007@gmail.com) -->
+              <a href="/admin" class="popup-menu-item popup-menu-admin" id="btn-menu-admin" style="display: none;">
+                <div class="menu-item-left">
+                  <svg class="menu-icon admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <rect x="9" y="11" width="6" height="5" rx="1"></rect>
+                    <path d="M10 11V9a2 2 0 1 1 4 0v2"></path>
+                  </svg>
+                  <span>Admin Panel</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <a href="/sign-in" class="popup-logout-btn" id="btn-logout">
+              <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Logout</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Problems App Container -->
+    <main class="problems-main-layout">
+      <div class="container problems-split-grid">
+        
+        <!-- Left Sidebar Navigation -->
+        <aside class="problems-sidebar">
+          <nav class="sidebar-nav-list">
+            
+            <a href="/problems" class="sidebar-nav-item active">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              <span>QLibrary</span>
+            </a>
+
+            <a href="/problem/quest" class="sidebar-nav-item" id="side-tab-quests">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                <line x1="4" y1="22" x2="4" y2="15"></line>
+              </svg>
+              <span>Quests</span>
+            </a>
+
+            <a href="/problem/contest" class="sidebar-nav-item" id="side-tab-contests">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+              <span>Contests</span>
+            </a>
+
+            <a href="/problem/leaderboard" class="sidebar-nav-item" id="side-tab-leaderboard">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              <span>Leaderboard</span>
+            </a>
+
+          </nav>
+        </aside>
+
+        <!-- Right Main Problems Area -->
+        <section class="problems-content-area">
+          
+          <!-- Top Bar: Title & Search/Filter Controls -->
+          <div class="qlibrary-header-row">
+            
+            <!-- Left: Title with Code Brackets -->
+            <div class="qlibrary-title-wrap">
+              <div class="qlibrary-title-main">
+                <span class="code-bracket-accent">&lt;/&gt;</span>
+                <h1 class="qlibrary-heading">QLibrary</h1>
+              </div>
+              <p class="qlibrary-subheading">Practice. Improve. Level Up.</p>
+            </div>
+
+            <!-- Right: Search & Filter Inputs -->
+            <div class="qlibrary-controls-wrap">
+              
+              <!-- Search Box -->
+              <div class="search-input-box">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="problem-search-input" class="search-field" placeholder="Search problems..." />
+              </div>
+
+              <!-- Filter Button & Dropdown Menu -->
+              <div class="filter-dropdown-wrap">
+                <button type="button" class="filter-toggle-btn" id="btn-filter-toggle" aria-expanded="false">
+                  <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                  </svg>
+                  <span>Filter</span>
+                  <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Filter Popover -->
+                <div class="filter-popover" id="filter-popover">
+                  <div class="filter-group">
+                    <span class="filter-group-title">Difficulty</span>
+                    <div class="filter-options-row">
+                      <button type="button" class="filter-tag-btn active" data-difficulty="All">All</button>
+                      <button type="button" class="filter-tag-btn tag-easy" data-difficulty="Easy">Easy</button>
+                      <button type="button" class="filter-tag-btn tag-medium" data-difficulty="Medium">Medium</button>
+                      <button type="button" class="filter-tag-btn tag-hard" data-difficulty="Hard">Hard</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Achieved Badges Banner -->
+          <div class="achieved-badges-card">
+            
+            <!-- Left Header -->
+            <div class="badges-card-header">
+              <div class="badges-ribbon-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="6"></circle>
+                  <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
+                </svg>
+              </div>
+              <h2 class="badges-card-title">Achieved Badges</h2>
+            </div>
+
+            <div class="badges-divider-vert"></div>
+
+            <!-- Badges Horizontal List -->
+            <div class="badges-carousel" id="badges-container">
+              
+              <!-- Badge 1: First Solve -->
+              <div class="badge-item">
+                <div class="badge-emblem-wrap emblem-green">
+                  <svg class="emblem-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l7 4v6c0 5.25-3.5 10-7 11-3.5-1-7-5.75-7-11V6l7-4z" fill="#10b981"/>
+                    <path d="m9 12 2 2 4-4" stroke="#ffffff"/>
+                  </svg>
+                </div>
+                <div class="badge-info">
+                  <span class="badge-name">First Solve</span>
+                  <span class="badge-desc">Solved 1st problem</span>
+                </div>
+              </div>
+
+              <!-- Badge 2: 7-Day Streak -->
+              <div class="badge-item">
+                <div class="badge-emblem-wrap emblem-purple">
+                  <svg class="emblem-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l7 4v6c0 5.25-3.5 10-7 11-3.5-1-7-5.75-7-11V6l7-4z" fill="#8b5cf6"/>
+                    <path d="M12 7c-2 2.5-3 4-3 5.5a3 3 0 0 0 6 0c0-1.5-1-3-3-5.5z" fill="#ffffff" stroke="none"/>
+                  </svg>
+                </div>
+                <div class="badge-info">
+                  <span class="badge-name">7-Day Streak</span>
+                  <span class="badge-desc">Learning streak 7 days</span>
+                </div>
+              </div>
+
+              <!-- Badge 3: Problem Solver -->
+              <div class="badge-item">
+                <div class="badge-emblem-wrap emblem-blue">
+                  <svg class="emblem-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l7 4v6c0 5.25-3.5 10-7 11-3.5-1-7-5.75-7-11V6l7-4z" fill="#3b82f6"/>
+                    <polygon points="12 8 13.5 11.5 17 11.8 14.5 14 15.3 17.5 12 15.5 8.7 17.5 9.5 14 7 11.8 10.5 11.5 12 8" fill="#ffffff" stroke="none"/>
+                  </svg>
+                </div>
+                <div class="badge-info">
+                  <span class="badge-name">Problem Solver</span>
+                  <span class="badge-desc">Solved 10 problems</span>
+                </div>
+              </div>
+
+              <!-- Badge 4: Quick Thinker -->
+              <div class="badge-item">
+                <div class="badge-emblem-wrap emblem-gold">
+                  <svg class="emblem-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l7 4v6c0 5.25-3.5 10-7 11-3.5-1-7-5.75-7-11V6l7-4z" fill="#f59e0b"/>
+                    <polygon points="13 7 8 13 12 13 11 18 16 12 12 12 13 7" fill="#ffffff" stroke="none"/>
+                  </svg>
+                </div>
+                <div class="badge-info">
+                  <span class="badge-name">Quick Thinker</span>
+                  <span class="badge-desc">Solved in under 10 mins</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Problems List Table Card -->
+          <div class="problems-table-card">
+            
+            <!-- Table Header -->
+            <div class="table-columns-header">
+              <span class="col-id">#</span>
+              <span class="col-problem">Problem</span>
+              <span class="col-diff">Difficulty</span>
+              <span class="col-topic">Topic</span>
+              <span class="col-reward">Reward</span>
+              <span class="col-action" aria-hidden="true"></span>
+            </div>
+
+            <!-- Problem Rows Container -->
+            <div class="problem-rows-container" id="problems-list-container">
+              
+              <!-- Problem 001 -->
+              <div class="problem-row" data-id="001" style="cursor: pointer;" onclick="window.location.href='/problem/qlibrary/compiler?id=001'">
+                <span class="row-id">001</span>
+                <span class="row-title">Two Sum</span>
+                <span class="row-diff"><span class="pill-difficulty diff-easy">Easy</span></span>
+                <span class="row-topic">
+                  <span class="topic-icon-wrap icon-arrays">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <rect x="3" y="3" width="7" height="7" rx="1"/>
+                      <rect x="14" y="3" width="7" height="7" rx="1"/>
+                      <rect x="14" y="14" width="7" height="7" rx="1"/>
+                      <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                  </span>
+                  <span class="topic-label">Arrays</span>
+                </span>
+                <span class="row-reward">
+                  <span class="star-gold">⭐</span>
+                  <span class="reward-val">+10 XP</span>
+                </span>
+                <span class="row-arrow">›</span>
+              </div>
+
+              <!-- Problem 002 -->
+              <div class="problem-row" data-id="002" style="cursor: pointer;" onclick="window.location.href='/problem/qlibrary/compiler?id=002'">
+                <span class="row-id">002</span>
+                <span class="row-title">Reverse a String</span>
+                <span class="row-diff"><span class="pill-difficulty diff-easy">Easy</span></span>
+                <span class="row-topic">
+                  <span class="topic-icon-wrap icon-strings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M7 4a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2"></path>
+                      <path d="M17 4a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2"></path>
+                    </svg>
+                  </span>
+                  <span class="topic-label">Strings</span>
+                </span>
+                <span class="row-reward">
+                  <span class="star-gold">⭐</span>
+                  <span class="reward-val">+10 XP</span>
+                </span>
+                <span class="row-arrow">›</span>
+              </div>
+
+              <!-- Problem 003 -->
+              <div class="problem-row" data-id="003" style="cursor: pointer;" onclick="window.location.href='/problem/qlibrary/compiler?id=003'">
+                <span class="row-id">003</span>
+                <span class="row-title">Valid Parentheses</span>
+                <span class="row-diff"><span class="pill-difficulty diff-medium">Medium</span></span>
+                <span class="row-topic">
+                  <span class="topic-icon-wrap icon-stack">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                    </svg>
+                  </span>
+                  <span class="topic-label">Stack</span>
+                </span>
+                <span class="row-reward">
+                  <span class="star-gold">⭐</span>
+                  <span class="reward-val">+20 XP</span>
+                </span>
+                <span class="row-arrow">›</span>
+              </div>
+
+              <!-- Problem 004 -->
+              <div class="problem-row" data-id="004" style="cursor: pointer;" onclick="window.location.href='/problem/qlibrary/compiler?id=004'">
+                <span class="row-id">004</span>
+                <span class="row-title">Binary Search</span>
+                <span class="row-diff"><span class="pill-difficulty diff-medium">Medium</span></span>
+                <span class="row-topic">
+                  <span class="topic-icon-wrap icon-searching">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </span>
+                  <span class="topic-label">Searching</span>
+                </span>
+                <span class="row-reward">
+                  <span class="star-gold">⭐</span>
+                  <span class="reward-val">+20 XP</span>
+                </span>
+                <span class="row-arrow">›</span>
+              </div>
+
+              <!-- Problem 005 -->
+              <div class="problem-row" data-id="005" style="cursor: pointer;" onclick="window.location.href='/problem/qlibrary/compiler?id=005'">
+                <span class="row-id">005</span>
+                <span class="row-title">Merge Sort</span>
+                <span class="row-diff"><span class="pill-difficulty diff-hard">Hard</span></span>
+                <span class="row-topic">
+                  <span class="topic-icon-wrap icon-sorting">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="17" y1="4" x2="7" y2="4"></line>
+                      <polyline points="7 8 3 4 7 0"></polyline>
+                      <line x1="7" y1="20" x2="17" y2="20"></line>
+                      <polyline points="17 16 21 20 17 24"></polyline>
+                    </svg>
+                  </span>
+                  <span class="topic-label">Sorting</span>
+                </span>
+                <span class="row-reward">
+                  <span class="star-gold">⭐</span>
+                  <span class="reward-val">+40 XP</span>
+                </span>
+                <span class="row-arrow">›</span>
+              </div>
+
+              <!-- Problem 006 -->
+              <div class="problem-row" data-id="006" style="cursor: pointer;" onclick="window.location.href='/problem/qlibrary/compiler?id=006'">
+                <span class="row-id">006</span>
+                <span class="row-title">Longest Common Subsequence</span>
+                <span class="row-diff"><span class="pill-difficulty diff-hard">Hard</span></span>
+                <span class="row-topic">
+                  <span class="topic-icon-wrap icon-dp">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                  </span>
+                  <span class="topic-label">Dynamic Programming</span>
+                </span>
+                <span class="row-reward">
+                  <span class="star-gold">⭐</span>
+                  <span class="reward-val">+40 XP</span>
+                </span>
+                <span class="row-arrow">›</span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Bottom Scenic Landscape -->
+    <div class="home-bottom-landscape-wrap">
+      <img src="/images/home_landscape.png" alt="Scenic fort and sea landscape" class="home-landscape-img" />
+    </div>
+
+    <!-- Problems Controller Script -->
+    <script type="module" src="/src/problems.ts"></script>
+  </body>
+</html>

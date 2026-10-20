@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home • KUIZU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="home-page-body">
+
+    <!-- Top Navigation Header -->
+    <header class="home-header">
+      <div class="container home-nav-container">
+        
+        <!-- Brand Logo -->
+        <a href="/home" class="brand-logo" aria-label="KUIZU Home">
+          <svg class="brand-icon" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.5 3C7.5 3 3 7 3 13V22C3 28 8 33 13.5 33C17.5 33 21 30.5 22.5 26.5L24 23L25.5 26.5C27 30.5 30.5 33 34.5 33C40 33 45 28 45 22V13C45 7 40.5 3 35.5 3H12.5Z" fill="url(#homeBrandGrad)" />
+            <path d="M11 15H17M14 12V18" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="31.5" cy="17.5" r="2.2" fill="white" />
+            <circle cx="36.5" cy="13.5" r="2.2" fill="white" />
+            <defs>
+              <linearGradient id="homeBrandGrad" x1="3" y1="3" x2="45" y2="33" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4F46E5" />
+                <stop offset="1" stop-color="#7C3AED" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand-text">KUIZU</span>
+        </a>
+
+        <!-- Middle Navigation Tabs -->
+        <nav class="home-nav-tabs">
+          <a href="/home" class="nav-tab active" id="tab-home">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            <span>Home</span>
+          </a>
+
+          <a href="/problems" class="nav-tab nav-tab-inactive" id="tab-problems">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Problems</span>
+          </a>
+
+          <a href="/quiz" class="nav-tab nav-tab-inactive" id="tab-quiz">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="m9 14 2 2 4-4"></path>
+            </svg>
+            <span>Quiz</span>
+          </a>
+
+          <a href="/battle" class="nav-tab nav-tab-inactive" id="tab-battle">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="14.5" y1="9.5" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="9.5" y2="14.5"></line>
+              <line x1="16" y1="3" x2="21" y2="8"></line>
+              <line x1="3" y1="16" x2="8" y2="21"></line>
+              <line x1="9.5" y1="9.5" x2="3" y2="3"></line>
+              <line x1="21" y1="21" x2="14.5" y2="14.5"></line>
+            </svg>
+            <span>Battle</span>
+          </a>
+        </nav>
+
+        <!-- Right User Profile Pill & Popup Dropdown -->
+        <div class="user-profile-menu-wrap">
+          <button type="button" class="user-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false">
+            <img src="/images/home_avatar.png" alt="User Profile Avatar" class="user-nav-avatar" />
+            <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <!-- Exact Profile Pop-up Card matching user screenshot -->
+          <div class="user-dropdown-menu profile-popup-card" id="user-dropdown">
+            
+            <!-- User Info Row: Avatar + Name + XP Badge -->
+            <div class="popup-user-header">
+              <div class="popup-avatar-wrap">
+                <img src="/images/home_avatar.png" alt="Anuj Profile" class="popup-avatar-img" />
+              </div>
+              <div class="popup-user-details">
+                <h3 class="popup-user-name" id="menu-user-name">Anuj</h3>
+                <div class="popup-xp-badge">
+                  <svg class="popup-star-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  <span id="menu-user-xp">2,450 XP</span>
+                </div>
+              </div>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <!-- Menu Items List -->
+            <div class="popup-menu-list">
+              
+              <!-- 1. Leaderboard -->
+              <button type="button" class="popup-menu-item" id="btn-menu-leaderboard">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                  </svg>
+                  <span>Leaderboard</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <!-- 2. Theme -->
+              <button type="button" class="popup-menu-item" id="btn-menu-theme">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+                  </svg>
+                  <span>Theme</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <!-- 3. Settings -->
+              <button type="button" class="popup-menu-item" id="btn-menu-settings">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <span>Settings</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <!-- 4. Admin Panel (Strictly shown only if user email is anujschavan007@gmail.com) -->
+              <a href="/admin" class="popup-menu-item popup-menu-admin" id="btn-menu-admin" style="display: none;">
+                <div class="menu-item-left">
+                  <svg class="menu-icon admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <rect x="9" y="11" width="6" height="5" rx="1"></rect>
+                    <path d="M10 11V9a2 2 0 1 1 4 0v2"></path>
+                  </svg>
+                  <span>Admin Panel</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+
+            </div>
+
+            <hr class="popup-divider" />
+
+            <!-- Logout Button -->
+            <a href="/sign-in" class="popup-logout-btn" id="btn-logout">
+              <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Logout</span>
+            </a>
+
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Home Content Section -->
+    <main class="home-main-content">
+      <div class="container home-container">
+        
+        <!-- Left & Center Layout Area -->
+        <div class="home-left-section">
+          
+          <!-- Hero Title Text with Flying Birds -->
+          <div class="home-hero-text">
+            <div class="hero-title-with-birds">
+              <div>
+                <p class="home-sub-italic">Keep Learning,</p>
+                <h1 class="home-main-title">
+                  Build Your <span class="title-level-accent">Level</span>
+                </h1>
+                <p class="home-motivation-text">
+                  Small steps everyday = Big results tomorrow 🚀
+                </p>
+              </div>
+              <div class="flying-birds-wrap" aria-hidden="true">
+                <svg class="flying-birds-svg" viewBox="0 0 120 50" fill="none">
+                  <path d="M12 28 C18 16, 28 16, 34 28 C40 16, 50 16, 56 28" stroke="#93c5fd" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.8"/>
+                  <path d="M68 20 C74 9, 83 9, 89 20 C95 9, 104 9, 110 20" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.65"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Two Interactive Cards Grid -->
+          <div class="home-cards-grid">
+            
+            <!-- Card 1: Today's KUIZU -->
+            <div class="home-activity-card card-quiz">
+              <div class="activity-card-header">
+                <div class="activity-header-left">
+                  <div class="card-badge-icon badge-purple">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/>
+                    </svg>
+                  </div>
+                  <div class="activity-title-group">
+                    <h2 class="activity-card-title">Today's <span class="highlight-purple">KUIZU</span></h2>
+                    <p class="activity-card-subtitle" id="daily-quiz-card-subtitle">3–5 questions • Based on your class syllabus</p>
+                  </div>
+                </div>
+                <button type="button" class="activity-arrow-btn" id="btn-arrow-quiz" aria-label="Open Daily Quiz">→</button>
+              </div>
+
+              <div class="activity-card-body">
+                <div class="activity-ill-wrap">
+                  <img src="/images/home_quiz_ill.png" alt="Quiz checklist and pencil" class="activity-ill-img" />
+                </div>
+                <div class="activity-cta-wrap">
+                  <button type="button" class="btn-activity-cta btn-start-quiz" id="btn-start-quiz">
+                    <span>Start Quiz</span>
+                    <span class="cta-arrow">→</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="activity-card-footer">
+                <div class="stat-pill-item">
+                  <svg class="stat-icon star-yellow" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color: #eab308;">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  <span class="stat-value" id="daily-quiz-card-xp">15 XP</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-pill-item">
+                  <svg class="stat-icon fire-red" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color: #ef4444;">
+                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+                  </svg>
+                  <span class="stat-value" id="daily-quiz-card-streak">+5 Streak</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Club Activity -->
+            <div class="home-activity-card card-club">
+              <div class="activity-card-header">
+                <div class="activity-header-left">
+                  <div class="card-badge-icon badge-green">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                    </svg>
+                  </div>
+                  <div class="activity-title-group">
+                    <h2 class="activity-card-title">Club Activity</h2>
+                    <p class="activity-card-subtitle">Join club events, participate & earn XP</p>
+                  </div>
+                </div>
+                <button type="button" class="activity-arrow-btn" id="btn-arrow-club" aria-label="Open Club Activity">→</button>
+              </div>
+
+              <div class="activity-card-body">
+                <div class="activity-ill-wrap">
+                  <img src="/images/home_club_ill.png" alt="Students with star shield" class="activity-ill-img" />
+                </div>
+                <div class="activity-cta-wrap">
+                  <button type="button" class="btn-activity-cta btn-view-club" id="btn-view-club">
+                    <span>View Activity</span>
+                    <span class="cta-arrow">→</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="activity-card-footer">
+                <div class="stat-pill-item">
+                  <span class="stat-icon star-yellow">⭐</span>
+                  <span class="stat-value">25 XP</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-pill-item">
+                  <span class="stat-icon trophy-gold">🏆</span>
+                  <span class="stat-value">Club Points</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Right Column: User Profile Summary Card -->
+        <div class="home-right-section">
+          <div class="home-profile-card">
+            
+            <div class="profile-avatar-container">
+              <img src="/images/home_avatar.png" alt="Student Profile Avatar" class="profile-avatar-img" />
+            </div>
+
+            <div class="profile-details-wrap">
+              <h2 class="profile-greeting" id="home-greeting">Hi, User</h2>
+              <p class="profile-tagline">Better Learning. Bigger Dreams.</p>
+            </div>
+
+            <div class="profile-metrics-list">
+              <!-- Streak Metric -->
+              <div class="metric-row-pill metric-streak" id="pill-streak">
+                <div class="metric-left">
+                  <svg class="metric-icon-fire" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#EA580C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+                  </svg>
+                  <span class="metric-name">Streak</span>
+                </div>
+                <div class="metric-right">
+                  <span class="metric-val" id="pill-streak-val">0 Days</span>
+                  <span class="metric-chevron">›</span>
+                </div>
+              </div>
+
+              <!-- XP Metric -->
+              <div class="metric-row-pill metric-xp" id="pill-xp">
+                <div class="metric-left">
+                  <svg class="metric-icon-star" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#7C3AED" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  <span class="metric-name">XP</span>
+                </div>
+                <div class="metric-right">
+                  <span class="metric-val" id="pill-xp-val">0 XP</span>
+                  <span class="metric-chevron">›</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Bottom Scenic Fort Landscape -->
+    <div class="home-bottom-landscape-wrap">
+      <img src="/images/home_landscape.png" alt="Scenic fort and sea landscape" class="home-landscape-img" />
+    </div>
+
+    <!-- Home Page TypeScript Controller -->
+    <script type="module" src="/src/home.ts"></script>
+  </body>
+</html>

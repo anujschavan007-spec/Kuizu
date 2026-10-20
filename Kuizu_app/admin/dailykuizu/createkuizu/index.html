@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en" class="admin-html">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Daily Kuizu - Admin KUIZU</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      
+      <!-- Left Sidebar (Fixed, Non-scrollable) -->
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-top">
+          <!-- Brand Logo -->
+          <a href="/admin" class="admin-sidebar-brand" style="text-decoration:none;">
+            <svg class="admin-logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 6C10 4.89543 10.8954 4 12 4C13.1046 4 14 4.89543 14 6V30C14 31.1046 13.1046 32 12 32C10.8954 32 10 31.1046 10 30V6Z" fill="#2563EB"/>
+              <path d="M26.2929 7.29289C27.083 6.50275 28.3637 6.50275 29.1539 7.29289C29.944 8.08304 29.944 9.3637 29.1539 10.1539L18.8077 20.5L29.1539 30.8461C29.944 31.6363 29.944 32.917 29.1539 33.7071C28.3637 34.4973 27.083 34.4973 26.2929 33.7071L14.5161 21.9304C13.726 21.1402 13.726 19.8598 14.5161 19.0696L26.2929 7.29289Z" fill="#3B82F6"/>
+            </svg>
+            <span class="admin-brand-name">KUIZU</span>
+          </a>
+
+          <!-- Nav Menu Items (Daily Kuizu is Active) -->
+          <nav class="admin-nav-menu">
+            <a href="/admin" class="admin-nav-item" id="nav-admin-home">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Home</span>
+            </a>
+
+            <a href="/admin/user" class="admin-nav-item" id="nav-admin-users">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Users</span>
+            </a>
+
+            <a href="/admin/uploadquiz" class="admin-nav-item" id="nav-admin-quiz">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m16 16-4-4-4 4"></path>
+              </svg>
+              <span>Upload Quiz</span>
+            </a>
+
+            <a href="/admin/daily-kuizu" class="admin-nav-item active" id="nav-admin-dailykuizu">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <path d="m9 16 2 2 4-4"></path>
+              </svg>
+              <span>Daily Kuizu</span>
+            </a>
+
+            <a href="/admin/uploadproblem" class="admin-nav-item" id="nav-admin-problem">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Upload Problem</span>
+            </a>
+
+            <a href="/admin/adminbattle" class="admin-nav-item" id="nav-admin-battles">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline>
+                <line x1="13" y1="19" x2="19" y2="13"></line>
+                <line x1="16" y1="16" x2="20" y2="20"></line>
+                <line x1="19" y1="21" x2="21" y2="19"></line>
+                <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"></polyline>
+                <line x1="5" y1="14" x2="11" y2="20"></line>
+              </svg>
+              <span>Battles</span>
+            </a>
+
+            <a href="/admin/admincontest" class="admin-nav-item" id="nav-admin-contests">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+              <span>Contests</span>
+            </a>
+
+            <a href="/admin/adminquest" class="admin-nav-item" id="nav-admin-quest">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+              <span>Quests</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="admin-sidebar-footer">
+          <div class="admin-user-info" id="admin-user-profile-btn" title="Admin Profile">
+            <div class="admin-avatar-circle">
+              <img src="/images/admin_avatar.png" alt="Admin" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" />
+            </div>
+            <span class="admin-user-name">Admin</span>
+          </div>
+          <a href="/admin/settings" class="admin-gear-btn" title="Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Right Main Content (Scrollable) -->
+      <main class="admin-main">
+        
+        <!-- Header with Back Button and Save Daily Kuizu -->
+        <header class="admin-details-topbar">
+          <div class="admin-details-header-left">
+            <a href="/admin/daily-kuizu" class="admin-back-btn" title="Back to Daily Kuizu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </a>
+            <div>
+              <h1 class="admin-dashboard-title" id="page-heading-title" style="margin:0;">Create Daily Kuizu</h1>
+              <p class="admin-dashboard-subtitle" style="margin-top:2px;">
+                <a href="/admin/daily-kuizu" style="color:#2563eb; font-weight:500; text-decoration:none;">Daily Kuizu</a> / Create & Schedule Challenge
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="/admin/daily-kuizu" class="admin-btn-outline" style="text-decoration: none;">
+              Cancel
+            </a>
+            <button class="admin-save-quiz-top-btn" id="save-dailykuizu-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              <span>Save Daily Kuizu</span>
+            </button>
+          </div>
+        </header>
+
+        <form id="create-dailykuizu-form" class="admin-create-problem-form" onsubmit="return false;">
+          
+          <!-- Card 1: Schedule & Rewards -->
+          <div class="admin-card admin-form-card">
+            <div class="admin-form-card-title-row">
+              <div class="admin-form-card-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
+              <h2 class="admin-card-title">Schedule & Details</h2>
+            </div>
+
+            <div class="admin-battle-details-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+              
+              <!-- Assigned Target Date -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="daily-target-date">Target Scheduled Date <span class="required-star">*</span></label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  <input 
+                    type="date" 
+                    id="daily-target-date" 
+                    class="admin-text-input has-icon" 
+                    required 
+                  />
+                </div>
+                <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                  When day passes, the next date assigned quiz activates automatically. If unassigned, last date quiz falls back.
+                </small>
+              </div>
+
+              <!-- Expiry Rule -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="daily-expiry-time">Daily Expiry Rule <span class="required-star">*</span></label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <select id="daily-expiry-time" class="admin-select-input" required>
+                    <option value="12:00 PM IST" selected>12:00 PM IST (Standard Daily Rollover)</option>
+                    <option value="11:59 PM IST">11:59 PM IST (Midnight Rollover)</option>
+                    <option value="06:00 PM IST">06:00 PM IST (Evening Rollover)</option>
+                    <option value="09:00 AM IST">09:00 AM IST (Morning Rollover)</option>
+                  </select>
+                  <svg class="admin-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Challenge Title -->
+              <div class="admin-form-group span-2" style="grid-column: 1 / -1;">
+                <label class="admin-form-label" for="daily-title">Challenge Title <span class="required-star">*</span></label>
+                <div class="admin-input-icon-wrap">
+                  <span class="admin-field-text-icon" style="font-weight: 700; color: #64748b; margin-left: 14px; font-size: 13px;">T</span>
+                  <input 
+                    type="text" 
+                    id="daily-title" 
+                    class="admin-text-input has-icon" 
+                    placeholder="e.g. Mastery Sprint: Data Structures & Algorithms" 
+                    required 
+                  />
+                </div>
+              </div>
+
+              <!-- Challenge Description -->
+              <div class="admin-form-group span-2" style="grid-column: 1 / -1;">
+                <label class="admin-form-label" for="daily-description">Short Description / Syllabus Focus</label>
+                <textarea 
+                  id="daily-description" 
+                  class="admin-text-input" 
+                  rows="2" 
+                  placeholder="e.g. Daily 3 to 5 question challenge testing quick fundamentals and reasoning..."
+                  style="height: auto; padding: 10px 14px; resize: vertical;"
+                ></textarea>
+              </div>
+
+              <!-- Reward XP -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="daily-reward-xp">Completion XP Reward</label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  <input 
+                    type="number" 
+                    id="daily-reward-xp" 
+                    class="admin-text-input has-icon" 
+                    value="15" 
+                    min="5" 
+                    max="500" 
+                  />
+                </div>
+              </div>
+
+              <!-- Streak Bonus -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="daily-streak-bonus">Streak Increment</label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+                  </svg>
+                  <input 
+                    type="number" 
+                    id="daily-streak-bonus" 
+                    class="admin-text-input has-icon" 
+                    value="5" 
+                    min="1" 
+                    max="50" 
+                  />
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Card 2: Selected Questions Tray (3 to 5 questions required) -->
+          <div class="admin-card admin-form-card" style="margin-top: 24px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 16px; margin-bottom: 16px;">
+              <div class="admin-form-card-title-row" style="margin: 0;">
+                <div class="admin-form-card-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 11 12 14 22 4"></polyline>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="admin-card-title" style="margin: 0;">Selected Challenge Questions</h2>
+                  <p style="font-size: 13px; color: #64748b; margin: 2px 0 0 0;">Add between 3 and 5 questions from quizzes, problems, or manual input.</p>
+                </div>
+              </div>
+
+              <div>
+                <span id="selected-questions-badge" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #eff6ff; color: #2563eb; font-weight: 600; font-size: 13px; border-radius: 9999px; border: 1px solid #dbeafe;">
+                  <span id="selected-count-number">0</span> / 5 Questions
+                </span>
+              </div>
+            </div>
+
+            <!-- Validation Notification Box -->
+            <div id="selection-validation-msg" style="margin-bottom: 14px; padding: 10px 14px; border-radius: 8px; font-size: 13px; background: #fffbeb; color: #b45309; border: 1px solid #fef3c7; display: flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span>Please select at least 3 questions (maximum 5 questions).</span>
+            </div>
+
+            <!-- List of Selected Questions -->
+            <div id="selected-questions-list" style="display: flex; flex-direction: column; gap: 10px; min-height: 80px;">
+              <div id="empty-tray-state" style="text-align: center; padding: 36px 16px; border: 1.5px dashed #e2e8f0; border-radius: 12px; color: #94a3b8;">
+                <p style="font-size: 14px; font-weight: 500; margin: 0 0 4px 0; color: #64748b;">No Questions Added Yet</p>
+                <p style="font-size: 13px; margin: 0;">Use the sources below to add questions from Quizzes, Problems, or create custom questions.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Question Sources -->
+          <div class="admin-card admin-form-card" style="margin-top: 24px;">
+            <div class="admin-form-card-title-row" style="margin-bottom: 16px;">
+              <div class="admin-form-card-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2v20"></path>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+              <h2 class="admin-card-title">Add Questions From Source</h2>
+            </div>
+
+            <!-- Source Tabs -->
+            <div style="display: flex; gap: 8px; border-bottom: 1px solid #e2e8f0; margin-bottom: 20px;">
+              <button type="button" class="source-tab-btn active" data-tab="tab-quizzes" style="padding: 10px 18px; border: none; background: transparent; font-size: 14px; font-weight: 600; color: #2563eb; border-bottom: 2px solid #2563eb; cursor: pointer;">
+                From Quizzes
+              </button>
+              <button type="button" class="source-tab-btn" data-tab="tab-problems" style="padding: 10px 18px; border: none; background: transparent; font-size: 14px; font-weight: 500; color: #64748b; border-bottom: 2px solid transparent; cursor: pointer;">
+                From Problems
+              </button>
+              <button type="button" class="source-tab-btn" data-tab="tab-manual" style="padding: 10px 18px; border: none; background: transparent; font-size: 14px; font-weight: 500; color: #64748b; border-bottom: 2px solid transparent; cursor: pointer;">
+                Add Custom Question
+              </button>
+            </div>
+
+            <!-- Tab 1: From Quizzes -->
+            <div id="tab-quizzes" class="source-tab-panel" style="display: block;">
+              <div style="margin-bottom: 14px;">
+                <input 
+                  type="text" 
+                  id="search-quizzes-input" 
+                  class="admin-text-input" 
+                  placeholder="Search quizzes by title or category..." 
+                  style="width: 100%;"
+                />
+              </div>
+
+              <div id="quizzes-source-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto; padding-right: 4px;">
+                <div style="text-align: center; padding: 24px; color: #94a3b8; font-size: 14px;">Loading quizzes from library...</div>
+              </div>
+            </div>
+
+            <!-- Tab 2: From Problems -->
+            <div id="tab-problems" class="source-tab-panel" style="display: none;">
+              <div style="margin-bottom: 14px;">
+                <input 
+                  type="text" 
+                  id="search-problems-input" 
+                  class="admin-text-input" 
+                  placeholder="Search coding problems by title or tag..." 
+                  style="width: 100%;"
+                />
+              </div>
+
+              <div id="problems-source-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto; padding-right: 4px;">
+                <div style="text-align: center; padding: 24px; color: #94a3b8; font-size: 14px;">Loading problems from library...</div>
+              </div>
+            </div>
+
+            <!-- Tab 3: Add Custom Question (Manual) -->
+            <div id="tab-manual" class="source-tab-panel" style="display: none;">
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                <div class="admin-form-group" style="margin-bottom: 14px;">
+                  <label class="admin-form-label" for="custom-question-text">Question Prompt <span class="required-star">*</span></label>
+                  <textarea 
+                    id="custom-question-text" 
+                    class="admin-text-input" 
+                    rows="3" 
+                    placeholder="Enter question prompt..." 
+                    style="height: auto; padding: 10px 14px; resize: vertical;"
+                  ></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px;">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label" style="display: flex; justify-content: space-between;">
+                      <span>Option A <span class="required-star">*</span></span>
+                      <label style="font-weight: 500; font-size: 12px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                        <input type="radio" name="custom-correct-opt" value="0" checked /> Correct
+                      </label>
+                    </label>
+                    <input type="text" id="custom-opt-0" class="admin-text-input" placeholder="Option A value..." />
+                  </div>
+
+                  <div class="admin-form-group">
+                    <label class="admin-form-label" style="display: flex; justify-content: space-between;">
+                      <span>Option B <span class="required-star">*</span></span>
+                      <label style="font-weight: 500; font-size: 12px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                        <input type="radio" name="custom-correct-opt" value="1" /> Correct
+                      </label>
+                    </label>
+                    <input type="text" id="custom-opt-1" class="admin-text-input" placeholder="Option B value..." />
+                  </div>
+
+                  <div class="admin-form-group">
+                    <label class="admin-form-label" style="display: flex; justify-content: space-between;">
+                      <span>Option C <span class="required-star">*</span></span>
+                      <label style="font-weight: 500; font-size: 12px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                        <input type="radio" name="custom-correct-opt" value="2" /> Correct
+                      </label>
+                    </label>
+                    <input type="text" id="custom-opt-2" class="admin-text-input" placeholder="Option C value..." />
+                  </div>
+
+                  <div class="admin-form-group">
+                    <label class="admin-form-label" style="display: flex; justify-content: space-between;">
+                      <span>Option D <span class="required-star">*</span></span>
+                      <label style="font-weight: 500; font-size: 12px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                        <input type="radio" name="custom-correct-opt" value="3" /> Correct
+                      </label>
+                    </label>
+                    <input type="text" id="custom-opt-3" class="admin-text-input" placeholder="Option D value..." />
+                  </div>
+                </div>
+
+                <div class="admin-form-group" style="margin-bottom: 16px;">
+                  <label class="admin-form-label" for="custom-explanation">Explanation (Optional)</label>
+                  <input type="text" id="custom-explanation" class="admin-text-input" placeholder="Brief explanation for the correct answer..." />
+                </div>
+
+                <div style="display: flex; justify-content: flex-end;">
+                  <button type="button" id="btn-add-custom-question" class="admin-create-quiz-top-btn" style="display: inline-flex; align-items: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>Add to Challenge Tray</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </form>
+
+      </main>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="admin-toast" class="admin-toast"></div>
+
+    <script type="module" src="/src/adminCreateDailyKuizu.ts"></script>
+  </body>
+</html>

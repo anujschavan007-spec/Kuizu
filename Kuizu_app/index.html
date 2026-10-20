@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KUIZU • Gamified Coding Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="landing-page-body">
+    
+    <!-- Top Header -->
+    <header class="site-header">
+      <div class="container nav-container">
+        <a href="/" class="brand-logo" aria-label="KUIZU Home">
+          <svg class="brand-icon" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.5 3C7.5 3 3 7 3 13V22C3 28 8 33 13.5 33C17.5 33 21 30.5 22.5 26.5L24 23L25.5 26.5C27 30.5 30.5 33 34.5 33C40 33 45 28 45 22V13C45 7 40.5 3 35.5 3H12.5Z" fill="url(#brandGrad)" />
+            <path d="M11 15H17M14 12V18" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="31.5" cy="17.5" r="2.2" fill="white" />
+            <circle cx="36.5" cy="13.5" r="2.2" fill="white" />
+            <defs>
+              <linearGradient id="brandGrad" x1="3" y1="3" x2="45" y2="33" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4F46E5" />
+                <stop offset="1" stop-color="#7C3AED" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand-text">KUIZU</span>
+        </a>
+
+        <div class="nav-actions">
+          <a href="/sign-in" class="btn-signin" id="nav-btn-signin">Sign In</a>
+          <a href="/sign-up" class="btn-signup" id="nav-btn-signup">Sign Up</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <main>
+      <section class="hero-section">
+        <div class="container hero-grid">
+          
+          <!-- Left Hero Content -->
+          <div class="hero-content">
+            <div class="hero-badge">
+              <svg class="star-icon" viewBox="0 0 24 24">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+              </svg>
+              <span>Learn • Solve • Grow</span>
+            </div>
+
+            <h1 class="hero-title">
+              Sharpen Your Coding Skills <br />
+              with <span class="brand-accent">KUIZU</span>
+            </h1>
+
+            <p class="hero-desc">
+              KUIZU is a gamified platform for coders. Solve problems, join contests, complete quests and level up your skills — all in one place.
+            </p>
+
+            <a href="/sign-up" class="btn-get-started" id="hero-btn-get-started">
+              <span style="font-size: 18px;">🚀</span>
+              <span>Get Started</span>
+              <span class="btn-arrow" style="font-size: 18px; font-weight: 800;">→</span>
+            </a>
+          </div>
+
+          <!-- Right Hero Visual Illustration -->
+          <div class="hero-visual-wrap">
+            <img 
+              src="/images/hero_art.png" 
+              alt="Coder learning with KUIZU gamified quest and castle in background" 
+              class="hero-illustration"
+              loading="eager"
+            />
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Why KUIZU? Section -->
+      <section class="why-section" id="features">
+        <div class="container">
+          
+          <div class="why-header">
+            <span class="why-badge">Why KUIZU?</span>
+            <h2 class="why-title">Everything You Need to Succeed</h2>
+            <p class="why-subtitle">
+              Built for learners, by learners. KUIZU helps you practice, improve and achieve your goals.
+            </p>
+          </div>
+
+          <!-- 5 Feature Cards Grid -->
+          <div class="cards-grid">
+            
+            <!-- Card 1: Practice Problems -->
+            <a href="/sign-up" class="feature-card">
+              <div>
+                <div class="card-icon-wrap icon-code">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                </div>
+                <h3 class="card-title">Practice Problems</h3>
+                <p class="card-desc">
+                  Solve handpicked problems from beginner to advanced levels.
+                </p>
+              </div>
+              <span class="card-arrow-btn" aria-hidden="true">→</span>
+            </a>
+
+            <!-- Card 2: Join Contests -->
+            <a href="/sign-up" class="feature-card">
+              <div>
+                <div class="card-icon-wrap icon-contest">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                  </svg>
+                </div>
+                <h3 class="card-title">Join Contests</h3>
+                <p class="card-desc">
+                  Compete with others and test your skills in real-time contests.
+                </p>
+              </div>
+              <span class="card-arrow-btn" aria-hidden="true">→</span>
+            </a>
+
+            <!-- Card 3: Complete Quests -->
+            <a href="/sign-up" class="feature-card">
+              <div>
+                <div class="card-icon-wrap icon-quest">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                    <line x1="4" y1="22" x2="4" y2="15"></line>
+                  </svg>
+                </div>
+                <h3 class="card-title">Complete Quests</h3>
+                <p class="card-desc">
+                  Follow learning paths, earn XP and unlock new challenges.
+                </p>
+              </div>
+              <span class="card-arrow-btn" aria-hidden="true">→</span>
+            </a>
+
+            <!-- Card 4: Track Progress -->
+            <a href="/sign-up" class="feature-card">
+              <div>
+                <div class="card-icon-wrap icon-track">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </div>
+                <h3 class="card-title">Track Progress</h3>
+                <p class="card-desc">
+                  Monitor your performance, level up and stay motivated.
+                </p>
+              </div>
+              <span class="card-arrow-btn" aria-hidden="true">→</span>
+            </a>
+
+            <!-- Card 5: Learn Together -->
+            <a href="/sign-up" class="feature-card">
+              <div>
+                <div class="card-icon-wrap icon-community">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
+                <h3 class="card-title">Learn Together</h3>
+                <p class="card-desc">
+                  Be part of a growing community of passionate coders.
+                </p>
+              </div>
+              <span class="card-arrow-btn" aria-hidden="true">→</span>
+            </a>
+
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Wave -->
+    <footer class="site-footer">
+      <img 
+        src="/images/footer_clouds.png" 
+        alt="Better Code • Bigger Dreams" 
+        class="footer-wave-img"
+      />
+    </footer>
+
+    <!-- Landing page typescript interactions -->
+    <script type="module" src="/src/landing.ts"></script>
+  </body>
+</html>

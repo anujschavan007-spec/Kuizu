@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contests • Problems • KUIZU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="problems-page-body">
+    <!-- Top Navigation Header -->
+    <header class="home-header">
+      <div class="container home-nav-container">
+        <!-- Brand Logo -->
+        <a href="/home" class="brand-logo" aria-label="KUIZU Home">
+          <svg class="brand-icon" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12.5 3C7.5 3 3 7 3 13V22C3 28 8 33 13.5 33C17.5 33 21 30.5 22.5 26.5L24 23L25.5 26.5C27 30.5 30.5 33 34.5 33C40 33 45 28 45 22V13C45 7 40.5 3 35.5 3H12.5Z"
+              fill="url(#probsBrandGrad)"
+            />
+            <path d="M11 15H17M14 12V18" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="31.5" cy="17.5" r="2.2" fill="white" />
+            <circle cx="36.5" cy="13.5" r="2.2" fill="white" />
+            <defs>
+              <linearGradient id="probsBrandGrad" x1="3" y1="3" x2="45" y2="33" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4F46E5" />
+                <stop offset="1" stop-color="#7C3AED" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand-text">KUIZU</span>
+        </a>
+
+        <!-- Middle Navigation Tabs (Problems Active) -->
+        <nav class="home-nav-tabs">
+          <a href="/home" class="nav-tab nav-tab-inactive" id="tab-nav-home">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            </svg>
+            <span>Home</span>
+          </a>
+
+          <a href="/problems" class="nav-tab active" id="tab-nav-problems">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Problems</span>
+          </a>
+
+          <a href="/quiz" class="nav-tab nav-tab-inactive" id="tab-nav-quiz">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="m9 14 2 2 4-4"></path>
+            </svg>
+            <span>Quiz</span>
+          </a>
+
+          <a href="/battle" class="nav-tab nav-tab-inactive" id="tab-nav-battle">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="14.5" y1="9.5" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="9.5" y2="14.5"></line>
+              <line x1="16" y1="3" x2="21" y2="8"></line>
+              <line x1="3" y1="16" x2="8" y2="21"></line>
+              <line x1="9.5" y1="9.5" x2="3" y2="3"></line>
+              <line x1="21" y1="21" x2="14.5" y2="14.5"></line>
+            </svg>
+            <span>Battle</span>
+          </a>
+        </nav>
+
+        <!-- Right User Profile Avatar & Dropdown -->
+        <div class="user-profile-menu-wrap">
+          <button type="button" class="user-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false">
+            <img src="/images/home_avatar.png" alt="User Profile Avatar" class="user-nav-avatar" />
+            <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <!-- Standardized Profile Pop-up Card -->
+          <div class="user-dropdown-menu profile-popup-card" id="user-dropdown">
+            <div class="popup-user-header">
+              <div class="popup-avatar-wrap">
+                <img src="/images/home_avatar.png" alt="Anuj Profile" class="popup-avatar-img" />
+              </div>
+              <div class="popup-user-details">
+                <h3 class="popup-user-name" id="menu-user-name">Anuj</h3>
+                <div class="popup-xp-badge">
+                  <svg class="popup-star-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  <span id="menu-user-xp">2,450 XP</span>
+                </div>
+              </div>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <div class="popup-menu-list">
+              <a href="/home" class="popup-menu-item" id="btn-menu-profile">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>My Profile</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+
+              <a href="/problems" class="popup-menu-item" id="btn-menu-leaderboard">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                  </svg>
+                  <span>Leaderboard</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+
+              <button type="button" class="popup-menu-item" id="btn-menu-theme">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                  </svg>
+                  <span>Theme Mode</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <button type="button" class="popup-menu-item" id="btn-menu-settings">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                  <span>Settings</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <!-- Admin Panel (Strictly shown only if user email is anujschavan007@gmail.com) -->
+              <a href="/admin" class="popup-menu-item popup-menu-admin" id="btn-menu-admin" style="display: none;">
+                <div class="menu-item-left">
+                  <svg class="menu-icon admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <rect x="9" y="11" width="6" height="5" rx="1"></rect>
+                    <path d="M10 11V9a2 2 0 1 1 4 0v2"></path>
+                  </svg>
+                  <span>Admin Panel</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <a href="/sign-in" class="popup-logout-btn" id="btn-logout">
+              <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Sign Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Problem/Contests Layout -->
+    <main class="problems-main-layout">
+      <div class="container problems-split-grid">
+        <!-- Left Sidebar Navigation -->
+        <aside class="problems-sidebar">
+          <nav class="sidebar-nav-list">
+            <a href="/problems" class="sidebar-nav-item">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              <span>QLibrary</span>
+            </a>
+
+            <a href="/problem/quest" class="sidebar-nav-item" id="side-tab-quests">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                <line x1="4" y1="22" x2="4" y2="15"></line>
+              </svg>
+              <span>Quests</span>
+            </a>
+
+            <!-- Active Contests Tab -->
+            <a href="/problem/contest" class="sidebar-nav-item active" id="side-tab-contests">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+              <span>Contests</span>
+            </a>
+
+            <a href="/problem/leaderboard" class="sidebar-nav-item" id="side-tab-leaderboard">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              <span>Leaderboard</span>
+            </a>
+          </nav>
+        </aside>
+
+        <!-- Right Contests Content Column (Exact Clone of contests_page.png) -->
+        <section class="problems-content-area">
+          <!-- Page Header: Big Trophy Icon + Title + Subtitle -->
+          <div class="contest-page-header">
+            <div class="contest-header-left">
+              <div class="contest-header-icon-wrap">
+                <svg class="contest-header-trophy" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                  <path d="M4 22h16"></path>
+                  <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                  <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                </svg>
+              </div>
+              <div class="contest-header-text">
+                <h1 class="contest-title">Contests</h1>
+                <p class="contest-subtitle">Challenge yourself. Compete. Grow.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured 2 Cards Grid -->
+          <div class="contest-featured-grid">
+            <!-- Weekly Coding Contest Card -->
+            <div class="featured-contest-card card-weekly">
+              <div class="featured-card-body">
+                <div class="featured-card-top">
+                  <div class="featured-card-info">
+                    <span class="featured-badge badge-weekly">Weekly Contest</span>
+                    <h2 class="featured-contest-title">Weekly Coding Contest</h2>
+                    <p class="featured-contest-desc">
+                      Solve a set of coding problems, compete with other learners and climb the leaderbourd.
+                    </p>
+                  </div>
+                  <div class="featured-card-illus-wrap">
+                    <img src="/images/contest_weekly_trophy.png" alt="Weekly Trophy Illustration" class="featured-trophy-img" />
+                  </div>
+                </div>
+                <div class="featured-card-footer">
+                  <div class="featured-meta-item">
+                    <div class="meta-icon-circle meta-icon-blue">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                    </div>
+                    <div class="meta-text">
+                      <span class="meta-label">Duration</span>
+                      <span class="meta-val meta-val-blue">1 hour</span>
+                    </div>
+                  </div>
+
+                  <div class="meta-divider"></div>
+
+                  <div class="featured-meta-item">
+                    <div class="meta-icon-circle meta-icon-blue">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="m9 16 2 2 4-4"></path>
+                      </svg>
+                    </div>
+                    <div class="meta-text">
+                      <span class="meta-label">Every Week</span>
+                      <span class="meta-val meta-val-blue">Sat, 7:00 PM</span>
+                    </div>
+                  </div>
+
+                  <button type="button" class="btn-contest-details btn-details-blue" data-contest="weekly">
+                    <span>View Details</span>
+                    <span class="btn-arrow">→</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Biweekly Coding Contest Card -->
+            <div class="featured-contest-card card-biweekly">
+              <div class="featured-card-body">
+                <div class="featured-card-top">
+                  <div class="featured-card-info">
+                    <span class="featured-badge badge-biweekly">Biweekly Contest</span>
+                    <h2 class="featured-contest-title">Biweekly Coding Contest</h2>
+                    <p class="featured-contest-desc">
+                      Tackle tougher problems, test your skills and earn bigger rewards.
+                    </p>
+                  </div>
+                  <div class="featured-card-illus-wrap">
+                    <img src="/images/contest_biweekly_trophy.png" alt="Biweekly Trophy Illustration" class="featured-trophy-img" />
+                  </div>
+                </div>
+                <div class="featured-card-footer">
+                  <div class="featured-meta-item">
+                    <div class="meta-icon-circle meta-icon-purple">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                    </div>
+                    <div class="meta-text">
+                      <span class="meta-label">Duration</span>
+                      <span class="meta-val meta-val-purple">2 hours</span>
+                    </div>
+                  </div>
+
+                  <div class="meta-divider"></div>
+
+                  <div class="featured-meta-item">
+                    <div class="meta-icon-circle meta-icon-purple">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="m9 16 2 2 4-4"></path>
+                      </svg>
+                    </div>
+                    <div class="meta-text">
+                      <span class="meta-label">Every 2 Weeks</span>
+                      <span class="meta-val meta-val-purple">Fri, 7:00 PM</span>
+                    </div>
+                  </div>
+
+                  <button type="button" class="btn-contest-details btn-details-purple" data-contest="biweekly">
+                    <span>View Details</span>
+                    <span class="btn-arrow">→</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Contests Section -->
+          <div class="upcoming-contests-section">
+            <div class="upcoming-section-header">
+              <div class="upcoming-header-left">
+                <div class="upcoming-calendar-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <path d="m9 16 2 2 4-4"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="upcoming-title">Upcoming Contests</h3>
+                  <p class="upcoming-subtitle">Don't miss out! Check out the upcoming contests and get ready.</p>
+                </div>
+              </div>
+
+              <!-- Filter Dropdown (All Contests ∨) -->
+              <div class="contest-filter-container">
+                <button type="button" class="btn-filter-dropdown" id="btn-filter-dropdown" aria-haspopup="true" aria-expanded="false">
+                  <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                  </svg>
+                  <span id="current-filter-label">All Contests</span>
+                  <svg class="dropdown-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+
+                <div class="contest-filter-menu" id="contest-filter-menu">
+                  <button type="button" class="filter-menu-item active" data-filter="all">All Contests</button>
+                  <button type="button" class="filter-menu-item" data-filter="weekly">Weekly Contests</button>
+                  <button type="button" class="filter-menu-item" data-filter="biweekly">Biweekly Challenges</button>
+                  <button type="button" class="filter-menu-item" data-filter="upcoming">Upcoming Only</button>
+                  <button type="button" class="filter-menu-item" data-filter="completed">Completed Only</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contests Table Card -->
+            <div class="contests-table-card">
+              <div class="table-responsive-wrapper">
+                <table class="contests-table">
+                  <thead>
+                    <tr>
+                      <th class="col-num">#</th>
+                      <th class="col-name">Contest Name</th>
+                      <th class="col-type">Type</th>
+                      <th class="col-date">Date &amp; Time</th>
+                      <th class="col-duration">Duration</th>
+                      <th class="col-status">Status</th>
+                      <th class="col-action">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="contests-table-body">
+                    <!-- Row 1: Weekly #12 -->
+                    <tr data-type="weekly" data-status="upcoming">
+                      <td class="col-num">1</td>
+                      <td class="col-name">
+                        <div class="contest-name-cell">
+                          <div class="contest-type-avatar avatar-blue">
+                            <span>&lt;/&gt;</span>
+                          </div>
+                          <div class="contest-name-info">
+                            <span class="contest-name-main">Weekly Coding Contest #12</span>
+                            <span class="contest-name-sub">Test your coding skills with real-world problems.</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="col-type">
+                        <span class="contest-badge-pill pill-weekly">Weekly</span>
+                      </td>
+                      <td class="col-date">
+                        <div class="date-cell">
+                          <span class="date-main">Apr 26, 2025</span>
+                          <span class="date-sub">7:00 PM (IST)</span>
+                        </div>
+                      </td>
+                      <td class="col-duration">
+                        <span class="duration-text">1 hour</span>
+                      </td>
+                      <td class="col-status">
+                        <span class="status-badge badge-upcoming">
+                          <span class="status-dot"></span>
+                          <span>Upcoming</span>
+                        </span>
+                      </td>
+                      <td class="col-action">
+                        <button type="button" class="btn-action-remind" data-contest-id="weekly-12">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                          </svg>
+                          <span>Remind Me</span>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 2: Biweekly #5 -->
+                    <tr data-type="biweekly" data-status="upcoming">
+                      <td class="col-num">2</td>
+                      <td class="col-name">
+                        <div class="contest-name-cell">
+                          <div class="contest-type-avatar avatar-purple">
+                            <span>&lt;/&gt;</span>
+                          </div>
+                          <div class="contest-name-info">
+                            <span class="contest-name-main">Biweekly Challenge #5</span>
+                            <span class="contest-name-sub">Harder problems. Bigger rewards.</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="col-type">
+                        <span class="contest-badge-pill pill-biweekly">Biweekly</span>
+                      </td>
+                      <td class="col-date">
+                        <div class="date-cell">
+                          <span class="date-main">May 2, 2025</span>
+                          <span class="date-sub">7:00 PM (IST)</span>
+                        </div>
+                      </td>
+                      <td class="col-duration">
+                        <span class="duration-text">2 hours</span>
+                      </td>
+                      <td class="col-status">
+                        <span class="status-badge badge-upcoming">
+                          <span class="status-dot"></span>
+                          <span>Upcoming</span>
+                        </span>
+                      </td>
+                      <td class="col-action">
+                        <button type="button" class="btn-action-remind" data-contest-id="biweekly-5">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                          </svg>
+                          <span>Remind Me</span>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 3: Weekly #11 -->
+                    <tr data-type="weekly" data-status="completed">
+                      <td class="col-num">3</td>
+                      <td class="col-name">
+                        <div class="contest-name-cell">
+                          <div class="contest-type-avatar avatar-blue">
+                            <span>&lt;/&gt;</span>
+                          </div>
+                          <div class="contest-name-info">
+                            <span class="contest-name-main">Weekly Coding Contest #11</span>
+                            <span class="contest-name-sub">Test your coding skills with real-world problems.</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="col-type">
+                        <span class="contest-badge-pill pill-weekly">Weekly</span>
+                      </td>
+                      <td class="col-date">
+                        <div class="date-cell">
+                          <span class="date-main">Apr 19, 2025</span>
+                          <span class="date-sub">7:00 PM (IST)</span>
+                        </div>
+                      </td>
+                      <td class="col-duration">
+                        <span class="duration-text">1 hour</span>
+                      </td>
+                      <td class="col-status">
+                        <span class="status-badge badge-completed">
+                          <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                          <span>Completed</span>
+                        </span>
+                      </td>
+                      <td class="col-action">
+                        <button type="button" class="btn-action-results" data-contest-title="Weekly Coding Contest #11">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                          </svg>
+                          <span>View Results</span>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 4: Biweekly #4 -->
+                    <tr data-type="biweekly" data-status="completed">
+                      <td class="col-num">4</td>
+                      <td class="col-name">
+                        <div class="contest-name-cell">
+                          <div class="contest-type-avatar avatar-purple">
+                            <span>&lt;/&gt;</span>
+                          </div>
+                          <div class="contest-name-info">
+                            <span class="contest-name-main">Biweekly Challenge #4</span>
+                            <span class="contest-name-sub">Harder problems. Bigger rewards.</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="col-type">
+                        <span class="contest-badge-pill pill-biweekly">Biweekly</span>
+                      </td>
+                      <td class="col-date">
+                        <div class="date-cell">
+                          <span class="date-main">Apr 11, 2025</span>
+                          <span class="date-sub">7:00 PM (IST)</span>
+                        </div>
+                      </td>
+                      <td class="col-duration">
+                        <span class="duration-text">2 hours</span>
+                      </td>
+                      <td class="col-status">
+                        <span class="status-badge badge-completed">
+                          <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                          <span>Completed</span>
+                        </span>
+                      </td>
+                      <td class="col-action">
+                        <button type="button" class="btn-action-results" data-contest-title="Biweekly Challenge #4">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                          </svg>
+                          <span>View Results</span>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 5: Weekly #10 -->
+                    <tr data-type="weekly" data-status="completed">
+                      <td class="col-num">5</td>
+                      <td class="col-name">
+                        <div class="contest-name-cell">
+                          <div class="contest-type-avatar avatar-blue">
+                            <span>&lt;/&gt;</span>
+                          </div>
+                          <div class="contest-name-info">
+                            <span class="contest-name-main">Weekly Coding Contest #10</span>
+                            <span class="contest-name-sub">Test your coding skills with real-world problems.</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="col-type">
+                        <span class="contest-badge-pill pill-weekly">Weekly</span>
+                      </td>
+                      <td class="col-date">
+                        <div class="date-cell">
+                          <span class="date-main">Apr 5, 2025</span>
+                          <span class="date-sub">7:00 PM (IST)</span>
+                        </div>
+                      </td>
+                      <td class="col-duration">
+                        <span class="duration-text">1 hour</span>
+                      </td>
+                      <td class="col-status">
+                        <span class="status-badge badge-completed">
+                          <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                          <span>Completed</span>
+                        </span>
+                      </td>
+                      <td class="col-action">
+                        <button type="button" class="btn-action-results" data-contest-title="Weekly Coding Contest #10">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                          </svg>
+                          <span>View Results</span>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Contest Details Modal -->
+    <div class="battle-modal-overlay" id="modal-contest-details" role="dialog" aria-modal="true">
+      <div class="battle-modal-card">
+        <div class="battle-modal-header">
+          <div class="modal-title-wrap">
+            <span class="featured-badge badge-weekly" id="modal-details-badge">Weekly Contest</span>
+            <h3 class="modal-heading" id="modal-details-title">Weekly Coding Contest #12</h3>
+          </div>
+          <button type="button" class="btn-modal-close" id="btn-close-details-modal" aria-label="Close modal">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-sub" style="margin-bottom: 16px;">
+            Compete live against coders worldwide. 4 algorithm problems ranging from Easy to Hard. Solve them with speed and accuracy to gain maximum XP!
+          </p>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px 16px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13.5px;">
+              <span style="color: #64748b; font-weight: 600;">Time Window:</span>
+              <span style="font-weight: 700; color: #1e293b;">Saturday, 7:00 PM – 8:00 PM (IST)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13.5px;">
+              <span style="color: #64748b; font-weight: 600;">Format:</span>
+              <span style="font-weight: 700; color: #1e293b;">4 Problems • 100 Points</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13.5px;">
+              <span style="color: #64748b; font-weight: 600;">Reward:</span>
+              <span style="font-weight: 700; color: #2563eb;">+250 XP &amp; Contest Badge</span>
+            </div>
+          </div>
+
+          <!-- Contest Problems List (Uploaded from Admin) -->
+          <div id="modal-details-problems-wrap" style="margin-bottom: 20px;">
+            <h4 style="font-size: 13.5px; font-weight: 700; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+              <span>Contest Challenge Problems:</span>
+              <span id="modal-problems-count-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #EEF2FF; color: #4F46E5; font-weight: 700;">4 Problems</span>
+            </h4>
+            <div id="modal-details-problems-list" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Dynamically populated from real contest questions -->
+            </div>
+          </div>
+
+          <div class="modal-actions" style="margin-top: 20px;">
+            <button type="button" class="btn-primary" id="btn-register-contest" style="width: 100%; justify-content: center; padding: 12px;">
+              <span>Register for Contest</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contest Results Modal -->
+    <div class="battle-modal-overlay" id="modal-contest-results" role="dialog" aria-modal="true">
+      <div class="battle-modal-card">
+        <div class="battle-modal-header">
+          <div class="modal-title-wrap">
+            <h3 class="modal-heading" id="modal-results-title">Weekly Coding Contest #11</h3>
+            <span class="status-badge badge-completed">✓ Finished</span>
+          </div>
+          <button type="button" class="btn-modal-close" id="btn-close-results-modal" aria-label="Close modal">✕</button>
+        </div>
+        <div class="modal-body">
+          <div style="display: flex; gap: 14px; margin-bottom: 16px;">
+            <div style="flex: 1; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px; text-align: center;">
+              <div style="font-size: 11.5px; font-weight: 700; color: #1e40af; text-transform: uppercase;">Your Rank</div>
+              <div style="font-size: 20px; font-weight: 800; color: #1d4ed8; margin-top: 2px;">#14 <span style="font-size: 12px; font-weight: 600; color: #60a5fa;">/ 1,420</span></div>
+            </div>
+            <div style="flex: 1; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 12px; text-align: center;">
+              <div style="font-size: 11.5px; font-weight: 700; color: #065f46; text-transform: uppercase;">Score</div>
+              <div style="font-size: 20px; font-weight: 800; color: #059669; margin-top: 2px;">4/4 <span style="font-size: 12px; font-weight: 600; color: #34d399;">(100 pts)</span></div>
+            </div>
+            <div style="flex: 1; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 12px; padding: 12px; text-align: center;">
+              <div style="font-size: 11.5px; font-weight: 700; color: #6b21a8; text-transform: uppercase;">XP Earned</div>
+              <div style="font-size: 20px; font-weight: 800; color: #7c3aed; margin-top: 2px;">+180 XP</div>
+            </div>
+          </div>
+
+          <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 16px 0 10px 0;">Top Performers</h4>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-radius: 10px; font-size: 13.5px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-weight: 800; color: #eab308; width: 22px;">🥇 1</span>
+                <span style="font-weight: 700; color: #0f172a;">DevNinja</span>
+              </div>
+              <span style="font-weight: 700; color: #059669;">24m 12s • 100 pts</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-radius: 10px; font-size: 13.5px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-weight: 800; color: #94a3b8; width: 22px;">🥈 2</span>
+                <span style="font-weight: 700; color: #0f172a;">CodeMaster</span>
+              </div>
+              <span style="font-weight: 700; color: #059669;">27m 45s • 100 pts</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-radius: 10px; font-size: 13.5px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-weight: 800; color: #d97706; width: 22px;">🥉 3</span>
+                <span style="font-weight: 700; color: #0f172a;">AlgorithmQueen</span>
+              </div>
+              <span style="font-weight: 700; color: #059669;">31m 10s • 100 pts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Scenic Fort and Sea Landscape matching screenshot -->
+    <div class="home-bottom-landscape-wrap">
+      <img src="/images/home_landscape.png" alt="Scenic fort and sea landscape" class="home-landscape-img" />
+    </div>
+
+    <!-- Contests Interactive Logic -->
+    <script type="module" src="/src/contest.ts"></script>
+  </body>
+</html>

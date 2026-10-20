@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" class="admin-html">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Quiz - Admin KUIZU</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      
+      <!-- Left Sidebar (Fixed, Non-scrollable) -->
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-top">
+          <!-- Brand Logo -->
+          <a href="/admin" class="admin-sidebar-brand" style="text-decoration:none;">
+            <svg class="admin-logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 6C10 4.89543 10.8954 4 12 4C13.1046 4 14 4.89543 14 6V30C14 31.1046 13.1046 32 12 32C10.8954 32 10 31.1046 10 30V6Z" fill="#2563EB"/>
+              <path d="M26.2929 7.29289C27.083 6.50275 28.3637 6.50275 29.1539 7.29289C29.944 8.08304 29.944 9.3637 29.1539 10.1539L18.8077 20.5L29.1539 30.8461C29.944 31.6363 29.944 32.917 29.1539 33.7071C28.3637 34.4973 27.083 34.4973 26.2929 33.7071L14.5161 21.9304C13.726 21.1402 13.726 19.8598 14.5161 19.0696L26.2929 7.29289Z" fill="#3B82F6"/>
+            </svg>
+            <span class="admin-brand-name">KUIZU</span>
+          </a>
+
+          <!-- Nav Menu Items (Upload Quiz is Active) -->
+          <nav class="admin-nav-menu">
+            <a href="/admin" class="admin-nav-item" id="nav-admin-home">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Home</span>
+            </a>
+
+            <a href="/admin/user" class="admin-nav-item" id="nav-admin-users">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Users</span>
+            </a>
+
+            <a href="/admin/uploadquiz" class="admin-nav-item active" id="nav-admin-quiz">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m16 16-4-4-4 4"></path>
+              </svg>
+              <span>Upload Quiz</span>
+            </a>
+
+            <a href="/admin/dailykuizu" class="admin-nav-item" id="nav-admin-dailykuizu">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <path d="m9 16 2 2 4-4"></path>
+              </svg>
+              <span>Daily Kuizu</span>
+            </a>
+
+            <a href="/admin/uploadproblem" class="admin-nav-item" id="nav-admin-problem">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Upload Problem</span>
+            </a>
+
+            <a href="/admin/adminbattle" class="admin-nav-item" id="nav-admin-battles">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline>
+                <line x1="13" y1="19" x2="19" y2="13"></line>
+                <line x1="16" y1="16" x2="20" y2="20"></line>
+                <line x1="19" y1="21" x2="21" y2="19"></line>
+                <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"></polyline>
+                <line x1="5" y1="14" x2="11" y2="20"></line>
+              </svg>
+              <span>Battles</span>
+            </a>
+
+            <a href="/admin/admincontest" class="admin-nav-item" id="nav-admin-contests">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+              <span>Contests</span>
+            </a>
+
+            <a href="/admin/adminquest" class="admin-nav-item" id="nav-admin-quest">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+              <span>Quests</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="admin-sidebar-footer">
+          <div class="admin-user-info" id="admin-user-profile-btn" title="Admin Profile">
+            <div class="admin-avatar-circle">
+              <img src="/images/admin_avatar.png" alt="Admin" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" />
+            </div>
+            <span class="admin-user-name">Admin</span>
+          </div>
+          <a href="/admin/settings" class="admin-gear-btn" title="Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Right Main Content (Scrollable) -->
+      <main class="admin-main">
+        
+        <!-- Header with Back Button and Save Quiz -->
+        <header class="admin-details-topbar">
+          <div class="admin-details-header-left">
+            <a href="/admin/uploadquiz" class="admin-back-btn" title="Back to Upload Quiz">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </a>
+            <div>
+              <h1 class="admin-dashboard-title" style="margin:0;">Create Quiz</h1>
+              <p class="admin-dashboard-subtitle" style="margin-top:2px;">Add a new quiz to the platform</p>
+            </div>
+          </div>
+
+          <button class="admin-save-quiz-top-btn" id="save-quiz-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            <span>Save Quiz</span>
+          </button>
+        </header>
+
+        <form id="create-quiz-form" class="admin-create-quiz-form">
+          
+          <!-- Card 1: Quiz Details -->
+          <div class="admin-card admin-form-card">
+            <div class="admin-form-card-title-row">
+              <div class="admin-form-card-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </div>
+              <h2 class="admin-card-title">Quiz Details</h2>
+            </div>
+
+            <div class="admin-details-fields-grid">
+              
+              <!-- Quiz Title -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="quiz-title">Quiz Title <span class="required-star">*</span></label>
+                <input 
+                  type="text" 
+                  id="quiz-title" 
+                  class="admin-text-input" 
+                  placeholder="Enter quiz title..." 
+                  required 
+                />
+              </div>
+
+              <!-- Select Question -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="quiz-question-select">Select Question <span class="required-star">*</span></label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                  </svg>
+                  <select id="quiz-question-select" class="admin-select-input" required>
+                    <option value="" disabled selected>Select question...</option>
+                    <option value="q1">Q1: What is the time complexity of binary search?</option>
+                    <option value="q2">Q2: Which data structure uses FIFO principle?</option>
+                    <option value="q3">Q3: What does CSS box-sizing: border-box do?</option>
+                    <option value="custom">+ Create New Question Below</option>
+                  </select>
+                  <svg class="admin-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Add to Daily KUIZU Toggle -->
+              <div class="admin-form-group admin-toggle-group">
+                <label class="admin-form-label">Add to Daily KUIZU</label>
+                <div class="admin-toggle-control-row">
+                  <label class="admin-switch">
+                    <input type="checkbox" id="daily-kuizu-toggle" checked />
+                    <span class="admin-slider"></span>
+                  </label>
+                </div>
+                <span class="admin-toggle-hint">This quiz will be added to the daily KUIZU schedule.</span>
+              </div>
+
+              <!-- Select Date -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="quiz-date">Select Date <span class="required-star">*</span></label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  <input 
+                    type="date" 
+                    id="quiz-date" 
+                    class="admin-text-input has-icon has-trailing-icon" 
+                    value="2025-04-21" 
+                    required 
+                  />
+                  <svg class="admin-field-trailing-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Select Quiz Level -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="quiz-level-select">Select Quiz Level <span class="required-star">*</span></label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                  </svg>
+                  <select id="quiz-level-select" class="admin-select-input" required>
+                    <option value="" disabled>Choose level</option>
+                    <option value="1" selected>Level 1</option>
+                    <option value="2">Level 2</option>
+                    <option value="3">Level 3</option>
+                    <option value="4">Level 4</option>
+                    <option value="5">Level 5</option>
+                    <option value="6">Level 6</option>
+                    <option value="7">Level 7</option>
+                    <option value="8">Level 8</option>
+                  </select>
+                  <svg class="admin-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+                <span class="admin-toggle-hint" style="margin-top: 4px; display: block; font-size: 12px; color: #64748b;">
+                  Each level features 3 questions (1 star for each correct answer). Previous level must be solved with ≥1 star to unlock the next level.
+                </span>
+              </div>
+
+              <!-- Description -->
+              <div class="admin-form-group full-width">
+                <label class="admin-form-label" for="quiz-description">Description</label>
+                <div class="admin-textarea-icon-wrap">
+                  <svg class="admin-textarea-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="21" y1="10" x2="3" y2="10"></line>
+                    <line x1="21" y1="6" x2="3" y2="6"></line>
+                    <line x1="21" y1="14" x2="3" y2="14"></line>
+                    <line x1="21" y1="18" x2="7" y2="18"></line>
+                  </svg>
+                  <textarea 
+                    id="quiz-description" 
+                    class="admin-textarea-input" 
+                    placeholder="Enter quiz description..." 
+                    rows="3"
+                  ></textarea>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Card 2: Question & Options -->
+          <div class="admin-card admin-form-card">
+            <div class="admin-form-card-title-row">
+              <div class="admin-form-card-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="14" r="0.5"></circle>
+                  <path d="M12 7.5a2 2 0 0 1 2 2c0 1.25-1.5 1.5-1.5 2.5"></path>
+                </svg>
+              </div>
+              <h2 class="admin-card-title">Question & Options</h2>
+            </div>
+
+            <!-- Question Input with Rich Toolbar -->
+            <div class="admin-form-group" style="margin-bottom: 20px;">
+              <label class="admin-form-label" for="question-body">Question <span class="required-star">*</span></label>
+              <div class="admin-rich-editor-box">
+                <div class="admin-editor-toolbar">
+                  <button type="button" class="admin-editor-tool-btn" data-action="bold" title="Bold"><strong>B</strong></button>
+                  <button type="button" class="admin-editor-tool-btn" data-action="italic" title="Italic"><em>I</em></button>
+                  <button type="button" class="admin-editor-tool-btn" data-action="bullet" title="Bullet List">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="8" y1="6" x2="21" y2="6"></line>
+                      <line x1="8" y1="12" x2="21" y2="12"></line>
+                      <line x1="8" y1="18" x2="21" y2="18"></line>
+                      <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                      <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                      <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    </svg>
+                  </button>
+                  <button type="button" class="admin-editor-tool-btn" data-action="number" title="Numbered List">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="10" y1="6" x2="21" y2="6"></line>
+                      <line x1="10" y1="12" x2="21" y2="12"></line>
+                      <line x1="10" y1="18" x2="21" y2="18"></line>
+                      <path d="M4 6h1v4"></path>
+                      <path d="M4 10h2"></path>
+                    </svg>
+                  </button>
+                  <button type="button" class="admin-editor-tool-btn" data-action="link" title="Insert Link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                  </button>
+                </div>
+                <textarea 
+                  id="question-body" 
+                  class="admin-rich-textarea" 
+                  placeholder="Enter question here..." 
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Options 2x2 Grid -->
+            <div class="admin-options-grid">
+              
+              <!-- Option A -->
+              <div class="admin-option-box">
+                <div class="admin-option-badge">A</div>
+                <div class="admin-option-input-wrap">
+                  <label class="admin-option-label" for="option-a">Option A <span class="required-star">*</span></label>
+                  <input 
+                    type="text" 
+                    id="option-a" 
+                    class="admin-option-input" 
+                    placeholder="Enter option A..." 
+                    required 
+                  />
+                </div>
+              </div>
+
+              <!-- Option B -->
+              <div class="admin-option-box">
+                <div class="admin-option-badge">B</div>
+                <div class="admin-option-input-wrap">
+                  <label class="admin-option-label" for="option-b">Option B <span class="required-star">*</span></label>
+                  <input 
+                    type="text" 
+                    id="option-b" 
+                    class="admin-option-input" 
+                    placeholder="Enter option B..." 
+                    required 
+                  />
+                </div>
+              </div>
+
+              <!-- Option C -->
+              <div class="admin-option-box">
+                <div class="admin-option-badge">C</div>
+                <div class="admin-option-input-wrap">
+                  <label class="admin-option-label" for="option-c">Option C <span class="required-star">*</span></label>
+                  <input 
+                    type="text" 
+                    id="option-c" 
+                    class="admin-option-input" 
+                    placeholder="Enter option C..." 
+                    required 
+                  />
+                </div>
+              </div>
+
+              <!-- Option D -->
+              <div class="admin-option-box">
+                <div class="admin-option-badge">D</div>
+                <div class="admin-option-input-wrap">
+                  <label class="admin-option-label" for="option-d">Option D <span class="required-star">*</span></label>
+                  <input 
+                    type="text" 
+                    id="option-d" 
+                    class="admin-option-input" 
+                    placeholder="Enter option D..." 
+                    required 
+                  />
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Correct Option Selection -->
+            <div class="admin-correct-option-section">
+              <label class="admin-form-label">Correct option <span class="required-star">*</span></label>
+              <div class="admin-radio-group">
+                <label class="admin-radio-label">
+                  <input type="radio" name="correct-option" value="A" required checked />
+                  <span class="admin-radio-custom"></span>
+                  <span class="admin-radio-text">A</span>
+                </label>
+                <label class="admin-radio-label">
+                  <input type="radio" name="correct-option" value="B" />
+                  <span class="admin-radio-custom"></span>
+                  <span class="admin-radio-text">B</span>
+                </label>
+                <label class="admin-radio-label">
+                  <input type="radio" name="correct-option" value="C" />
+                  <span class="admin-radio-custom"></span>
+                  <span class="admin-radio-text">C</span>
+                </label>
+                <label class="admin-radio-label">
+                  <input type="radio" name="correct-option" value="D" />
+                  <span class="admin-radio-custom"></span>
+                  <span class="admin-radio-text">D</span>
+                </label>
+              </div>
+            </div>
+
+          </div>
+
+        </form>
+
+      </main>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="admin-toast" class="admin-toast"></div>
+
+    <script type="module" src="/src/adminCreateQuiz.ts"></script>
+  </body>
+</html>

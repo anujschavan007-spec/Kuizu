@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en" class="admin-html">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Problem - Admin KUIZU</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      
+      <!-- Left Sidebar (Fixed, Non-scrollable) -->
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-top">
+          <!-- Brand Logo -->
+          <a href="/admin" class="admin-sidebar-brand" style="text-decoration:none;">
+            <svg class="admin-logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 6C10 4.89543 10.8954 4 12 4C13.1046 4 14 4.89543 14 6V30C14 31.1046 13.1046 32 12 32C10.8954 32 10 31.1046 10 30V6Z" fill="#2563EB"/>
+              <path d="M26.2929 7.29289C27.083 6.50275 28.3637 6.50275 29.1539 7.29289C29.944 8.08304 29.944 9.3637 29.1539 10.1539L18.8077 20.5L29.1539 30.8461C29.944 31.6363 29.944 32.917 29.1539 33.7071C28.3637 34.4973 27.083 34.4973 26.2929 33.7071L14.5161 21.9304C13.726 21.1402 13.726 19.8598 14.5161 19.0696L26.2929 7.29289Z" fill="#3B82F6"/>
+            </svg>
+            <span class="admin-brand-name">KUIZU</span>
+          </a>
+
+          <!-- Nav Menu Items (Upload Problem is Active) -->
+          <nav class="admin-nav-menu">
+            <a href="/admin" class="admin-nav-item" id="nav-admin-home">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Home</span>
+            </a>
+
+            <a href="/admin/user" class="admin-nav-item" id="nav-admin-users">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Users</span>
+            </a>
+
+            <a href="/admin/uploadquiz" class="admin-nav-item" id="nav-admin-quiz">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m16 16-4-4-4 4"></path>
+              </svg>
+              <span>Upload Quiz</span>
+            </a>
+
+            <a href="/admin/dailykuizu" class="admin-nav-item" id="nav-admin-dailykuizu">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <path d="m9 16 2 2 4-4"></path>
+              </svg>
+              <span>Daily Kuizu</span>
+            </a>
+
+            <a href="/admin/uploadproblem" class="admin-nav-item active" id="nav-admin-problem">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Upload Problem</span>
+            </a>
+
+            <a href="/admin/adminbattle" class="admin-nav-item" id="nav-admin-battles">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline>
+                <line x1="13" y1="19" x2="19" y2="13"></line>
+                <line x1="16" y1="16" x2="20" y2="20"></line>
+                <line x1="19" y1="21" x2="21" y2="19"></line>
+                <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"></polyline>
+                <line x1="5" y1="14" x2="11" y2="20"></line>
+              </svg>
+              <span>Battles</span>
+            </a>
+
+            <a href="/admin/admincontest" class="admin-nav-item" id="nav-admin-contests">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+              <span>Contests</span>
+            </a>
+
+            <a href="/admin/adminquest" class="admin-nav-item" id="nav-admin-quest">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+              <span>Quests</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="admin-sidebar-footer">
+          <div class="admin-user-info" id="admin-user-profile-btn" title="Admin Profile">
+            <div class="admin-avatar-circle">
+              <img src="/images/admin_avatar.png" alt="Admin" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" />
+            </div>
+            <span class="admin-user-name">Admin</span>
+          </div>
+          <a href="/admin/settings" class="admin-gear-btn" title="Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Right Main Content (Scrollable) -->
+      <main class="admin-main">
+        
+        <!-- Header with Back Button and Save Problem -->
+        <header class="admin-details-topbar">
+          <div class="admin-details-header-left">
+            <a href="/admin/uploadproblem" class="admin-back-btn" title="Back to Problems">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </a>
+            <div>
+              <h1 class="admin-dashboard-title" style="margin:0;">Create Problem</h1>
+              <p class="admin-dashboard-subtitle" style="margin-top:2px;">
+                <a href="/admin/uploadproblem" style="color:#2563eb; font-weight:500; text-decoration:none;">Upload Problem</a> / Create Problem
+              </p>
+            </div>
+          </div>
+
+          <button class="admin-save-quiz-top-btn" id="save-problem-top-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            <span>Save Problem</span>
+          </button>
+        </header>
+
+        <form id="create-problem-form" class="admin-create-problem-form">
+          
+          <!-- Card 1: Problem Details -->
+          <div class="admin-card admin-form-card">
+            <div class="admin-form-card-title-row">
+              <div class="admin-form-card-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </div>
+              <h2 class="admin-card-title">Problem Details</h2>
+            </div>
+
+            <div class="admin-problem-details-grid">
+              
+              <!-- Row 1: Problem Title, Difficulty, Topic/Tags, Problem ID -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="prob-title">Problem Title <span class="required-star">*</span></label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="6" y1="3" x2="6" y2="15"></line>
+                    <circle cx="18" cy="6" r="3"></circle>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <path d="M18 9a9 9 0 0 1-9 9"></path>
+                  </svg>
+                  <input 
+                    type="text" 
+                    id="prob-title" 
+                    class="admin-text-input has-icon" 
+                    placeholder="Enter problem title..." 
+                    required 
+                  />
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="prob-difficulty">Difficulty <span class="required-star">*</span></label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                  <select id="prob-difficulty" class="admin-select-input" required>
+                    <option value="" disabled selected>Select difficulty</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                  </select>
+                  <svg class="admin-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="prob-tags">Topic / Tags <span class="required-star">*</span></label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                  </svg>
+                  <select id="prob-tags" class="admin-select-input" required>
+                    <option value="" disabled selected>Select topics/tags</option>
+                    <option value="Arrays">Arrays</option>
+                    <option value="Strings">Strings</option>
+                    <option value="Dynamic Programming">Dynamic Programming</option>
+                    <option value="Math">Math</option>
+                    <option value="Trees & Graphs">Trees & Graphs</option>
+                    <option value="Hash Table">Hash Table</option>
+                  </select>
+                  <svg class="admin-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="prob-id">Problem ID</label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="4" y1="9" x2="20" y2="9"></line>
+                    <line x1="4" y1="15" x2="20" y2="15"></line>
+                    <line x1="10" y1="3" x2="8" y2="21"></line>
+                    <line x1="16" y1="3" x2="14" y2="21"></line>
+                  </svg>
+                  <input 
+                    type="text" 
+                    id="prob-id" 
+                    class="admin-text-input has-icon admin-input-readonly" 
+                    value="P-20250421-001" 
+                    readonly 
+                  />
+                </div>
+                <span class="admin-id-hint">(Auto-generated)</span>
+              </div>
+
+              <!-- Row 2: Description (spans 2 columns), Time Limit, Memory Limit -->
+              <div class="admin-form-group span-2">
+                <label class="admin-form-label" for="prob-desc">Description <span class="required-star">*</span></label>
+                <div class="admin-textarea-icon-wrap">
+                  <svg class="admin-textarea-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="21" y1="10" x2="3" y2="10"></line>
+                    <line x1="21" y1="6" x2="3" y2="6"></line>
+                    <line x1="21" y1="14" x2="3" y2="14"></line>
+                    <line x1="21" y1="18" x2="7" y2="18"></line>
+                  </svg>
+                  <textarea 
+                    id="prob-desc" 
+                    class="admin-textarea-input" 
+                    placeholder="Enter short description..." 
+                    rows="2"
+                    required
+                  ></textarea>
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="prob-time-limit">Time Limit (seconds)</label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <input 
+                    type="number" 
+                    id="prob-time-limit" 
+                    class="admin-text-input has-icon" 
+                    placeholder="e.g. 1000" 
+                    value="1000" 
+                  />
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="prob-memory-limit">Memory Limit (MB)</label>
+                <div class="admin-input-icon-wrap">
+                  <svg class="admin-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                  </svg>
+                  <input 
+                    type="number" 
+                    id="prob-memory-limit" 
+                    class="admin-text-input has-icon" 
+                    placeholder="e.g. 256" 
+                    value="256" 
+                  />
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Card 2: Problem Statement -->
+          <div class="admin-card admin-form-card">
+            <div class="admin-form-card-title-row">
+              <div class="admin-form-card-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+              </div>
+              <h2 class="admin-card-title">Problem Statement</h2>
+            </div>
+
+            <div class="admin-rich-editor-box">
+              <div class="admin-editor-toolbar">
+                <button type="button" class="admin-editor-tool-btn" data-action="bold" title="Bold"><strong>B</strong></button>
+                <button type="button" class="admin-editor-tool-btn" data-action="italic" title="Italic"><em>I</em></button>
+                <button type="button" class="admin-editor-tool-btn" data-action="underline" title="Underline"><u>U</u></button>
+                <button type="button" class="admin-editor-tool-btn" data-action="link" title="Insert Link">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                  </svg>
+                </button>
+                <button type="button" class="admin-editor-tool-btn" data-action="bullet" title="Bullet List">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                </button>
+                <button type="button" class="admin-editor-tool-btn" data-action="number" title="Numbered List">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="10" y1="6" x2="21" y2="6"></line>
+                    <line x1="10" y1="12" x2="21" y2="12"></line>
+                    <line x1="10" y1="18" x2="21" y2="18"></line>
+                    <path d="M4 6h1v4"></path>
+                    <path d="M4 10h2"></path>
+                  </svg>
+                </button>
+                <button type="button" class="admin-editor-tool-btn" data-action="code" title="Code Block">
+                  <span style="font-family: monospace; font-weight:700;">&lt;&gt;</span>
+                </button>
+              </div>
+              <textarea 
+                id="prob-statement-text" 
+                class="admin-rich-textarea" 
+                placeholder="Write the full problem statement and constraints..." 
+                rows="4" 
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Card 3: Test Cases -->
+          <div class="admin-card admin-form-card">
+            <div class="admin-table-card-header" style="margin-bottom: 20px;">
+              <div class="admin-table-title-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 11l3 3L22 4"></path>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                <h2 class="admin-card-title">Test Cases</h2>
+              </div>
+
+              <div class="admin-test-case-actions">
+                <input type="file" id="test-case-file-input" style="display:none;" accept=".txt,.json,.csv" />
+                <button type="button" class="admin-btn-outline" id="btn-upload-test-cases">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <span>Upload Test Cases</span>
+                </button>
+
+                <button type="button" class="admin-btn-outline" id="btn-add-test-case">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span>Add Test Case</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-data-table" id="test-cases-table">
+                <thead>
+                  <tr>
+                    <th style="width: 48px;">#</th>
+                    <th>Test Case Name</th>
+                    <th>Input</th>
+                    <th>Expected Output</th>
+                    <th>Visibility</th>
+                    <th style="width: 90px; text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="test-cases-tbody">
+                  <!-- Dynamically populated or added via Add Test Case / Upload -->
+                  <tr id="test-cases-empty-row">
+                    <td colspan="6" style="text-align: center; padding: 36px 16px; background: #f8fafc; color: #64748b;">
+                      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #94a3b8;">
+                          <path d="M9 11l3 3L22 4"></path>
+                          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span style="font-weight: 600; font-size: 14px; color: #475569;">No test cases added yet</span>
+                        <span style="font-size: 13px; color: #94a3b8;">Click "+ Add Test Case" above to manually add test cases, or "Upload Test Cases" to import.</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Card 4: Examples -->
+          <div class="admin-card admin-form-card">
+            <div class="admin-table-card-header" style="margin-bottom: 20px;">
+              <div class="admin-table-title-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+                <h2 class="admin-card-title">Examples</h2>
+              </div>
+
+              <button type="button" class="admin-btn-outline" id="btn-add-example">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Add Example</span>
+              </button>
+            </div>
+
+            <div class="admin-examples-grid" id="examples-container">
+              <!-- Dynamically populated or added by Add Example button -->
+              <div id="examples-empty-state" style="grid-column: 1 / -1; text-align: center; padding: 32px 16px; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 12px; color: #64748b;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 8px; color: #94a3b8;">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+                <p style="margin: 0; font-size: 14px; font-weight: 500;">No examples added yet.</p>
+                <p style="margin: 4px 0 0 0; font-size: 13px; color: #94a3b8;">Click "+ Add Example" above to add input/output demonstration cases.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 5: Input / Output Format & Constraints -->
+          <div class="admin-card admin-form-card">
+            <div class="admin-form-card-title-row">
+              <div class="admin-form-card-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+              </div>
+              <h2 class="admin-card-title">Input / Output Format</h2>
+            </div>
+
+            <div class="admin-io-format-grid">
+              <!-- Input Format -->
+              <div class="admin-form-group">
+                <div class="admin-format-header">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="9" y1="9" x2="15" y2="9"></line>
+                    <line x1="9" y1="13" x2="15" y2="13"></line>
+                    <line x1="9" y1="17" x2="13" y2="17"></line>
+                  </svg>
+                  <label class="admin-form-label" for="prob-input-format" style="margin:0;">Input Format <span class="required-star">*</span></label>
+                </div>
+                <div class="admin-textarea-icon-wrap" style="margin-top: 8px;">
+                  <svg class="admin-textarea-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  </svg>
+                  <textarea 
+                    id="prob-input-format" 
+                    class="admin-textarea-input" 
+                    placeholder="Describe the input format..." 
+                    rows="3" 
+                    required
+                  ></textarea>
+                </div>
+              </div>
+
+              <!-- Output Format -->
+              <div class="admin-form-group">
+                <div class="admin-format-header">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  <label class="admin-form-label" for="prob-output-format" style="margin:0;">Output Format <span class="required-star">*</span></label>
+                </div>
+                <div class="admin-textarea-icon-wrap" style="margin-top: 8px;">
+                  <svg class="admin-textarea-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  <textarea 
+                    id="prob-output-format" 
+                    class="admin-textarea-input" 
+                    placeholder="Describe the output format..." 
+                    rows="3" 
+                    required
+                  ></textarea>
+                </div>
+              </div>
+
+              <!-- Constraints -->
+              <div class="admin-form-group">
+                <div class="admin-format-header">
+                  <span style="font-family: monospace; font-weight:700; color:#2563eb;">&lt;&gt;</span>
+                  <label class="admin-form-label" for="prob-constraints" style="margin:0;">Constraints <span class="required-star">*</span></label>
+                </div>
+                <div class="admin-textarea-icon-wrap" style="margin-top: 8px;">
+                  <svg class="admin-textarea-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                  <textarea 
+                    id="prob-constraints" 
+                    class="admin-textarea-input" 
+                    placeholder="Add constraints (e.g. 1 ≤ n ≤ 10^5)..." 
+                    rows="3" 
+                    required
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Actions Row -->
+          <div class="admin-bottom-actions-row">
+            <a href="/admin/uploadproblem" class="admin-cancel-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              <span>Cancel</span>
+            </a>
+
+            <button type="submit" class="admin-save-quiz-top-btn" id="save-problem-bottom-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              <span>Save Problem</span>
+            </button>
+          </div>
+
+        </form>
+
+      </main>
+
+    </div>
+
+    <!-- Add/Edit Test Case Modal -->
+    <div id="test-case-modal" class="admin-modal-backdrop" style="display:none;">
+      <div class="admin-modal-dialog">
+        <div class="admin-modal-header">
+          <h3 class="admin-modal-title" id="tc-modal-title">Add Test Case</h3>
+          <button class="admin-modal-close" id="close-tc-modal">✕</button>
+        </div>
+        <form id="tc-form" class="admin-modal-form">
+          <input type="hidden" id="modal-tc-edit-id" value="" />
+          <div class="admin-form-group">
+            <label for="modal-tc-name">Test Case Name</label>
+            <input type="text" id="modal-tc-name" class="admin-form-input" placeholder="e.g. Test Case 4" required />
+          </div>
+          <div class="admin-form-group">
+            <label for="modal-tc-input">Input</label>
+            <textarea id="modal-tc-input" class="admin-form-input font-mono" placeholder="Enter input data..." rows="3" required></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label for="modal-tc-output">Expected Output</label>
+            <textarea id="modal-tc-output" class="admin-form-input font-mono" placeholder="Enter expected output..." rows="2" required></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label for="modal-tc-visibility">Visibility</label>
+            <select id="modal-tc-visibility" class="admin-form-input">
+              <option value="Sample">Sample (Visible to students)</option>
+              <option value="Hidden" selected>Hidden (Grading only)</option>
+            </select>
+          </div>
+          <div class="admin-modal-actions">
+            <button type="button" class="admin-btn-secondary" id="cancel-tc-btn">Cancel</button>
+            <button type="submit" class="admin-btn-primary" id="save-tc-btn">Save Test Case</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add/Edit Example Modal -->
+    <div id="example-modal" class="admin-modal-backdrop" style="display:none;">
+      <div class="admin-modal-dialog">
+        <div class="admin-modal-header">
+          <h3 class="admin-modal-title" id="example-modal-title">Add Example</h3>
+          <button class="admin-modal-close" id="close-example-modal">✕</button>
+        </div>
+        <form id="example-form" class="admin-modal-form">
+          <input type="hidden" id="modal-example-edit-id" value="" />
+          <div class="admin-form-group">
+            <label for="modal-example-input">Sample Input <span class="required-star">*</span></label>
+            <textarea id="modal-example-input" class="admin-form-input font-mono" placeholder="e.g. 5&#10;1 2 3 4 5" rows="3" required></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label for="modal-example-output">Sample Output <span class="required-star">*</span></label>
+            <textarea id="modal-example-output" class="admin-form-input font-mono" placeholder="e.g. 15" rows="2" required></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label for="modal-example-explanation">Explanation (Optional)</label>
+            <textarea id="modal-example-explanation" class="admin-form-input" placeholder="Explain why the input leads to this output..." rows="2"></textarea>
+          </div>
+          <div class="admin-modal-actions">
+            <button type="button" class="admin-btn-secondary" id="cancel-example-btn">Cancel</button>
+            <button type="submit" class="admin-btn-primary" id="save-example-btn">Save Example</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="admin-toast" class="admin-toast"></div>
+
+    <script type="module" src="/src/adminCreateProblem.ts"></script>
+  </body>
+</html>

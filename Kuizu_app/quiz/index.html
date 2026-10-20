@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Adventure • KUIZU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="quiz-page-body">
+
+    <!-- Top Navigation Header -->
+    <header class="home-header">
+      <div class="container home-nav-container">
+        
+        <!-- Brand Logo -->
+        <a href="/home" class="brand-logo" aria-label="KUIZU Home">
+          <svg class="brand-icon" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.5 3C7.5 3 3 7 3 13V22C3 28 8 33 13.5 33C17.5 33 21 30.5 22.5 26.5L24 23L25.5 26.5C27 30.5 30.5 33 34.5 33C40 33 45 28 45 22V13C45 7 40.5 3 35.5 3H12.5Z" fill="url(#quizBrandGrad)" />
+            <path d="M11 15H17M14 12V18" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="31.5" cy="17.5" r="2.2" fill="white" />
+            <circle cx="36.5" cy="13.5" r="2.2" fill="white" />
+            <defs>
+              <linearGradient id="quizBrandGrad" x1="3" y1="3" x2="45" y2="33" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4F46E5" />
+                <stop offset="1" stop-color="#7C3AED" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand-text">KUIZU</span>
+        </a>
+
+        <!-- Middle Navigation Tabs -->
+        <nav class="home-nav-tabs">
+          <a href="/home" class="nav-tab nav-tab-inactive" id="tab-nav-home">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            <span>Home</span>
+          </a>
+
+          <a href="/problems" class="nav-tab nav-tab-inactive" id="tab-nav-problems">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Problems</span>
+          </a>
+
+          <a href="/quiz" class="nav-tab active" id="tab-nav-quiz">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="m9 14 2 2 4-4"></path>
+            </svg>
+            <span>Quiz</span>
+          </a>
+
+          <a href="/battle" class="nav-tab nav-tab-inactive" id="tab-nav-battle">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="14.5" y1="9.5" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="9.5" y2="14.5"></line>
+              <line x1="16" y1="3" x2="21" y2="8"></line>
+              <line x1="3" y1="16" x2="8" y2="21"></line>
+              <line x1="9.5" y1="9.5" x2="3" y2="3"></line>
+              <line x1="21" y1="21" x2="14.5" y2="14.5"></line>
+            </svg>
+            <span>Battle</span>
+          </a>
+        </nav>
+
+        <!-- Right User Profile Pill & Dropdown -->
+        <div class="user-profile-menu-wrap">
+          <button type="button" class="user-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false">
+            <img src="/images/home_avatar.png" alt="User Profile Avatar" class="user-nav-avatar" />
+            <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <!-- Exact Profile Pop-up Card -->
+          <div class="user-dropdown-menu profile-popup-card" id="user-dropdown">
+            <div class="popup-user-header">
+              <div class="popup-avatar-wrap">
+                <img src="/images/home_avatar.png" alt="Anuj Profile" class="popup-avatar-img" />
+              </div>
+              <div class="popup-user-details">
+                <h3 class="popup-user-name" id="menu-user-name">Anuj</h3>
+                <div class="popup-xp-badge">
+                  <svg class="popup-star-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  <span id="menu-user-xp">2,450 XP</span>
+                </div>
+              </div>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <div class="popup-menu-list">
+              <button type="button" class="popup-menu-item" id="btn-menu-leaderboard">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                  </svg>
+                  <span>Leaderboard</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <button type="button" class="popup-menu-item" id="btn-menu-theme">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+                  </svg>
+                  <span>Theme</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <button type="button" class="popup-menu-item" id="btn-menu-settings">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <span>Settings</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <!-- 4. Admin Panel (Strictly shown only if user email is anujschavan007@gmail.com) -->
+              <a href="/admin" class="popup-menu-item popup-menu-admin" id="btn-menu-admin" style="display: none;">
+                <div class="menu-item-left">
+                  <svg class="menu-icon admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <rect x="9" y="11" width="6" height="5" rx="1"></rect>
+                    <path d="M10 11V9a2 2 0 1 1 4 0v2"></path>
+                  </svg>
+                  <span>Admin Panel</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <a href="/sign-in" class="popup-logout-btn" id="btn-logout">
+              <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Logout</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Quiz Container (Non-scrolling on desktop) -->
+    <main class="quiz-main-layout">
+      
+      <!-- Top Title Area floating in the sky -->
+      <div class="quiz-sky-header">
+        <div class="quiz-challenge-badge">
+          <svg class="target-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+          </svg>
+          <span>Quiz Challenge</span>
+        </div>
+        <h1 class="quiz-main-heading">Level Up Your <span class="text-gradient-purple">Knowledge</span></h1>
+        <p class="quiz-subheading">Take quizzes, earn XP and unlock new levels. Keep going!</p>
+      </div>
+
+      <!-- Adventure Quiz Map Canvas -->
+      <div class="quiz-map-stage" id="quiz-map-stage">
+        <div class="quiz-map-wrapper">
+          <!-- Clean Background Scene without any baked-in text or levels -->
+          <img src="/images/quiz_clean_map_bg.jpg" alt="Scenic quiz map background" class="quiz-map-base-art" />
+
+          <!-- SVG Connecting Trail between all 4 Levels -->
+          <svg class="levels-connecting-trail" viewBox="0 0 1000 562" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="trailGlowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.9" />
+                <stop offset="30%" stop-color="#FBBF24" stop-opacity="0.8" />
+                <stop offset="70%" stop-color="#E2E8F0" stop-opacity="0.6" />
+                <stop offset="100%" stop-color="#CBD5E1" stop-opacity="0.4" />
+              </linearGradient>
+              <filter id="trailShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.35"/>
+              </filter>
+            </defs>
+
+            <!-- Base Trail Shadow Path -->
+            <path d="M 140 405 Q 240 385 360 360 Q 470 330 580 305 Q 680 260 780 215"
+                  fill="none" stroke="rgba(15, 23, 42, 0.25)" stroke-width="12" stroke-linecap="round" />
+
+            <!-- Connecting Stepping Stones / Dashed Trail -->
+            <path d="M 140 405 Q 240 385 360 360 Q 470 330 580 305 Q 680 260 780 215"
+                  fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="14 12" stroke-linecap="round" filter="url(#trailShadow)" />
+
+            <!-- Active Glowing Energy Line connecting Unlocked Levels -->
+            <path id="active-trail-segment" d="M 140 405 Q 240 385 360 360"
+                  fill="none" stroke="url(#trailGlowGrad)" stroke-width="5" stroke-linecap="round" class="active-energy-trail" />
+          </svg>
+
+          <!-- Interactive Level 1 Node (Golden Circle, Active Flag, 3 Stars) -->
+          <div class="map-level-node level-1-node unlocked" id="node-level-1" data-level="1" style="left: 14%; top: 72%;">
+            <!-- Tooltip Sign -->
+            <div class="node-sign-bubble wooden-sign-unlocked">
+              <span class="sign-lvl-title">Level 1</span>
+              <span class="sign-status-pill badge-unlocked">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Unlocked</span>
+              </span>
+            </div>
+
+            <!-- Custom Designed Clickable Pedestal Disc -->
+            <button type="button" class="pedestal-disc-btn disc-golden" aria-label="Open Level 1">
+              <span class="pedestal-glow-ring"></span>
+              <span class="pedestal-outer-ring">
+                <span class="pedestal-inner-circle">
+                  <span class="pedestal-number">1</span>
+                </span>
+              </span>
+              <span class="pedestal-flag-marker" style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: #ef4444; color: #ffffff; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.45);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                  <line x1="4" y1="22" x2="4" y2="15"></line>
+                </svg>
+              </span>
+            </button>
+
+            <!-- 3 Stars Rating Display (Requested: each level contains 3 stars with clickable levels) -->
+            <div class="node-stars-row" id="stars-level-1">
+              <span class="level-star star-filled">★</span>
+              <span class="level-star star-filled">★</span>
+              <span class="level-star star-empty">★</span>
+            </div>
+          </div>
+
+          <!-- Interactive Level 2 Node -->
+          <div class="map-level-node level-2-node locked" id="node-level-2" data-level="2" style="left: 36%; top: 64%;">
+            <!-- Tooltip Sign -->
+            <div class="node-sign-bubble bubble-locked">
+              <span class="sign-lvl-title">Level 2</span>
+              <span class="sign-status-pill badge-locked">
+                <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span>Locked</span>
+              </span>
+            </div>
+
+            <!-- Custom Designed Clickable Stone Disc -->
+            <button type="button" class="pedestal-disc-btn disc-stone" aria-label="Open Level 2 (Locked)">
+              <span class="pedestal-outer-ring">
+                <span class="pedestal-inner-circle">
+                  <span class="pedestal-lock-icon">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                      <path d="M19 11h-1V7A6 6 0 0 0 6 7v4H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zM8 7a4 4 0 0 1 8 0v4H8V7z"/>
+                    </svg>
+                  </span>
+                  <span class="pedestal-number">2</span>
+                </span>
+              </span>
+            </button>
+
+            <!-- 3 Stars Rating Display -->
+            <div class="node-stars-row" id="stars-level-2">
+              <span class="level-star star-empty">★</span>
+              <span class="level-star star-empty">★</span>
+              <span class="level-star star-empty">★</span>
+            </div>
+          </div>
+
+          <!-- Interactive Level 3 Node -->
+          <div class="map-level-node level-3-node locked" id="node-level-3" data-level="3" style="left: 58%; top: 54%;">
+            <!-- Tooltip Sign -->
+            <div class="node-sign-bubble bubble-locked">
+              <span class="sign-lvl-title">Level 3</span>
+              <span class="sign-status-pill badge-locked">
+                <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span>Locked</span>
+              </span>
+            </div>
+
+            <!-- Custom Designed Clickable Stone Disc -->
+            <button type="button" class="pedestal-disc-btn disc-stone" aria-label="Open Level 3 (Locked)">
+              <span class="pedestal-outer-ring">
+                <span class="pedestal-inner-circle">
+                  <span class="pedestal-lock-icon">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                      <path d="M19 11h-1V7A6 6 0 0 0 6 7v4H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zM8 7a4 4 0 0 1 8 0v4H8V7z"/>
+                    </svg>
+                  </span>
+                  <span class="pedestal-number">3</span>
+                </span>
+              </span>
+            </button>
+
+            <!-- 3 Stars Rating Display -->
+            <div class="node-stars-row" id="stars-level-3">
+              <span class="level-star star-empty">★</span>
+              <span class="level-star star-empty">★</span>
+              <span class="level-star star-empty">★</span>
+            </div>
+          </div>
+
+          <!-- Interactive Level 4 Node -->
+          <div class="map-level-node level-4-node locked" id="node-level-4" data-level="4" style="left: 78%; top: 38%;">
+            <!-- Tooltip Sign -->
+            <div class="node-sign-bubble bubble-locked">
+              <span class="sign-lvl-title">Level 4</span>
+              <span class="sign-status-pill badge-locked">
+                <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span>Locked</span>
+              </span>
+            </div>
+
+            <!-- Custom Designed Clickable Stone Disc -->
+            <button type="button" class="pedestal-disc-btn disc-stone" aria-label="Open Level 4 (Locked)">
+              <span class="pedestal-outer-ring">
+                <span class="pedestal-inner-circle">
+                  <span class="pedestal-lock-icon">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                      <path d="M19 11h-1V7A6 6 0 0 0 6 7v4H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zM8 7a4 4 0 0 1 8 0v4H8V7z"/>
+                    </svg>
+                  </span>
+                  <span class="pedestal-number">4</span>
+                </span>
+              </span>
+            </button>
+
+            <!-- 3 Stars Rating Display -->
+            <div class="node-stars-row" id="stars-level-4">
+              <span class="level-star star-empty">★</span>
+              <span class="level-star star-empty">★</span>
+              <span class="level-star star-empty">★</span>
+            </div>
+          </div>
+
+          <!-- Bottom-left Wooden Sign: "Better Every Day :)" -->
+          <div class="wooden-motto-sign" style="left: 7.5%; top: 88%;">
+            <div class="motto-wood-plank">
+              <span>Better</span>
+              <span>Every Day ☺</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal 1: Level Overview & Start Modal -->
+    <div class="quiz-modal-backdrop" id="modal-level-overview" aria-hidden="true">
+      <div class="quiz-level-card-popup" role="dialog" aria-modal="true">
+        
+        <button type="button" class="modal-close-icon-btn" id="btn-close-overview" aria-label="Close modal">
+          ✕
+        </button>
+
+        <!-- Level Header with Stars -->
+        <div class="level-popup-header">
+          <div class="level-badge-pill" id="modal-level-badge">Level 1</div>
+          <h2 class="level-popup-title" id="modal-level-title">Syntax & Variables</h2>
+          <p class="level-popup-desc" id="modal-level-desc">Learn variables, primitives, operators, and basic programming fundamentals.</p>
+          
+          <!-- 3 Stars Progress -->
+          <div class="modal-stars-container">
+            <span class="modal-star star-active" id="modal-star-1">★</span>
+            <span class="modal-star star-active" id="modal-star-2">★</span>
+            <span class="modal-star" id="modal-star-3">★</span>
+          </div>
+          <span class="modal-stars-caption" id="modal-stars-caption">2 / 3 Stars Earned</span>
+        </div>
+
+        <!-- Level Stats Grid -->
+        <div class="level-stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">Questions</span>
+            <span class="stat-value" id="modal-stat-questions">10</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Max Reward</span>
+            <span class="stat-value text-gold" id="modal-stat-xp">+30 XP</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Time Limit</span>
+            <span class="stat-value" id="modal-stat-time">10:00</span>
+          </div>
+        </div>
+
+        <!-- Start Button -->
+        <div class="level-popup-actions">
+          <button type="button" class="btn-start-quiz" id="btn-launch-quiz">
+            <span>Start Quiz</span>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Modal 2: Interactive Playable Quiz Arena (Matching img4_level_page.png) -->
+    <div class="quiz-arena-overlay" id="quiz-arena-overlay" aria-hidden="true">
+      <div class="arena-background-scene">
+        <!-- Floating decorative elements -->
+        <div class="arena-leaves-left"></div>
+        <div class="arena-leaves-right"></div>
+      </div>
+
+      <div class="arena-content-container">
+        
+        <!-- Top Level Badge & Segmented Progress Bar -->
+        <div class="arena-top-bar">
+          <div class="arena-level-wood-badge">
+            <span id="arena-level-indicator">Level 1</span>
+          </div>
+
+          <div class="arena-segmented-progress" id="arena-segmented-progress">
+            <div class="progress-segment active"></div>
+            <div class="progress-segment"></div>
+            <div class="progress-segment"></div>
+            <div class="progress-segment"></div>
+            <div class="progress-segment"></div>
+            <div class="progress-segment"></div>
+            <div class="progress-segment"></div>
+            <div class="progress-segment"></div>
+            <div class="progress-segment"></div>
+            <div class="progress-segment"></div>
+          </div>
+
+          <button type="button" class="arena-exit-btn" id="btn-exit-arena" aria-label="Exit quiz">
+            ✕ Exit
+          </button>
+        </div>
+
+        <!-- Main Question Card (Matching img4_level_page.png) -->
+        <div class="arena-question-card">
+          
+          <div class="arena-card-header">
+            <div class="arena-badge-group">
+              <span class="pill-q-count" id="arena-question-counter">Question 1 of 10</span>
+              <span class="pill-xp-reward" id="arena-question-xp">⭐ +15 XP</span>
+            </div>
+
+            <!-- Digital Timer Pill -->
+            <div class="arena-timer-pill" id="arena-timer-display">
+              <svg class="timer-clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span id="timer-text">09:42</span>
+            </div>
+          </div>
+
+          <!-- Big Question Title -->
+          <h2 class="arena-question-text" id="arena-question-text">
+            What is the correct answer?
+          </h2>
+
+        </div>
+
+        <!-- 4 Multiple Choice Option Cards (2x2 Grid) -->
+        <div class="arena-options-grid" id="arena-options-grid">
+          
+          <!-- Option A -->
+          <button type="button" class="arena-option-card" data-option="A">
+            <div class="option-letter-badge">A</div>
+            <span class="option-text">Option text here</span>
+            <span class="option-check-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+          </button>
+
+          <!-- Option B -->
+          <button type="button" class="arena-option-card selected" data-option="B">
+            <div class="option-letter-badge">B</div>
+            <span class="option-text">Option text here</span>
+            <span class="option-check-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+          </button>
+
+          <!-- Option C -->
+          <button type="button" class="arena-option-card" data-option="C">
+            <div class="option-letter-badge">C</div>
+            <span class="option-text">Option text here</span>
+            <span class="option-check-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+          </button>
+
+          <!-- Option D -->
+          <button type="button" class="arena-option-card" data-option="D">
+            <div class="option-letter-badge">D</div>
+            <span class="option-text">Option text here</span>
+            <span class="option-check-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+          </button>
+
+        </div>
+
+        <!-- Navigation Buttons: Previous & Next -->
+        <div class="arena-bottom-nav">
+          <button type="button" class="arena-nav-btn btn-prev" id="btn-quiz-prev" disabled>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Previous</span>
+          </button>
+
+          <button type="button" class="arena-nav-btn btn-next" id="btn-quiz-next">
+            <span>Next</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Modal 3: Quiz Victory & Results Dialog -->
+    <div class="quiz-modal-backdrop" id="modal-quiz-results" aria-hidden="true">
+      <div class="quiz-results-card" role="dialog" aria-modal="true">
+        
+        <div class="results-trophy-wrap" style="display: flex; align-items: center; justify-content: center; width: 72px; height: 72px; margin: 0 auto 16px auto; border-radius: 20px; background: linear-gradient(135deg, #fef3c7, #fde68a); color: #d97706; box-shadow: 0 10px 25px -5px rgba(217, 119, 6, 0.35);">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+            <path d="M4 22h16"></path>
+            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+          </svg>
+        </div>
+
+        <h2 class="results-title">Level Completed!</h2>
+        <p class="results-subtitle" id="results-level-subtitle">Great job mastering Syntax & Variables!</p>
+
+        <!-- 3 Stars Earned Display -->
+        <div class="results-stars-row" id="results-stars-row">
+          <span class="res-star star-gold">★</span>
+          <span class="res-star star-gold">★</span>
+          <span class="res-star star-gold">★</span>
+        </div>
+        <p class="results-stars-label" id="results-stars-label">3 / 3 Stars Earned</p>
+
+        <!-- Score & XP Badges -->
+        <div class="results-score-grid">
+          <div class="score-pill">
+            <span class="pill-k">Score</span>
+            <span class="pill-v" id="results-score-text">9 / 10</span>
+          </div>
+          <div class="score-pill">
+            <span class="pill-k">XP Earned</span>
+            <span class="pill-v text-gold" id="results-xp-text">+30 XP</span>
+          </div>
+        </div>
+
+        <div class="results-actions" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+          <button type="button" class="btn-results-continue" id="btn-results-continue">
+            <span>Continue Adventure</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+          <button type="button" id="btn-reopen-quiz-badge-3d" style="
+            display: none;
+            width: 100%;
+            padding: 11px 18px;
+            border-radius: 12px;
+            background: #fdf2f8;
+            border: 1px solid #fbcfe8;
+            color: #db2777;
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+          ">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>Inspect 3D Pink Solver Badge</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Quiz Controller Script -->
+    <script type="module" src="/src/quiz.ts"></script>
+  </body>
+</html>

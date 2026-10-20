@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en" class="admin-html">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - Admin KUIZU</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      
+      <!-- Left Sidebar (Fixed, Non-scrollable) -->
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-top">
+          <!-- Brand Logo -->
+          <a href="/admin" class="admin-sidebar-brand" style="text-decoration:none;">
+            <svg class="admin-logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 6C10 4.89543 10.8954 4 12 4C13.1046 4 14 4.89543 14 6V30C14 31.1046 13.1046 32 12 32C10.8954 32 10 31.1046 10 30V6Z" fill="#2563EB"/>
+              <path d="M26.2929 7.29289C27.083 6.50275 28.3637 6.50275 29.1539 7.29289C29.944 8.08304 29.944 9.3637 29.1539 10.1539L18.8077 20.5L29.1539 30.8461C29.944 31.6363 29.944 32.917 29.1539 33.7071C28.3637 34.4973 27.083 34.4973 26.2929 33.7071L14.5161 21.9304C13.726 21.1402 13.726 19.8598 14.5161 19.0696L26.2929 7.29289Z" fill="#3B82F6"/>
+            </svg>
+            <span class="admin-brand-name">KUIZU</span>
+          </a>
+
+          <!-- Nav Menu Items -->
+          <nav class="admin-nav-menu">
+            <a href="/admin" class="admin-nav-item" id="nav-admin-home">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Home</span>
+            </a>
+
+            <a href="/admin/user" class="admin-nav-item" id="nav-admin-users">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Users</span>
+            </a>
+
+            <a href="/admin/uploadquiz" class="admin-nav-item" id="nav-admin-quiz">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m16 16-4-4-4 4"></path>
+              </svg>
+              <span>Upload Quiz</span>
+            </a>
+
+            <a href="/admin/dailykuizu" class="admin-nav-item" id="nav-admin-dailykuizu">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <path d="m9 16 2 2 4-4"></path>
+              </svg>
+              <span>Daily Kuizu</span>
+            </a>
+
+            <a href="/admin/uploadproblem" class="admin-nav-item" id="nav-admin-problem">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Upload Problem</span>
+            </a>
+
+            <a href="/admin/adminbattle" class="admin-nav-item" id="nav-admin-battles">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline>
+                <line x1="13" y1="19" x2="19" y2="13"></line>
+                <line x1="16" y1="16" x2="20" y2="20"></line>
+                <line x1="19" y1="21" x2="21" y2="19"></line>
+                <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"></polyline>
+                <line x1="5" y1="14" x2="11" y2="20"></line>
+              </svg>
+              <span>Battles</span>
+            </a>
+
+            <a href="/admin/admincontest" class="admin-nav-item" id="nav-admin-contests">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+              <span>Contests</span>
+            </a>
+
+            <a href="/admin/adminquest" class="admin-nav-item" id="nav-admin-quest">
+              <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+              <span>Quest</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Sidebar Footer (Active Gear Icon) -->
+        <div class="admin-sidebar-footer">
+          <div class="admin-user-info" id="admin-user-profile-btn" title="Admin Profile">
+            <div class="admin-avatar-circle">
+              <img src="/images/admin_avatar.png" alt="Admin" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" />
+            </div>
+            <span class="admin-user-name">Admin</span>
+          </div>
+          <a href="/admin/settings" class="admin-gear-btn active" title="Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Right Main Content (Scrollable) -->
+      <main class="admin-main">
+        
+        <!-- Topbar -->
+        <header class="admin-topbar">
+          <div class="admin-settings-topbar-left">
+            <div class="admin-settings-title-icon-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </div>
+            <div>
+              <h1 class="admin-dashboard-title">Settings</h1>
+              <p class="admin-dashboard-subtitle">Manage your account preferences and application settings.</p>
+            </div>
+          </div>
+        </header>
+
+        <!-- Settings Main 2-Column Grid -->
+        <div class="admin-settings-layout-grid">
+          
+          <!-- Left Navigation Tabs -->
+          <aside class="admin-settings-nav-col">
+            <div class="admin-settings-tabs-list">
+              <button type="button" class="admin-setting-tab-btn active" data-tab="general">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>General</span>
+              </button>
+
+              <button type="button" class="admin-setting-tab-btn" data-tab="appearance">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                  <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                  <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                  <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                  <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path>
+                </svg>
+                <span>Appearance</span>
+              </button>
+
+              <button type="button" class="admin-setting-tab-btn" data-tab="notifications">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span>Notifications</span>
+              </button>
+
+              <button type="button" class="admin-setting-tab-btn" data-tab="account">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Account</span>
+              </button>
+
+              <button type="button" class="admin-setting-tab-btn" data-tab="privacy">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+                <span>Privacy & Security</span>
+              </button>
+
+              <button type="button" class="admin-setting-tab-btn" data-tab="support">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span>Help & Support</span>
+              </button>
+
+              <button type="button" class="admin-setting-tab-btn" data-tab="audio">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 18V5l12-2v13"></path>
+                  <circle cx="6" cy="18" r="3"></circle>
+                  <circle cx="18" cy="16" r="3"></circle>
+                </svg>
+                <span>Game Audio & BGM</span>
+              </button>
+            </div>
+
+            <!-- Reset to Default Button at bottom of left column -->
+            <button type="button" class="admin-reset-default-btn" id="btn-reset-settings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                <path d="M3 3v5h5"></path>
+              </svg>
+              <span>Reset to Default</span>
+            </button>
+          </aside>
+
+          <!-- Right Content Column: Settings Panels -->
+          <div class="admin-settings-content-col">
+            
+            <!-- Card 1: Appearance -->
+            <div class="admin-card admin-setting-card" id="section-appearance">
+              <div class="admin-setting-card-header">
+                <div class="admin-setting-header-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="admin-setting-card-title">Appearance</h2>
+                  <p class="admin-setting-card-desc">Customize how KUIZU looks and feels.</p>
+                </div>
+              </div>
+
+              <div class="admin-appearance-body-grid">
+                <!-- Theme Section -->
+                <div class="admin-theme-select-block">
+                  <label class="admin-setting-label">Theme</label>
+                  <div class="admin-theme-segmented-group">
+                    <button type="button" class="admin-theme-segment-btn active" data-theme="light">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                      </svg>
+                      <span>Light</span>
+                    </button>
+
+                    <button type="button" class="admin-theme-segment-btn" data-theme="dark">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                      </svg>
+                      <span>Dark</span>
+                    </button>
+
+                    <button type="button" class="admin-theme-segment-btn" data-theme="system">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                      </svg>
+                      <span>System</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Vertical Divider -->
+                <div class="admin-appearance-divider"></div>
+
+                <!-- Accent Color Section -->
+                <div class="admin-accent-select-block">
+                  <label class="admin-setting-label">Accent Color</label>
+                  <div class="admin-accent-colors-row">
+                    <button type="button" class="admin-accent-color-btn active" data-color="#2563EB" style="--accent-val: #2563EB;" title="Blue"></button>
+                    <button type="button" class="admin-accent-color-btn" data-color="#8B5CF6" style="--accent-val: #8B5CF6;" title="Purple"></button>
+                    <button type="button" class="admin-accent-color-btn" data-color="#10B981" style="--accent-val: #10B981;" title="Green"></button>
+                    <button type="button" class="admin-accent-color-btn" data-color="#F97316" style="--accent-val: #F97316;" title="Orange"></button>
+                    <button type="button" class="admin-accent-color-btn" data-color="#F43F5E" style="--accent-val: #F43F5E;" title="Rose"></button>
+                    <button type="button" class="admin-accent-color-btn" data-color="#06B6D4" style="--accent-val: #06B6D4;" title="Cyan"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Notifications -->
+            <div class="admin-card admin-setting-card" id="section-notifications">
+              <div class="admin-setting-card-header">
+                <div class="admin-setting-header-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="admin-setting-card-title">Notifications</h2>
+                  <p class="admin-setting-card-desc">Choose what you want to be notified about.</p>
+                </div>
+              </div>
+
+              <div class="admin-notifications-list">
+                <!-- Item 1: Email Notifications (ON) -->
+                <div class="admin-setting-toggle-row">
+                  <div class="admin-toggle-info-left">
+                    <div class="admin-toggle-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                    </div>
+                    <div class="admin-toggle-texts">
+                      <span class="admin-toggle-title">Email Notifications</span>
+                      <span class="admin-toggle-desc">Receive important updates via email.</span>
+                    </div>
+                  </div>
+                  <label class="admin-switch">
+                    <input type="checkbox" id="toggle-email-notif" checked />
+                    <span class="admin-switch-slider"></span>
+                  </label>
+                </div>
+
+                <!-- Item 2: Platform Notifications (ON) -->
+                <div class="admin-setting-toggle-row">
+                  <div class="admin-toggle-info-left">
+                    <div class="admin-toggle-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                      </svg>
+                    </div>
+                    <div class="admin-toggle-texts">
+                      <span class="admin-toggle-title">Platform Notifications</span>
+                      <span class="admin-toggle-desc">Get notified about new contests, battles and events.</span>
+                    </div>
+                  </div>
+                  <label class="admin-switch">
+                    <input type="checkbox" id="toggle-platform-notif" checked />
+                    <span class="admin-switch-slider"></span>
+                  </label>
+                </div>
+
+                <!-- Item 3: Quiz Reminders (OFF) -->
+                <div class="admin-setting-toggle-row">
+                  <div class="admin-toggle-info-left">
+                    <div class="admin-toggle-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                    </div>
+                    <div class="admin-toggle-texts">
+                      <span class="admin-toggle-title">Quiz Reminders</span>
+                      <span class="admin-toggle-desc">Reminders for upcoming quizzes and deadlines.</span>
+                    </div>
+                  </div>
+                  <label class="admin-switch">
+                    <input type="checkbox" id="toggle-quiz-reminders" />
+                    <span class="admin-switch-slider"></span>
+                  </label>
+                </div>
+
+                <!-- Item 4: Marketing Updates (OFF) -->
+                <div class="admin-setting-toggle-row">
+                  <div class="admin-toggle-info-left">
+                    <div class="admin-toggle-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <polyline points="9 12 11 14 15 10"></polyline>
+                      </svg>
+                    </div>
+                    <div class="admin-toggle-texts">
+                      <span class="admin-toggle-title">Marketing Updates</span>
+                      <span class="admin-toggle-desc">Get news about new features and updates.</span>
+                    </div>
+                  </div>
+                  <label class="admin-switch">
+                    <input type="checkbox" id="toggle-marketing-updates" />
+                    <span class="admin-switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: Additional Settings -->
+            <div class="admin-card admin-setting-card" id="section-additional">
+              <div class="admin-setting-card-header">
+                <div class="admin-setting-header-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="admin-setting-card-title">Additional Settings</h2>
+                  <p class="admin-setting-card-desc">Other important preferences.</p>
+                </div>
+              </div>
+
+              <div class="admin-additional-grid">
+                <!-- Left Column: Language & Timezone -->
+                <div class="admin-additional-left-col">
+                  <!-- Language -->
+                  <div class="admin-additional-select-row">
+                    <div class="admin-toggle-info-left">
+                      <div class="admin-toggle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="2" y1="12" x2="22" y2="12"></line>
+                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                      </div>
+                      <div class="admin-toggle-texts">
+                        <span class="admin-toggle-title">Language</span>
+                        <span class="admin-toggle-desc">Select your preferred language.</span>
+                      </div>
+                    </div>
+                    <div class="admin-setting-select-wrap">
+                      <select id="setting-language" class="admin-mini-select">
+                        <option value="en" selected>English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                        <option value="hi">Hindi</option>
+                      </select>
+                      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- Timezone -->
+                  <div class="admin-additional-select-row">
+                    <div class="admin-toggle-info-left">
+                      <div class="admin-toggle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                      </div>
+                      <div class="admin-toggle-texts">
+                        <span class="admin-toggle-title">Timezone</span>
+                        <span class="admin-toggle-desc">Set your local timezone.</span>
+                      </div>
+                    </div>
+                    <div class="admin-setting-select-wrap">
+                      <select id="setting-timezone" class="admin-mini-select">
+                        <option value="Asia/Kolkata" selected>Asia/Kolkata (IST)</option>
+                        <option value="America/New_York">America/New_York (EST)</option>
+                        <option value="Europe/London">Europe/London (GMT)</option>
+                        <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                        <option value="UTC">UTC (Universal Time)</option>
+                      </select>
+                      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right Column: Auto Save, Show Leaderboard, Sound Effects -->
+                <div class="admin-additional-right-col">
+                  <!-- Auto Save (ON) -->
+                  <div class="admin-setting-toggle-row compact">
+                    <div class="admin-toggle-info-left">
+                      <div class="admin-toggle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                          <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                      </div>
+                      <div class="admin-toggle-texts">
+                        <span class="admin-toggle-title">Auto Save</span>
+                        <span class="admin-toggle-desc">Automatically save your progress.</span>
+                      </div>
+                    </div>
+                    <label class="admin-switch">
+                      <input type="checkbox" id="toggle-autosave" checked />
+                      <span class="admin-switch-slider"></span>
+                    </label>
+                  </div>
+
+                  <!-- Show Leaderboard (ON) -->
+                  <div class="admin-setting-toggle-row compact">
+                    <div class="admin-toggle-info-left">
+                      <div class="admin-toggle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                          <path d="M4 22h16"></path>
+                          <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                          <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                        </svg>
+                      </div>
+                      <div class="admin-toggle-texts">
+                        <span class="admin-toggle-title">Show Leaderboard</span>
+                        <span class="admin-toggle-desc">Display your rank on the leaderboard.</span>
+                      </div>
+                    </div>
+                    <label class="admin-switch">
+                      <input type="checkbox" id="toggle-show-leaderboard" checked />
+                      <span class="admin-switch-slider"></span>
+                    </label>
+                  </div>
+
+                  <!-- Sound Effects (ON) -->
+                  <div class="admin-setting-toggle-row compact">
+                    <div class="admin-toggle-info-left">
+                      <div class="admin-toggle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                      </div>
+                      <div class="admin-toggle-texts">
+                        <span class="admin-toggle-title">Sound Effects</span>
+                        <span class="admin-toggle-desc">Play sounds for interactions.</span>
+                      </div>
+                    </div>
+                    <label class="admin-switch">
+                      <input type="checkbox" id="toggle-sound-effects" checked />
+                      <span class="admin-switch-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Game Audio & BGM -->
+            <div class="admin-card admin-setting-card" id="section-audio">
+              <div class="admin-setting-card-header">
+                <div class="admin-setting-header-icon-wrap" style="background:#eef2ff; color:#4f46e5; border-color:#e0e7ff;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 18V5l12-2v13"></path>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <circle cx="18" cy="16" r="3"></circle>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="admin-setting-card-title">Game Audio & BGM</h2>
+                  <p class="admin-setting-card-desc">Control background music soundtrack and master volume across Quiz Levels, Live Battles, and Daily Kuizu.</p>
+                </div>
+              </div>
+
+              <!-- Track Banner -->
+              <div class="admin-audio-banner">
+                <div class="admin-audio-banner-left">
+                  <div class="admin-audio-disc-icon" id="admin-audio-disc">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </div>
+                  <div class="admin-audio-track-info">
+                    <div class="admin-audio-track-badge">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                      </svg>
+                      Active Arena Soundtrack
+                    </div>
+                    <h3 class="admin-audio-track-title">Guardians of the Globe (Invincible Orchestral Theme)</h3>
+                    <p class="admin-audio-track-artist">Luis Humanoide • Seamless Loop • Game Level & Battle Background Music</p>
+                  </div>
+                </div>
+
+                <div class="admin-audio-banner-right">
+                  <div class="admin-equalizer-bars" id="admin-eq-bars">
+                    <span class="admin-eq-bar"></span>
+                    <span class="admin-eq-bar"></span>
+                    <span class="admin-eq-bar"></span>
+                    <span class="admin-eq-bar"></span>
+                  </div>
+                  <button type="button" class="admin-audio-preview-btn" id="btn-preview-bgm">
+                    <svg id="icon-preview-play" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <span id="text-preview-btn">Preview</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Master BGM Toggle Row -->
+              <div class="admin-setting-toggle-row compact">
+                <div class="admin-toggle-info-left">
+                  <div class="admin-toggle-icon" style="background:#eef2ff; color:#4f46e5;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                  </div>
+                  <div class="admin-toggle-texts">
+                    <span class="admin-toggle-title">Enable Background Music in Game Arenas</span>
+                    <span class="admin-toggle-desc">Automatically plays this orchestral soundtrack when users enter quiz levels or live battles.</span>
+                  </div>
+                </div>
+                <label class="admin-switch">
+                  <input type="checkbox" id="toggle-bgm-enabled" checked />
+                  <span class="admin-switch-slider"></span>
+                </label>
+              </div>
+
+              <!-- Master Volume Slider Box -->
+              <div class="admin-volume-control-box">
+                <div class="admin-volume-header">
+                  <div class="admin-volume-label-wrap">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                    <span>Master Game Music Volume</span>
+                  </div>
+                  <span class="admin-volume-val-badge" id="label-bgm-volume">50%</span>
+                </div>
+
+                <div class="admin-volume-slider-row">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <line x1="23" y1="9" x2="17" y2="15"></line>
+                    <line x1="17" y1="9" x2="23" y2="15"></line>
+                  </svg>
+                  <input type="range" class="admin-volume-slider" id="slider-bgm-volume" min="0" max="100" value="50" step="1" />
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  </svg>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="admin-volume-presets">
+                  <span style="font-size: 12px; color: #64748b; font-weight: 600;">Presets:</span>
+                  <button type="button" class="admin-vol-preset-btn" data-vol="0">Mute (0%)</button>
+                  <button type="button" class="admin-vol-preset-btn" data-vol="25">Low (25%)</button>
+                  <button type="button" class="admin-vol-preset-btn active" data-vol="50">Balanced (50%)</button>
+                  <button type="button" class="admin-vol-preset-btn" data-vol="75">High (75%)</button>
+                  <button type="button" class="admin-vol-preset-btn" data-vol="100">Max (100%)</button>
+                </div>
+
+                <div class="admin-audio-scope-note">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  <span>This volume level is saved globally and immediately applied to all users when playing Quiz Levels and Live Battles.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Action Row: Save Changes -->
+            <div class="admin-settings-save-row">
+              <button type="button" class="admin-save-changes-btn" id="btn-save-settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Save Changes</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </main>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="admin-toast" class="admin-toast"></div>
+
+    <script type="module" src="/src/adminSettings.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Today's KUIZU - Daily Challenge</title>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="daily-quiz-body" style="background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #fdf4ff 100%); min-height: 100vh; display: flex; flex-direction: column; font-family: 'Inter', sans-serif;">
+
+    <!-- Top Navigation Header -->
+    <header class="daily-top-nav" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); position: sticky; top: 0; z-index: 50; padding: 14px 24px;">
+      <div style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+        
+        <!-- Left: Logo & Back to Home -->
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <a href="/home" class="daily-logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #1e1b4b; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 22px;">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; color: white;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+            <span>KUIZU</span>
+          </a>
+
+          <a href="/home" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #64748b; font-weight: 600; font-size: 13.5px; padding: 6px 12px; border-radius: 8px; background: #f1f5f9; transition: all 0.2s;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <span>Back to Home</span>
+          </a>
+        </div>
+
+        <!-- Center / Right: Date Badge & Reward Pills -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div id="daily-header-date" style="display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: #475569; background: #ffffff; padding: 6px 14px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span id="nav-date-text">Loading date...</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px; background: #fef9c3; color: #854d0e; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 13px; border: 1px solid #fef08a;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <span id="nav-xp-text">15 XP</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; background: #ffe4e6; color: #9f1239; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 13px; border: 1px solid #fecdd3;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+              </svg>
+              <span id="nav-streak-text">+5 Streak</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main style="flex: 1; max-width: 860px; width: 100%; margin: 28px auto 48px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 20px;">
+      
+      <!-- Fallback Alert Banner (Shown when no quiz is assigned for today or past 12 PM) -->
+      <div id="daily-fallback-alert" style="display: none; background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 14px 18px; color: #92400e; align-items: flex-start; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #b45309; flex-shrink: 0; margin-top: 1px;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div style="flex: 1;">
+          <h4 style="margin: 0 0 2px 0; font-size: 14px; font-weight: 700; color: #b45309;" id="fallback-alert-title">Showing Previous Daily Kuizu</h4>
+          <p style="margin: 0; font-size: 13px; color: #a16207; line-height: 1.4;" id="fallback-alert-desc">
+            No daily quiz was added for today yet. You can play this previous challenge to earn your daily streak and XP!
+          </p>
+        </div>
+      </div>
+
+      <!-- Main Quiz Arena Card -->
+      <section class="admin-card" style="background: #ffffff; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); padding: 32px; overflow: hidden; position: relative;">
+        
+        <!-- Header Row inside Card -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid #f1f5f9;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span class="admin-status-badge active" style="font-size: 12px; padding: 3px 10px;" id="arena-status-badge">
+                <span class="status-dot"></span>Daily Kuizu
+              </span>
+              <span id="arena-expiry-pill" style="font-size: 12px; color: #d97706; background: #fffbeb; padding: 3px 8px; border-radius: 6px; font-weight: 600; border: 1px solid #fef3c7; display: inline-flex; align-items: center; gap: 4px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>Expires 12:00 PM IST</span>
+              </span>
+            </div>
+            <h2 id="arena-quiz-title" style="font-size: 20px; font-family: 'Outfit', sans-serif; font-weight: 700; color: #0f172a; margin: 0;">
+              Loading Challenge...
+            </h2>
+          </div>
+
+          <!-- Timer & Question Counter -->
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 8px 16px; border-radius: 12px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #6366f1;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span id="arena-timer" style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: #1e1b4b;">05:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar & Question Counter Indicator -->
+        <div style="margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span id="arena-question-step" style="font-size: 13.5px; font-weight: 700; color: #4338ca;">Question 1 of 3</span>
+            <span id="arena-answered-count" style="font-size: 12.5px; color: #64748b; font-weight: 500;">0 of 3 Answered</span>
+          </div>
+          <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden;">
+            <div id="arena-progress-fill" style="width: 33%; height: 100%; background: linear-gradient(90deg, #6366f1, #8b5cf6); border-radius: 999px; transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        <!-- Question Prompt Area -->
+        <div id="arena-question-box" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 24px; margin-bottom: 28px;">
+          <span style="font-size: 12px; font-weight: 700; color: #6366f1; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block;" id="arena-question-name">Question 1</span>
+          <div id="arena-question-text" style="font-size: 16.5px; font-weight: 600; color: #1e293b; line-height: 1.55; white-space: pre-wrap;">
+            Loading question prompt...
+          </div>
+        </div>
+
+        <!-- Options Grid (A, B, C, D) -->
+        <div id="arena-options-grid" style="display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 32px;">
+          <!-- Dynamically Generated Option Buttons -->
+        </div>
+
+        <!-- Bottom Controls Row -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 18px; border-top: 1px solid #f1f5f9;">
+          <button type="button" class="admin-btn-secondary" id="btn-quiz-prev" style="padding: 10px 20px; font-weight: 600;">
+            ← Previous
+          </button>
+
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button type="button" class="admin-save-quiz-top-btn" id="btn-quiz-next" style="padding: 10px 24px; font-weight: 600; background: linear-gradient(135deg, #4f46e5, #7c3aed);">
+              <span>Next</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Quiz Results Modal -->
+    <div id="daily-results-modal" class="admin-modal-backdrop" style="display: none;">
+      <div class="admin-modal-dialog" style="max-width: 520px; text-align: center; padding: 36px 32px;">
+        
+        <div style="width: 72px; height: 72px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px auto; border: 2px solid #bfdbfe;">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">
+          Daily Challenge Completed!
+        </h3>
+        <p style="font-size: 14px; color: #64748b; margin: 0 0 24px 0;" id="results-subtitle">
+          Great job! Your syllabus practice for today is recorded.
+        </p>
+
+        <!-- Rewards Badge Row -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 24px;">
+          <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px 18px; border-radius: 12px; flex: 1;">
+            <div style="font-size: 20px; font-weight: 800; color: #1d4ed8; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <span>+15 XP</span>
+            </div>
+            <div style="font-size: 12px; color: #60a5fa; font-weight: 600; margin-top: 2px;">XP Awarded</div>
+          </div>
+          <div style="background: #fff1f2; border: 1px solid #fecdd3; padding: 12px 18px; border-radius: 12px; flex: 1;">
+            <div style="font-size: 20px; font-weight: 800; color: #be123c; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+              <span>+5 Streak</span>
+            </div>
+            <div style="font-size: 12px; color: #fb7185; font-weight: 600; margin-top: 2px;">Streak Maintained</div>
+          </div>
+        </div>
+
+        <!-- Score Breakdown Box -->
+        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 24px; text-align: left;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 13.5px; font-weight: 700; color: #334155;">Accuracy Score:</span>
+            <span id="results-score-badge" style="font-size: 14px; font-weight: 800; color: #16a34a; background: #dcfce7; padding: 3px 10px; border-radius: 20px;">3 / 3 (100%)</span>
+          </div>
+          <p style="font-size: 12.5px; color: #64748b; margin: 0;" id="results-feedback-note">
+            All syllabus questions answered correctly!
+          </p>
+        </div>
+
+        <!-- Inspect 3D Silver Badge Button -->
+        <div style="margin-bottom: 14px;">
+          <button type="button" id="btn-view-3d-daily-badge" style="
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+          ">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+              <path d="m9 16 2 2 4-4"></path>
+            </svg>
+            <span>Inspect 3D Silver Badge</span>
+          </button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <a href="/home" class="admin-save-quiz-top-btn" style="text-decoration: none; justify-content: center; padding: 12px; font-size: 15px; background: linear-gradient(135deg, #4f46e5, #7c3aed);">
+            <span>Return to Home Dashboard</span>
+          </a>
+          <a href="/quiz" class="admin-btn-secondary" style="text-decoration: none; justify-content: center; padding: 11px; font-size: 14px;">
+            <span>Explore Arena Levels Road</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="admin-toast" class="admin-toast"></div>
+
+    <script type="module" src="/src/dailyQuiz.ts"></script>
+  </body>
+</html>
