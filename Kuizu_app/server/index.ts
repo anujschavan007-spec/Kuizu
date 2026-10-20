@@ -611,7 +611,7 @@ const server = Bun.serve({
           4: { leftPercent: 78.0, topPercent: 46.0 }
         };
 
-        const sortedLevelNums = Array.from(new Set([...levelNumbers, 1])).sort((a, b) => a - b);
+        const sortedLevelNums = Array.from(new Set([...levelNumbers, 1, 2, 3, 4])).sort((a, b) => a - b);
         let previousLevelCompleted = true; // Level 1 is always unlocked by default
 
         const levelsResult = sortedLevelNums.map((lvlNum, index) => {
@@ -633,8 +633,13 @@ const server = Bun.serve({
             }
           }
 
+          // Level 1 is NEVER locked!
+          if (lvlNum === 1) {
+            status = (stars >= 1 || progress?.status === "completed") ? "completed" : "unlocked";
+          }
+
           // Check if this level is completed for the next level
-          previousLevelCompleted = stars >= 1;
+          previousLevelCompleted = status === "completed" || stars >= 1;
 
           // Main name from first quiz in level or Level N
           const firstName = qList[0]?.name || `Level ${lvlNum}`;

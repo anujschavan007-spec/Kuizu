@@ -110,8 +110,13 @@ function updateMapNodes(): void {
   const renderedIds = new Set<number>();
 
   levels.forEach((lvl) => {
-    const lvlNum = lvl.id;
+    const lvlNum = Number(lvl.id ?? (lvl as any).levelNumber ?? 1);
     renderedIds.add(lvlNum);
+
+    // Level 1 is always unlocked or completed by default, never locked
+    if (lvlNum === 1 && lvl.status === 'locked') {
+      lvl.status = 'unlocked';
+    }
 
     let nodeEl = document.getElementById(`node-level-${lvlNum}`);
     
@@ -119,7 +124,6 @@ function updateMapNodes(): void {
     if (!nodeEl) {
       nodeEl = document.createElement('div');
       nodeEl.id = `node-level-${lvlNum}`;
-      nodeEl.className = `map-level-node level-${lvlNum}-node ${lvl.status}`;
       nodeEl.setAttribute('data-level', String(lvlNum));
       const left = lvl.position?.leftPercent ?? (14 + ((lvlNum - 1) * 22) % 70);
       const top = lvl.position?.topPercent ?? (72 - ((lvlNum - 1) * 10) % 40);
@@ -127,9 +131,10 @@ function updateMapNodes(): void {
       mapWrapper.appendChild(nodeEl);
     } else {
       nodeEl.setAttribute('data-level', String(lvlNum));
-      nodeEl.className = `map-level-node level-${lvlNum}-node ${lvl.status}`;
       nodeEl.style.display = '';
     }
+
+    nodeEl.className = `map-level-node level-${lvlNum}-node ${lvl.status}`;
 
     // Bind click listener directly
     nodeEl.onclick = () => handleLevelClick(lvlNum);
@@ -167,37 +172,65 @@ function updateMapNodes(): void {
     `;
   });
 
-  // For static nodes in the HTML template that don't have a corresponding level, set them as locked Level N
+  // For static nodes in the HTML template that don't have a corresponding level:
   [1, 2, 3, 4].forEach(n => {
     if (!renderedIds.has(n)) {
       const el = document.getElementById(`node-level-${n}`);
       if (el) {
-        el.className = `map-level-node level-${n}-node locked`;
-        el.innerHTML = `
-          <div class="node-sign-bubble bubble-locked">
-            <span class="sign-lvl-title">Level ${n}</span>
-            <span class="sign-status-pill badge-locked">
-              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              <span>Locked</span>
-            </span>
-          </div>
-          <button type="button" class="pedestal-disc-btn disc-stone" aria-label="Open Level ${n} (Locked)">
-            <span class="pedestal-outer-ring">
-              <span class="pedestal-inner-circle">
-                <span class="pedestal-lock-icon">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 11h-1V7A6 6 0 0 0 6 7v4H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zM8 7a4 4 0 0 1 8 0v4H8V7z"/></svg>
-                </span>
-                <span class="pedestal-number">${n}</span>
+        if (n === 1) {
+          // Level 1 is NEVER locked!
+          el.className = 'map-level-node level-1-node unlocked';
+          el.innerHTML = `
+            <div class="node-sign-bubble wooden-sign-unlocked">
+              <span class="sign-lvl-title">Level 1</span>
+              <span class="sign-status-pill badge-unlocked">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Unlocked</span>
               </span>
-            </span>
-          </button>
-          <div class="node-stars-row" id="stars-level-${n}">
-            <span class="level-star star-empty">★</span>
-            <span class="level-star star-empty">★</span>
-            <span class="level-star star-empty">★</span>
-          </div>
-        `;
-        el.onclick = () => showToast(`Complete Level ${n - 1} with at least 1 star to unlock Level ${n}!`);
+            </div>
+            <button type="button" class="pedestal-disc-btn disc-golden" aria-label="Open Level 1">
+              <span class="pedestal-outer-ring">
+                <span class="pedestal-inner-circle">
+                  <span class="pedestal-number">1</span>
+                </span>
+              </span>
+              <span class="pedestal-flag-marker">🚩</span>
+            </button>
+            <div class="node-stars-row" id="stars-level-1">
+              <span class="level-star star-empty">★</span>
+              <span class="level-star star-empty">★</span>
+              <span class="level-star star-empty">★</span>
+            </div>
+          `;
+          el.onclick = () => handleLevelClick(1);
+        } else {
+          el.className = `map-level-node level-${n}-node locked`;
+          el.innerHTML = `
+            <div class="node-sign-bubble bubble-locked">
+              <span class="sign-lvl-title">Level ${n}</span>
+              <span class="sign-status-pill badge-locked">
+                <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Locked</span>
+              </span>
+            </div>
+            <button type="button" class="pedestal-disc-btn disc-stone" aria-label="Open Level ${n} (Locked)">
+              <span class="pedestal-outer-ring">
+                <span class="pedestal-inner-circle">
+                  <span class="pedestal-lock-icon">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 11h-1V7A6 6 0 0 0 6 7v4H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zM8 7a4 4 0 0 1 8 0v4H8V7z"/></svg>
+                  </span>
+                  <span class="pedestal-number">${n}</span>
+                </span>
+              </span>
+            </button>
+            <div class="node-stars-row" id="stars-level-${n}">
+              <span class="level-star star-empty">★</span>
+              <span class="level-star star-empty">★</span>
+              <span class="level-star star-empty">★</span>
+            </div>
+          `;
+          el.onclick = () => showToast(`Complete Level ${n - 1} with at least 1 star to unlock Level ${n}!`);
+        }
       }
     }
   });
@@ -211,7 +244,30 @@ function escapeHtml(str: string): string {
  * Handle clicking on a level node
  */
 function handleLevelClick(lvlId: number): void {
-  const level = levels.find(l => l.id === lvlId);
+  let level = levels.find(l => Number(l.id ?? (l as any).levelNumber) === lvlId);
+
+  // Guarantee Level 1 object is always available and unlocked
+  if (lvlId === 1) {
+    if (!level) {
+      level = {
+        id: 1,
+        name: 'Syntax & Variables',
+        description: 'Learn variables, primitives, operators, and basic programming fundamentals.',
+        status: 'unlocked',
+        stars: 0,
+        maxStars: 3,
+        questionCount: 3,
+        rewardXp: 30,
+        timeLimitSeconds: 600,
+        position: { leftPercent: 14.0, topPercent: 72.0 }
+      };
+      levels.unshift(level);
+    }
+    if (level.status === 'locked') {
+      level.status = 'unlocked';
+    }
+  }
+
   if (!level) return;
 
   const nodeEl = document.getElementById(`node-level-${lvlId}`);

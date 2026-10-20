@@ -469,37 +469,64 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
       4: { leftPercent: 78.0, topPercent: 46.0 }
     };
 
-    const levelNumbers = Array.from(new Set([...Object.keys(levelsMap).map(Number), 1])).sort((a, b) => a - b);
-    let previousLevelCompleted = true;
+    const defaultNames: Record<number, { name: string; description: string }> = {
+      1: { name: 'Syntax & Variables', description: 'Learn variables, primitives, operators, and basic programming fundamentals.' },
+      2: { name: 'Conditionals & Loops', description: 'Master if-else logic, for/while iteration loops, and break/continue statements.' },
+      3: { name: 'Functions & Scope', description: 'Understand function declarations, closures, arrow functions, and variable scope.' },
+      4: { name: 'Data Structures Mastery', description: 'Conquer arrays, linked lists, stacks, queues, hash maps, and algorithmic thinking.' }
+    };
+
+    // Guarantee levels 1, 2, 3, 4
+    const levelNumbers = Array.from(new Set([...Object.keys(levelsMap).map(Number), 1, 2, 3, 4])).sort((a, b) => a - b);
+    let previousLevelCompleted = true; // Level 1 is always unlocked
 
     const levelsResult = levelNumbers.map((lvlNum, index) => {
       const qList = levelsMap[lvlNum] || [];
       const prog = progressMap[lvlNum];
-      let status: 'unlocked' | 'locked' | 'completed' = 'locked';
       let stars = 0;
+      let status: 'unlocked' | 'locked' | 'completed' = 'locked';
 
       if (prog) {
-        stars = prog.stars || 0;
+        stars = Number(prog.stars) || 0;
         status = prog.status || (stars >= 1 ? 'completed' : 'unlocked');
-      } else {
-        status = lvlNum === 1 || previousLevelCompleted ? 'unlocked' : 'locked';
       }
-      previousLevelCompleted = stars >= 1;
+
+      // Level 1 rule: ALWAYS UNLOCKED or COMPLETED, NEVER LOCKED
+      if (lvlNum === 1) {
+        status = (stars >= 1 || prog?.status === 'completed') ? 'completed' : 'unlocked';
+      } else {
+        if (!prog) {
+          status = previousLevelCompleted ? 'unlocked' : 'locked';
+        }
+      }
+
+      previousLevelCompleted = status === 'completed' || stars >= 1;
 
       const pos = defaultPositions[lvlNum] || {
         leftPercent: 14 + ((index * 22) % 70),
         topPercent: 72 - ((index * 8) % 40)
       };
 
+      const meta = defaultNames[lvlNum] || {
+        name: `Level ${lvlNum}`,
+        description: `Master Level ${lvlNum} concepts and challenges.`
+      };
+
       return {
+        id: lvlNum,
         levelNumber: lvlNum,
-        name: qList[0]?.name || `Level ${lvlNum}`,
-        description: qList[0]?.description || `Master Level ${lvlNum} concepts and challenges.`,
+        name: qList[0]?.name || meta.name,
+        description: qList[0]?.description || meta.description,
         status,
         stars,
         maxStars: 3,
-        questionCount: qList.length || 1,
-        rewardXp: (qList[0]?.reward_xp || 30) * Math.max(1, qList.length),
+        questionCount: Math.min(3, Math.max(1, qList.length || 3)),
+        rewardXp: 30,
+        timeLimitSeconds: 600,
+        position: {
+          leftPercent: qList[0]?.position_left ?? pos.leftPercent,
+          topPercent: qList[0]?.position_top ?? pos.topPercent
+        },
         positionLeft: qList[0]?.position_left ?? pos.leftPercent,
         positionTop: qList[0]?.position_top ?? pos.topPercent,
         quizzes: qList
@@ -514,59 +541,279 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
     const { data: questions } = await supabase
       .from('quizzes')
       .select('*')
-      .eq('level_number', levelId);
+      .eq('level_number', levelId)
+      .order('id', { ascending: true });
 
-    const formatted = (questions || []).map(q => ({
-      id: q.id,
-      name: q.name,
-      description: q.description,
-      levelNumber: q.level_number,
-      questionContent: q.question_content,
-      optionA: q.option_a,
-      optionB: q.option_b,
-      optionC: q.option_c,
-      optionD: q.option_d,
-      correctOption: q.correct_option,
-      rewardXp: q.reward_xp || 30
-    }));
+    let formatted: any[] = [];
 
-    return jsonResponse({ success: true, levelId, count: formatted.length, questions: formatted });
+    if (questions && questions.length > 0) {
+      formatted = questions.map((q, idx) => ({
+        id: q.id || idx + 1,
+        question: q.question_content || q.name || `Question ${idx + 1}`,
+        options: [
+          { id: 'A', text: q.option_a || 'Option A' },
+          { id: 'B', text: q.option_b || 'Option B' },
+          { id: 'C', text: q.option_c || 'Option C' },
+          { id: 'D', text: q.option_d || 'Option D' }
+        ],
+        correctOption: ((q.correct_option || 'A').toUpperCase() as 'A' | 'B' | 'C' | 'D'),
+        rewardXp: q.reward_xp || 15,
+        explanation: q.description || ''
+      }));
+    } else {
+      // Fallback questions for levels that might not have custom questions in DB yet
+      const fallbackQuestions: Record<number, any[]> = {
+        1: [
+          {
+            id: 1,
+            question: 'Which keyword is used to declare a block-scoped variable in modern JavaScript?',
+            options: [
+              { id: 'A', text: 'var keyword' },
+              { id: 'B', text: 'let or const' },
+              { id: 'C', text: 'def keyword' },
+              { id: 'D', text: 'val keyword' }
+            ],
+            correctOption: 'B',
+            rewardXp: 15,
+            explanation: 'let and const provide block scoping, unlike var which is function-scoped.'
+          },
+          {
+            id: 2,
+            question: 'What does the strict equality operator (===) compare in JavaScript?',
+            options: [
+              { id: 'A', text: 'Values only with implicit type coercion' },
+              { id: 'B', text: 'Memory address references only' },
+              { id: 'C', text: 'Both value and data type without coercion' },
+              { id: 'D', text: 'Object prototypes only' }
+            ],
+            correctOption: 'C',
+            rewardXp: 15,
+            explanation: '=== checks both the value and the type strictly without type conversion.'
+          },
+          {
+            id: 3,
+            question: 'Which of the following is NOT a JavaScript primitive data type?',
+            options: [
+              { id: 'A', text: 'String' },
+              { id: 'B', text: 'Boolean' },
+              { id: 'C', text: 'Symbol' },
+              { id: 'D', text: 'Array' }
+            ],
+            correctOption: 'D',
+            rewardXp: 15,
+            explanation: 'Arrays are objects (reference types), not primitives.'
+          }
+        ],
+        2: [
+          {
+            id: 14,
+            question: 'What is printed by the following code?\nint sum = 0;\nfor (int i = 1; i <= 4; i++)\nsum += i;\ncout << sum;',
+            options: [
+              { id: 'A', text: '4' },
+              { id: 'B', text: '10' },
+              { id: 'C', text: '6' },
+              { id: 'D', text: '14' }
+            ],
+            correctOption: 'B',
+            rewardXp: 15,
+            explanation: '1 + 2 + 3 + 4 = 10'
+          },
+          {
+            id: 15,
+            question: 'Which loop is guaranteed to execute its block at least once?',
+            options: [
+              { id: 'A', text: 'for loop' },
+              { id: 'B', text: 'while loop' },
+              { id: 'C', text: 'do-while loop' },
+              { id: 'D', text: 'nested loop' }
+            ],
+            correctOption: 'C',
+            rewardXp: 15,
+            explanation: 'A do-while loop evaluates its condition at the end of the block.'
+          },
+          {
+            id: 16,
+            question: 'Which keyword immediately exits a loop in C++ and JavaScript?',
+            options: [
+              { id: 'A', text: 'continue' },
+              { id: 'B', text: 'break' },
+              { id: 'C', text: 'return' },
+              { id: 'D', text: 'skip' }
+            ],
+            correctOption: 'B',
+            rewardXp: 15,
+            explanation: 'The break statement terminates execution of the nearest enclosing loop.'
+          }
+        ],
+        3: [
+          {
+            id: 17,
+            question: 'What is a closure in JavaScript?',
+            options: [
+              { id: 'A', text: 'A function bundled with references to its lexical environment' },
+              { id: 'B', text: 'A syntax error closing a block prematurely' },
+              { id: 'C', text: 'A method to close browser tabs' },
+              { id: 'D', text: 'An object without prototypes' }
+            ],
+            correctOption: 'A',
+            rewardXp: 15,
+            explanation: 'A closure gives a function access to its outer scope from an inner function.'
+          },
+          {
+            id: 18,
+            question: 'What does the keyword `this` refer to inside an arrow function?',
+            options: [
+              { id: 'A', text: 'The global window object always' },
+              { id: 'B', text: 'The enclosing lexical context where it was defined' },
+              { id: 'C', text: 'The caller function' },
+              { id: 'D', text: 'undefined' }
+            ],
+            correctOption: 'B',
+            rewardXp: 15,
+            explanation: 'Arrow functions do not bind their own `this`; they retain the lexical context.'
+          },
+          {
+            id: 19,
+            question: 'Which variable declaration has function scope instead of block scope?',
+            options: [
+              { id: 'A', text: 'let' },
+              { id: 'B', text: 'const' },
+              { id: 'C', text: 'var' },
+              { id: 'D', text: 'val' }
+            ],
+            correctOption: 'C',
+            rewardXp: 15,
+            explanation: '`var` declarations are scoped to the nearest function block.'
+          }
+        ],
+        4: [
+          {
+            id: 20,
+            question: 'Which data structure follows the First-In, First-Out (FIFO) principle?',
+            options: [
+              { id: 'A', text: 'Stack' },
+              { id: 'B', text: 'Queue' },
+              { id: 'C', text: 'Binary Search Tree' },
+              { id: 'D', text: 'Max Heap' }
+            ],
+            correctOption: 'B',
+            rewardXp: 15,
+            explanation: 'A Queue processes elements FIFO.'
+          },
+          {
+            id: 21,
+            question: 'What is the average time complexity of a lookup in a Hash Table?',
+            options: [
+              { id: 'A', text: 'O(log n)' },
+              { id: 'B', text: 'O(1)' },
+              { id: 'C', text: 'O(n)' },
+              { id: 'D', text: 'O(n²)' }
+            ],
+            correctOption: 'B',
+            rewardXp: 15,
+            explanation: 'Hash table lookups are O(1) on average.'
+          },
+          {
+            id: 22,
+            question: 'In a singly linked list, what is the time complexity to insert a node at the head?',
+            options: [
+              { id: 'A', text: 'O(1)' },
+              { id: 'B', text: 'O(n)' },
+              { id: 'C', text: 'O(log n)' },
+              { id: 'D', text: 'O(n log n)' }
+            ],
+            correctOption: 'A',
+            rewardXp: 15,
+            explanation: 'Inserting at head simply updates the head pointer, taking O(1).'
+          }
+        ]
+      };
+      formatted = fallbackQuestions[levelId] || fallbackQuestions[1];
+    }
+
+    return jsonResponse({ success: true, levelId, count: formatted.length, questions: formatted.slice(0, 3) });
   }
 
   if (pathname.includes('/submit') && pathname.startsWith('/api/quizzes/levels/')) {
     const levelId = Number(pathname.replace('/api/quizzes/levels/', '').replace('/submit', '')) || 1;
-    const { stars = 3, score = 100, userEmail, userId } = body;
+    const { answers, stars: inputStars, score: inputScore, userEmail, userId, email, name } = body;
+    const effectiveEmail = userEmail || email || '';
 
+    let starsEarned = Number(inputStars) || 0;
+    let score = Number(inputScore) || 0;
+    let totalQuestions = 3;
+
+    if (answers && typeof answers === 'object') {
+      const { data: dbQuestions } = await supabase.from('quizzes').select('*').eq('level_number', levelId);
+      if (dbQuestions && dbQuestions.length > 0) {
+        totalQuestions = Math.min(3, dbQuestions.length);
+        let correct = 0;
+        for (const q of dbQuestions.slice(0, 3)) {
+          const userAns = answers[q.id];
+          if (userAns && userAns.toUpperCase() === (q.correct_option || 'A').toUpperCase()) {
+            correct++;
+          }
+        }
+        score = correct;
+        starsEarned = Math.min(3, correct);
+      } else {
+        const count = Object.keys(answers).length;
+        score = count;
+        starsEarned = Math.min(3, count);
+      }
+    } else if (!starsEarned) {
+      starsEarned = 3;
+      score = 3;
+    }
+
+    const xpEarned = starsEarned >= 1 ? 30 : 0;
+
+    // Upsert level completion in Supabase
     await supabase.from('quiz_level_progress').upsert({
       level_id: levelId,
-      status: 'completed',
-      stars: Number(stars) || 3,
-      completed_at: new Date().toISOString()
+      status: starsEarned >= 1 ? 'completed' : 'unlocked',
+      stars: starsEarned,
+      completed_at: starsEarned >= 1 ? new Date().toISOString() : null
     });
 
-    // Unlock next level
-    await supabase.from('quiz_level_progress').upsert({
-      level_id: levelId + 1,
-      status: 'unlocked',
-      stars: 0,
-      unlocked_at: new Date().toISOString()
-    });
+    // If completed (stars >= 1), unlock next level
+    if (starsEarned >= 1) {
+      const { data: nextProg } = await supabase.from('quiz_level_progress').select('*').eq('level_id', levelId + 1).maybeSingle();
+      if (!nextProg || nextProg.status === 'locked') {
+        await supabase.from('quiz_level_progress').upsert({
+          level_id: levelId + 1,
+          status: 'unlocked',
+          stars: nextProg?.stars || 0,
+          unlocked_at: new Date().toISOString()
+        });
+      }
+    }
 
-    if (userEmail || userId) {
-      const { data: user } = await supabase.from('users').select('*').or(`id.eq.${userId},email.ilike.${userEmail}`).maybeSingle();
+    if (effectiveEmail) {
+      const { data: user } = await supabase.from('users').select('*').ilike('email', effectiveEmail).maybeSingle();
       if (user) {
-        let completed = [];
+        let completed: number[] = [];
         try { completed = JSON.parse(user.completed_quiz_levels_json || '[]'); } catch {}
-        if (!completed.includes(levelId)) completed.push(levelId);
+        if (starsEarned >= 1 && !completed.includes(levelId)) {
+          completed.push(levelId);
+        }
         await supabase.from('users').update({
           completed_quiz_levels_json: JSON.stringify(completed),
-          xp: (user.xp || 0) + 30 * (Number(stars) || 1),
+          xp: (user.xp || 0) + xpEarned,
           last_active: 'Today'
         }).eq('id', user.id);
       }
     }
 
-    return jsonResponse({ success: true, levelId, stars, earnedXp: 30 * (Number(stars) || 1) });
+    return jsonResponse({
+      success: true,
+      levelId,
+      score,
+      totalQuestions,
+      starsEarned,
+      xpEarned,
+      nextLevelUnlocked: starsEarned >= 1
+    });
   }
 
   // ----------------------------------------------------

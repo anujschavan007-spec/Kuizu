@@ -22,9 +22,9 @@ const DEFAULT_MOCK_LEVELS: QuizLevel[] = [
     name: 'Syntax & Variables',
     description: 'Learn variables, primitives, operators, and basic programming fundamentals.',
     status: 'unlocked',
-    stars: 2, // 2 out of 3 stars achieved
+    stars: 0,
     maxStars: 3,
-    questionCount: 10,
+    questionCount: 3,
     rewardXp: 30,
     timeLimitSeconds: 600,
     position: {
@@ -242,14 +242,43 @@ export async function fetchQuizLevels(): Promise<QuizLevel[]> {
     if (res.ok) {
       const data = await res.json();
       if (data && Array.isArray(data.levels) && data.levels.length > 0) {
-        return data.levels;
+        const normalized: QuizLevel[] = data.levels.map((lvl: any, index: number) => {
+          const id = Number(lvl.id ?? lvl.levelNumber ?? (index + 1));
+          let status: 'unlocked' | 'locked' | 'completed' = lvl.status || (id === 1 ? 'unlocked' : 'locked');
+          if (id === 1 && status === 'locked') {
+            status = (lvl.stars && lvl.stars >= 1) ? 'completed' : 'unlocked';
+          }
+          return {
+            ...lvl,
+            id,
+            levelNumber: id,
+            status,
+            stars: Number(lvl.stars) || 0,
+            maxStars: 3,
+            questionCount: Number(lvl.questionCount) || 3,
+            rewardXp: Number(lvl.rewardXp) || 30,
+            timeLimitSeconds: Number(lvl.timeLimitSeconds) || 600,
+            position: lvl.position || {
+              leftPercent: Number(lvl.positionLeft ?? (14 + ((id - 1) * 22) % 70)),
+              topPercent: Number(lvl.positionTop ?? (72 - ((id - 1) * 8) % 40))
+            }
+          };
+        });
+        saveLevels(normalized);
+        return normalized;
       }
     }
   } catch (err) {
     console.warn('Backend /api/quizzes/levels unavailable, using local levels:', err);
   }
 
-  return getSavedLevels();
+  const saved = getSavedLevels();
+  if (saved && saved.length > 0) {
+    if (saved[0].id === 1 && saved[0].status === 'locked') {
+      saved[0].status = 'unlocked';
+    }
+  }
+  return saved;
 }
 
 /**
