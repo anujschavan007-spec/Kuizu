@@ -55,36 +55,38 @@ const DEFAULT_BATTLE_QUESTIONS: BattleQuestion[] = [
     prompt: 'Which of these are powers of 2?',
     timeLimitSeconds: 20,
     items: [
-      { id: 1, value: 1, isPrime: false },
       { id: 2, value: 2, isPrime: true },
       { id: 3, value: 3, isPrime: false },
       { id: 4, value: 4, isPrime: true },
+      { id: 5, value: 5, isPrime: false },
       { id: 6, value: 6, isPrime: false },
       { id: 8, value: 8, isPrime: true },
+      { id: 10, value: 10, isPrime: false },
       { id: 12, value: 12, isPrime: false },
       { id: 16, value: 16, isPrime: true },
       { id: 24, value: 24, isPrime: false },
       { id: 32, value: 32, isPrime: true }
     ],
-    targetPrimeIds: [1, 2, 4, 8, 16, 32]
+    targetPrimeIds: [2, 4, 8, 16, 32]
   },
   {
     id: 3,
     tag: 'QUESTION 3 OF 4',
-    prompt: 'Select all even Fibonacci numbers',
+    prompt: 'Select all multiples of 4',
     timeLimitSeconds: 20,
     items: [
-      { id: 1, value: 1, isPrime: false },
-      { id: 2, value: 2, isPrime: true },
-      { id: 3, value: 3, isPrime: false },
-      { id: 5, value: 5, isPrime: false },
+      { id: 2, value: 2, isPrime: false },
+      { id: 4, value: 4, isPrime: true },
+      { id: 6, value: 6, isPrime: false },
       { id: 8, value: 8, isPrime: true },
-      { id: 13, value: 13, isPrime: false },
-      { id: 21, value: 21, isPrime: false },
-      { id: 34, value: 34, isPrime: true },
-      { id: 55, value: 55, isPrime: false }
+      { id: 10, value: 10, isPrime: false },
+      { id: 12, value: 12, isPrime: true },
+      { id: 14, value: 14, isPrime: false },
+      { id: 16, value: 16, isPrime: true },
+      { id: 18, value: 18, isPrime: false },
+      { id: 20, value: 20, isPrime: true }
     ],
-    targetPrimeIds: [2, 8, 34]
+    targetPrimeIds: [4, 8, 12, 16, 20]
   },
   {
     id: 4,
@@ -112,9 +114,8 @@ let battleQuestions: BattleQuestion[] = [];
 let currentQuestionIndex = 0;
 let currentQuestion: BattleQuestion = MOCK_BATTLE_QUESTION;
 let selectedAnswers: Array<string | number> = [];
-let questionTimerInterval: ReturnType<typeof setInterval> | null = null;
+let arenaTickInterval: ReturnType<typeof setInterval> | null = null;
 let secondsRemaining = 20;
-let mainTimerInterval: ReturnType<typeof setInterval> | null = null;
 let mainSecondsRemaining = 80;
 let playerScore = 0;
 let roomPlayers: LiveBattlePlayer[] = [];
@@ -559,6 +560,7 @@ function openRoomLobby(room: BattleRoom) {
  */
 async function startBattleArena(room: BattleRoom) {
   stopLobbyPolling();
+  stopArenaTimerLoop();
   currentRoom = room;
 
   // Initialize Questions Series
@@ -593,8 +595,8 @@ async function startBattleArena(room: BattleRoom) {
   // Load Question 1
   loadQuestion(0);
 
-  // Start Dual Timers
-  startArenaTimers();
+  // Start Consolidated Single-Loop Timers
+  startArenaTimerLoop();
 
   // Play background music
   soundManager.playGameBgm();
@@ -620,10 +622,13 @@ function initLiveLeaderboardPlayers(room: BattleRoom) {
     }
   } catch {}
 
+  const cleanUserName = currentUserName.replace(/\s*\(You\)/gi, '').trim() || 'Player';
+  const normUserName = cleanUserName.toLowerCase();
+
   const players: LiveBattlePlayer[] = [
     {
       id: currentUserId,
-      name: `${currentUserName} (You)`,
+      name: `${cleanUserName} (You)`,
       avatar: currentUserAvatar,
       score: 0,
       solvedCount: 0,
@@ -632,39 +637,51 @@ function initLiveLeaderboardPlayers(room: BattleRoom) {
     }
   ];
 
-  // Add room players or default competitors matching screenshot
-  const competitors = [
+  // Distinct competitor bot pool to avoid duplicate names
+  const rivalBotPool = [
     { name: 'Student 774', avatar: '/images/home_avatar.png' },
-    { name: 'Student 375', avatar: '/images/home_avatar.png' },
-    { name: 'Anuj Chavan', avatar: '/images/home_avatar.png' }
+    { name: 'Student 351', avatar: '/images/home_avatar.png' },
+    { name: 'Alex Rivera', avatar: '/images/home_avatar.png' },
+    { name: 'Elena Rostova', avatar: '/images/home_avatar.png' },
+    { name: 'Kenji Sato', avatar: '/images/home_avatar.png' },
+    { name: 'Maya Lin', avatar: '/images/home_avatar.png' }
   ];
 
-  if (room.players && room.players.length > 1) {
+  const isUserDuplicate = (name: string, id?: string) => {
+    if (id && id === currentUserId) return true;
+    const n = name.replace(/\s*\(You\)/gi, '').trim().toLowerCase();
+    return n === 'you' || n === normUserName;
+  };
+
+  if (room.players && room.players.length > 0) {
     room.players.forEach((p, idx) => {
-      if (p.id !== currentUserId && !p.name.includes('(You)')) {
-        players.push({
-          id: p.id || `usr_rival_${idx}`,
-          name: p.name,
-          avatar: p.avatar || '/images/home_avatar.png',
-          score: 0,
-          solvedCount: 0,
-          isYou: false,
-          isHost: p.isHost,
-          rank: players.length + 1
-        });
+      if (!isUserDuplicate(p.name, p.id)) {
+        if (!players.some((pl) => pl.name.toLowerCase() === p.name.trim().toLowerCase())) {
+          players.push({
+            id: p.id || `usr_rival_${idx}`,
+            name: p.name,
+            avatar: p.avatar || '/images/home_avatar.png',
+            score: 0,
+            solvedCount: 0,
+            isYou: false,
+            isHost: p.isHost,
+            rank: players.length + 1
+          });
+        }
       }
     });
   }
 
-  // Ensure at least 4 active competing players in the room
-  let compIdx = 0;
-  while (players.length < 4 && compIdx < competitors.length) {
-    const comp = competitors[compIdx++];
-    if (!players.some((p) => p.name === comp.name)) {
+  // Ensure exactly 4 unique players in the arena
+  let botIdx = 0;
+  while (players.length < 4 && botIdx < rivalBotPool.length) {
+    const bot = rivalBotPool[botIdx++];
+    const botNorm = bot.name.toLowerCase();
+    if (botNorm !== normUserName && !players.some((p) => p.name.toLowerCase() === botNorm)) {
       players.push({
-        id: `usr_bot_${compIdx}`,
-        name: comp.name,
-        avatar: comp.avatar,
+        id: `usr_bot_${botIdx}`,
+        name: bot.name,
+        avatar: bot.avatar,
         score: 0,
         solvedCount: 0,
         isYou: false,
@@ -712,6 +729,12 @@ function loadQuestion(index: number) {
   isQuestionSubmitting = false;
   secondsRemaining = currentRoom?.timePerQuestion || 20;
 
+  if (btnSubmitArenaAnswer) {
+    btnSubmitArenaAnswer.removeAttribute('disabled');
+    (btnSubmitArenaAnswer as HTMLButtonElement).style.opacity = '1';
+    (btnSubmitArenaAnswer as HTMLButtonElement).style.pointerEvents = 'auto';
+  }
+
   // Update prompt and step indicators
   const promptEl = document.getElementById('arena-q-prompt');
   if (promptEl) {
@@ -730,7 +753,7 @@ function loadQuestion(index: number) {
   renderSelectedChips();
   updateTimerDisplays();
 
-  // Schedule real-time solves by other room players for this question
+  // Schedule real-time solves by rival room players for this question
   scheduleCompetitorSolvesForQuestion(index);
 }
 
@@ -893,56 +916,37 @@ function setupArenaInteractions() {
  */
 function scheduleCompetitorSolvesForQuestion(qIndex: number) {
   clearScheduledSolveEvents();
+  const rivals = roomPlayers.filter((p) => !p.isYou);
+  if (rivals.length === 0) return;
 
-  if (qIndex === 0) {
-    // Question 1: Student 774 solves first problem -> name moves to top of live leaderboard
-    scheduledSolveTimeouts.push(
-      setTimeout(() => {
-        applyCompetitorSolve('Student 774', 120, '⚡ Student 774 solved first question! Took Rank #1.');
-      }, 6500)
-    );
+  // Staggered solves by rivals during the question round
+  // Solver 1 solves around 4-7s
+  const rival1 = rivals[qIndex % rivals.length];
+  const t1 = 4500 + Math.random() * 2500;
+  scheduledSolveTimeouts.push(
+    setTimeout(() => {
+      const addedPoints = 110 + Math.floor(Math.random() * 30);
+      applyCompetitorSolve(
+        rival1.id,
+        addedPoints,
+        `⚡ ${rival1.name} solved Question ${qIndex + 1}! (+${addedPoints} pts)`
+      );
+    }, t1)
+  );
 
+  // Solver 2 solves around 9-13s if more than 1 rival
+  if (rivals.length > 1) {
+    const rival2 = rivals[(qIndex + 1) % rivals.length];
+    const t2 = 9500 + Math.random() * 3500;
     scheduledSolveTimeouts.push(
       setTimeout(() => {
-        applyCompetitorSolve('Anuj Chavan', 110, '⚡ Anuj Chavan submitted solution! (+110 pts)');
-      }, 13000)
-    );
-  } else if (qIndex === 1) {
-    // Question 2: Student 375 submits 2nd question -> rank on battle leaderboard updates live!
-    scheduledSolveTimeouts.push(
-      setTimeout(() => {
-        applyCompetitorSolve('Student 375', 135, '🔥 Student 375 submitted 2nd question! Rank updated live.');
-      }, 7000)
-    );
-
-    scheduledSolveTimeouts.push(
-      setTimeout(() => {
-        applyCompetitorSolve('Student 774', 115, '⚡ Student 774 solved Question 2 (+115 pts)');
-      }, 14000)
-    );
-  } else if (qIndex === 2) {
-    // Question 3
-    scheduledSolveTimeouts.push(
-      setTimeout(() => {
-        applyCompetitorSolve('Student 375', 120, '⚡ Student 375 solved Question 3! Leading with 3 solves.');
-      }, 8500)
-    );
-    scheduledSolveTimeouts.push(
-      setTimeout(() => {
-        applyCompetitorSolve('Anuj Chavan', 120, '⚡ Anuj Chavan solved Question 3 (+120 pts)');
-      }, 13500)
-    );
-  } else {
-    // Question 4
-    scheduledSolveTimeouts.push(
-      setTimeout(() => {
-        applyCompetitorSolve('Student 774', 125, '⚡ Student 774 completed Question 4 (+125 pts)');
-      }, 7500)
-    );
-    scheduledSolveTimeouts.push(
-      setTimeout(() => {
-        applyCompetitorSolve('Student 375', 110, '⚡ Student 375 completed Question 4 (+110 pts)');
-      }, 12500)
+        const addedPoints = 95 + Math.floor(Math.random() * 25);
+        applyCompetitorSolve(
+          rival2.id,
+          addedPoints,
+          `🔥 ${rival2.name} submitted solution for Question ${qIndex + 1}! (+${addedPoints} pts)`
+        );
+      }, t2)
     );
   }
 }
@@ -955,8 +959,8 @@ function clearScheduledSolveEvents() {
 /**
  * Apply solve event for a room competitor and update live leaderboard in real-time
  */
-function applyCompetitorSolve(name: string, addedScore: number, tickerMsg: string) {
-  const p = roomPlayers.find((player) => player.name.includes(name));
+function applyCompetitorSolve(playerId: string, addedScore: number, tickerMsg: string) {
+  const p = roomPlayers.find((player) => player.id === playerId);
   if (!p) return;
 
   p.solvedCount += 1;
@@ -970,6 +974,7 @@ function applyCompetitorSolve(name: string, addedScore: number, tickerMsg: strin
 
   setTimeout(() => {
     p.hasJustSolved = false;
+    renderLiveLeaderboard();
   }, 1300);
 }
 
@@ -1028,44 +1033,53 @@ function setLiveTicker(text: string) {
 }
 
 /**
- * Start Question Timer and Overall Match Timer
+ * Start Consolidated Match & Question Timer Loop
  */
-function startArenaTimers() {
-  stopArenaTimers();
+function startArenaTimerLoop() {
+  stopArenaTimerLoop();
   updateTimerDisplays();
 
-  // Question Timer
-  questionTimerInterval = setInterval(() => {
-    secondsRemaining--;
-    updateTimerDisplays();
-
-    if (secondsRemaining <= 0) {
-      handleQuestionTimeExpired();
-    }
-  }, 1000);
-
-  // Overall Match Timer
-  mainTimerInterval = setInterval(() => {
+  arenaTickInterval = setInterval(() => {
+    // 1. Decrement overall match timer
     mainSecondsRemaining--;
+    if (mainSecondsRemaining < 0) mainSecondsRemaining = 0;
+
+    // 2. Decrement question timer if not evaluating answer
+    if (!isQuestionSubmitting) {
+      secondsRemaining--;
+      if (secondsRemaining <= 0) {
+        secondsRemaining = 0;
+        updateTimerDisplays();
+        handleQuestionTimeExpired();
+        return;
+      }
+    }
+
     updateTimerDisplays();
 
+    // 3. Match timer expired -> end battle
     if (mainSecondsRemaining <= 0) {
-      stopArenaTimers();
+      stopArenaTimerLoop();
       setLiveTicker('⏱️ Main battle timer expired! Calculating final standings...');
-      setTimeout(() => endBattleMatch(), 900);
+      setTimeout(() => endBattleMatch(), 800);
     }
   }, 1000);
 }
 
+function stopArenaTimerLoop() {
+  if (arenaTickInterval) {
+    clearInterval(arenaTickInterval);
+    arenaTickInterval = null;
+  }
+}
+
+// Backward compatibility alias
+function startArenaTimers() {
+  startArenaTimerLoop();
+}
+
 function stopArenaTimers() {
-  if (questionTimerInterval) {
-    clearInterval(questionTimerInterval);
-    questionTimerInterval = null;
-  }
-  if (mainTimerInterval) {
-    clearInterval(mainTimerInterval);
-    mainTimerInterval = null;
-  }
+  stopArenaTimerLoop();
 }
 
 function updateTimerDisplays() {
@@ -1088,9 +1102,13 @@ function updateTimerDisplays() {
  * When Question Timer runs out -> transition to next question
  */
 function handleQuestionTimeExpired() {
-  if (questionTimerInterval) {
-    clearInterval(questionTimerInterval);
-    questionTimerInterval = null;
+  if (isQuestionSubmitting) return;
+  isQuestionSubmitting = true;
+
+  if (btnSubmitArenaAnswer) {
+    btnSubmitArenaAnswer.setAttribute('disabled', 'true');
+    (btnSubmitArenaAnswer as HTMLButtonElement).style.opacity = '0.6';
+    (btnSubmitArenaAnswer as HTMLButtonElement).style.pointerEvents = 'none';
   }
 
   setLiveTicker(`⏰ Time over for Question ${currentQuestionIndex + 1}! Moving to next...`);
@@ -1107,17 +1125,32 @@ function evaluateCurrentAnswer() {
   if (isQuestionSubmitting) return;
   isQuestionSubmitting = true;
 
-  if (questionTimerInterval) {
-    clearInterval(questionTimerInterval);
-    questionTimerInterval = null;
+  if (btnSubmitArenaAnswer) {
+    btnSubmitArenaAnswer.setAttribute('disabled', 'true');
+    (btnSubmitArenaAnswer as HTMLButtonElement).style.opacity = '0.6';
+    (btnSubmitArenaAnswer as HTMLButtonElement).style.pointerEvents = 'none';
   }
 
-  const targetPrimes = currentQuestion.targetPrimeIds || [];
-  const isCorrect =
-    selectedAnswers.length > 0 &&
-    targetPrimes.length > 0 &&
-    selectedAnswers.length === targetPrimes.length &&
-    targetPrimes.every((p) => selectedAnswers.some((ans) => String(ans) === String(p)));
+  const targetAnswers = currentQuestion.targetPrimeIds || [];
+  const selectedStr = selectedAnswers.map((s) => String(s).trim());
+
+  let isCorrect =
+    selectedStr.length > 0 &&
+    targetAnswers.length > 0 &&
+    selectedStr.length === targetAnswers.length &&
+    targetAnswers.every((t) => selectedStr.includes(String(t).trim()));
+
+  // Fallback for powers of 2 (if 1 was included or excluded)
+  if (!isCorrect && currentQuestion.prompt.toLowerCase().includes('powers of 2')) {
+    const withOne = ['1', '2', '4', '8', '16', '32'];
+    const withoutOne = ['2', '4', '8', '16', '32'];
+    if (
+      (selectedStr.length === withOne.length && withOne.every((v) => selectedStr.includes(v))) ||
+      (selectedStr.length === withoutOne.length && withoutOne.every((v) => selectedStr.includes(v)))
+    ) {
+      isCorrect = true;
+    }
+  }
 
   const you = roomPlayers.find((p) => p.isYou);
   if (you) {
@@ -1138,7 +1171,7 @@ function evaluateCurrentAnswer() {
 
       setLiveTicker(`🎉 You solved Question ${currentQuestionIndex + 1} correctly! (+${addedPoints} pts)`);
     } else {
-      setLiveTicker(`Question ${currentQuestionIndex + 1} completed! Target answers: ${targetPrimes.join(', ')}`);
+      setLiveTicker(`❌ Question ${currentQuestionIndex + 1} incorrect! Target: ${targetAnswers.join(', ')}`);
     }
 
     sortAndRankPlayers();
@@ -1146,10 +1179,11 @@ function evaluateCurrentAnswer() {
 
     setTimeout(() => {
       you.hasJustSolved = false;
+      renderLiveLeaderboard();
     }, 1300);
   }
 
-  // Brief pause to show result, then advance to next question
+  // Brief pause to show feedback, then advance to next question
   setTimeout(() => {
     advanceToNextQuestion();
   }, 1200);
@@ -1163,7 +1197,6 @@ function advanceToNextQuestion() {
 
   if (nextIdx < battleQuestions.length && mainSecondsRemaining > 0) {
     loadQuestion(nextIdx);
-    startArenaTimers();
   } else {
     // All questions played or main timer expired -> end battle match!
     endBattleMatch();

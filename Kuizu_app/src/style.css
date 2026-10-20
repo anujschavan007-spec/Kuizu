@@ -5759,6 +5759,10 @@ body.home-page-body {
 }
 
 /* Result Trophy Card */
+#modal-battle-result {
+  z-index: 3000 !important;
+}
+
 .result-card {
   text-align: center;
   max-width: 440px;
