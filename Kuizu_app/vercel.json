@@ -1,0 +1,80 @@
+{
+  "version": 2,
+  "buildCommand": "",
+  "outputDirectory": "dist",
+  "installCommand": "",
+  "framework": null,
+  "rewrites": [
+    { "source": "/sign-in", "destination": "/sign-in/index.html" },
+    { "source": "/sign-up", "destination": "/sign-up/index.html" },
+    { "source": "/sso-callback", "destination": "/sso-callback/index.html" },
+    { "source": "/home", "destination": "/home/index.html" },
+    { "source": "/problems", "destination": "/problems/index.html" },
+    { "source": "/quiz", "destination": "/quiz/index.html" },
+    { "source": "/dailyquiz", "destination": "/dailyquiz/index.html" },
+    { "source": "/daily-quiz", "destination": "/dailyquiz/index.html" },
+    { "source": "/battle", "destination": "/battle/index.html" },
+    { "source": "/profile", "destination": "/profile/index.html" },
+    { "source": "/settings", "destination": "/settings/index.html" },
+    { "source": "/problem/qlibrary/compiler/submission", "destination": "/problem/qlibrary/compiler/submission/index.html" },
+    { "source": "/problem/qlibrary/compiler", "destination": "/problem/qlibrary/compiler/index.html" },
+    { "source": "/qlibrary/compiler/submission", "destination": "/problem/qlibrary/compiler/submission/index.html" },
+    { "source": "/qlibrary/compiler", "destination": "/problem/qlibrary/compiler/index.html" },
+    { "source": "/problem/contest/arena", "destination": "/problem/contest/arena/index.html" },
+    { "source": "/problem/contest/compiler", "destination": "/problem/contest/arena/index.html" },
+    { "source": "/contest/arena", "destination": "/problem/contest/arena/index.html" },
+    { "source": "/problem/contest", "destination": "/problem/contest/index.html" },
+    { "source": "/contest", "destination": "/problem/contest/index.html" },
+    { "source": "/contests", "destination": "/problem/contest/index.html" },
+    { "source": "/problem/quest", "destination": "/problem/quest/index.html" },
+    { "source": "/problem/mainleaderboard", "destination": "/problem/mainleaderboard/index.html" },
+    { "source": "/mainleaderboard", "destination": "/problem/mainleaderboard/index.html" },
+    { "source": "/home/leaderboard", "destination": "/problem/mainleaderboard/index.html" },
+    { "source": "/problem/leaderboard", "destination": "/problem/leaderboard/index.html" },
+    { "source": "/admin/user/userprofile", "destination": "/admin/user/userprofile/index.html" },
+    { "source": "/admin/user", "destination": "/admin/user/index.html" },
+    { "source": "/admin/users", "destination": "/admin/user/index.html" },
+    { "source": "/admin/uploadquiz", "destination": "/admin/uploadquiz/index.html" },
+    { "source": "/admin/quiz/upload", "destination": "/admin/uploadquiz/index.html" },
+    { "source": "/admin/dailykuizu/createkuizu", "destination": "/admin/dailykuizu/createkuizu/index.html" },
+    { "source": "/admin/dailykuizu", "destination": "/admin/dailykuizu/index.html" },
+    { "source": "/admin/daily-kuizu", "destination": "/admin/dailykuizu/index.html" },
+    { "source": "/admin/createquiz", "destination": "/admin/createquiz/index.html" },
+    { "source": "/admin/quiz/create", "destination": "/admin/createquiz/index.html" },
+    { "source": "/admin/uploadproblem", "destination": "/admin/uploadproblem/index.html" },
+    { "source": "/admin/problem/upload", "destination": "/admin/uploadproblem/index.html" },
+    { "source": "/admin/createproblem", "destination": "/admin/createproblem/index.html" },
+    { "source": "/admin/problem/create", "destination": "/admin/createproblem/index.html" },
+    { "source": "/admin/adminbattle/createbattle", "destination": "/admin/adminbattle/createbattle/index.html" },
+    { "source": "/admin/adminbattle", "destination": "/admin/adminbattle/index.html" },
+    { "source": "/admin/battle/create", "destination": "/admin/adminbattle/createbattle/index.html" },
+    { "source": "/admin/battles", "destination": "/admin/adminbattle/index.html" },
+    { "source": "/admin/admincontest/createcontest", "destination": "/admin/admincontest/createcontest/index.html" },
+    { "source": "/admin/admincontest", "destination": "/admin/admincontest/index.html" },
+    { "source": "/admin/contest/create", "destination": "/admin/admincontest/createcontest/index.html" },
+    { "source": "/admin/contests", "destination": "/admin/admincontest/index.html" },
+    { "source": "/admin/adminquest/createquest", "destination": "/admin/adminquest/createquest/index.html" },
+    { "source": "/admin/adminquest", "destination": "/admin/adminquest/index.html" },
+    { "source": "/admin/quest/create", "destination": "/admin/adminquest/createquest/index.html" },
+    { "source": "/admin/quests", "destination": "/admin/adminquest/index.html" },
+    { "source": "/admin/settings", "destination": "/admin/settings/index.html" },
+    { "source": "/admin/profile", "destination": "/admin/profile/index.html" },
+    { "source": "/admin", "destination": "/admin/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}

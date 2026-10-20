@@ -7,10 +7,14 @@
     "dev": "vite",
     "server": "bun run server/index.ts",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "supabase:link": "bunx supabase link --project-ref pjahxopllhifjmnonfdp",
+    "supabase:push": "bunx supabase db push",
+    "supabase:sync": "bun run server/syncToSupabase.ts"
   },
   "dependencies": {
     "@clerk/clerk-js": "^6.39.1",
+    "@supabase/supabase-js": "^2.118.0",
     "canvas-confetti": "^1.9.4",
     "three": "^0.186.1"
   },
