@@ -6234,6 +6234,29 @@ body.home-page-body {
   transform: translateX(3px);
 }
 
+.badge-completed-pill {
+  background: #ecfdf5 !important;
+  color: #059669 !important;
+  border: 1px solid #a7f3d0 !important;
+}
+
+.btn-details-completed {
+  background: #059669 !important;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.22) !important;
+  color: #ffffff !important;
+}
+
+.btn-details-completed:hover {
+  background: #047857 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(5, 150, 105, 0.3) !important;
+}
+
+.contest-completed-card {
+  border-color: #a7f3d0 !important;
+  position: relative;
+}
+
 /* Upcoming Contests Section */
 .upcoming-contests-section {
   display: flex;

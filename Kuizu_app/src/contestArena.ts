@@ -387,14 +387,46 @@ if (selectArenaTheme) {
   });
 }
 
+function getContestId(): string {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('contestId') || urlParams.get('id') || 'weekly-default';
+}
+
+function getContestSolvedKey(contestId: string, qId: string): string {
+  return `kuizu_contest_${contestId}_q_${qId}_solved`;
+}
+
+function getContestCodeKey(contestId: string, qId: string, lang: string): string {
+  return `kuizu_contest_${contestId}_q_${qId}_code_${lang}`;
+}
+
 function getCodeStorageKey(problemId: string, lang: string): string {
   return `kuizu_problem_code_${problemId}_${lang}`;
 }
 
 function getStoredOrStarterCode(q: ArenaQuestion, lang: string): string {
+  const contestId = getContestId();
+
+  // 1. Contest specific code saved for this question & language
+  const contestLangCode = localStorage.getItem(getContestCodeKey(contestId, q.id, lang));
+  if (contestLangCode !== null && contestLangCode !== undefined) return contestLangCode;
+
+  // 2. Contest submitted code
+  const contestSubmittedCode = localStorage.getItem(`kuizu_contest_${contestId}_q_${q.id}_submitted_code`);
+  const contestSubmittedLang = localStorage.getItem(`kuizu_contest_${contestId}_q_${q.id}_submitted_lang`);
+  if (contestSubmittedCode && (!contestSubmittedLang || contestSubmittedLang === lang)) {
+    return contestSubmittedCode;
+  }
+
+  // 3. User code in memory
+  if (q.userCode && q.userCode[lang]) return q.userCode[lang];
+  if (q.submittedCode && (!q.submittedLang || q.submittedLang === lang)) return q.submittedCode;
+
+  // 4. Global problem code storage
   const localSaved = localStorage.getItem(getCodeStorageKey(q.id, lang));
   if (localSaved !== null && localSaved !== undefined) return localSaved;
-  if (q.userCode && q.userCode[lang]) return q.userCode[lang];
+
+  // 5. Starters
   if (q.starters && q.starters[lang]) return q.starters[lang];
   if (q.starters && q.starters['cpp']) return q.starters['cpp'];
   return `// Write your ${lang.toUpperCase()} solution here`;
@@ -724,7 +756,7 @@ function renderQuestion(index: number) {
 function switchQuestion(newIndex: number) {
   if (newIndex < 0 || newIndex >= questions.length || newIndex === currentIndex) return;
 
-  // 1. Save currently typed code in userCode cache
+  // 1. Save currently typed code in userCode cache and localStorage
   if (codeEditor && questions[currentIndex]) {
     const q = questions[currentIndex];
     const curLang = langSelect?.value || 'cpp';
@@ -733,6 +765,10 @@ function switchQuestion(newIndex: number) {
     }
     const userCodeMap = q.userCode;
     if (userCodeMap) userCodeMap[curLang] = codeEditor.value;
+
+    const contestId = getContestId();
+    localStorage.setItem(getContestCodeKey(contestId, q.id, curLang), codeEditor.value);
+    localStorage.setItem(getCodeStorageKey(q.id, curLang), codeEditor.value);
   }
 
   // 2. Smooth fade animation
@@ -965,38 +1001,51 @@ runBtn?.addEventListener('click', async () => {
       <span>Run</span>
     `;
 
+    const isAllPassed = Boolean(
+      data.allPassed ?? 
+      data.passed ?? 
+      (typeof data.passedCount === 'number' && data.passedCount === data.totalCount && data.totalCount > 0)
+    );
+
     if (data.success && Array.isArray(data.results)) {
       // Map results back to real test cases
       data.results.forEach((r: any, idx: number) => {
         if (curQ.testcases[idx]) {
-          curQ.testcases[idx].yourOutput = r.actualOutput !== undefined && r.actualOutput !== null 
+          const out = r.actualOutput !== undefined && r.actualOutput !== null 
             ? String(r.actualOutput).trim() 
-            : (r.error || 'No output');
+            : (r.actual !== undefined && r.actual !== null ? String(r.actual).trim() : (r.error || 'No output'));
+          curQ.testcases[idx].yourOutput = out;
           curQ.testcases[idx].status = r.passed ? 'Passed' : 'Failed';
         }
       });
 
       renderTestCases(curQ);
 
+      const contestId = getContestId();
+      if (!curQ.userCode) curQ.userCode = {};
+      curQ.userCode[lang] = code;
+      localStorage.setItem(getContestCodeKey(contestId, curQ.id, lang), code);
+      localStorage.setItem(getCodeStorageKey(curQ.id, lang), code);
+
       // Update My Output console tab
       if (consoleBox) {
         consoleBox.innerHTML = `
           <div style="font-weight: 700; color: #1e293b; margin-bottom: 8px;">Execution Finished (${lang.toUpperCase()})</div>
-          ${data.allPassed
+          ${isAllPassed
             ? `<div style="color: #16a34a; font-weight: 700; margin-bottom: 6px;">✔ All ${data.passedCount}/${data.totalCount} sample test cases passed!</div>`
             : `<div style="color: #dc2626; font-weight: 700; margin-bottom: 6px;">✖ ${data.passedCount}/${data.totalCount} test cases passed.</div>`
           }
           <div style="border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
             ${data.results.map((r: any) => `
               <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: ${r.passed ? '#15803d' : '#b91c1c'};">
-                Case ${r.num}: ${r.passed ? 'Passed' : `Failed (Output: "${escapeHtml(r.actualOutput || r.error || '')}", Expected: "${escapeHtml(r.expectedOutput || '')}")`}
+                Case ${r.num}: ${r.passed ? 'Passed' : `Failed (Output: "${escapeHtml(r.actualOutput || r.actual || r.error || '')}", Expected: "${escapeHtml(r.expectedOutput || r.expected || '')}")`}
               </div>
             `).join('')}
           </div>
         `;
       }
 
-      if (data.allPassed) {
+      if (isAllPassed) {
         showToast(`✔ All sample test cases passed! (${data.passedCount}/${data.totalCount})`);
         if (tcBanner && tcBannerText) {
           tcBanner.style.display = 'flex';
@@ -1077,26 +1126,44 @@ submitBtn?.addEventListener('click', async () => {
       <span>Submit</span>
     `;
 
+    const isAllPassed = Boolean(
+      data.allPassed ?? 
+      data.passed ?? 
+      (typeof data.passedCount === 'number' && data.passedCount === data.totalCount && data.totalCount > 0)
+    );
+
     if (data.success && Array.isArray(data.results)) {
       // Map results back to real test cases
       data.results.forEach((r: any, idx: number) => {
         if (curQ.testcases[idx]) {
-          curQ.testcases[idx].yourOutput = r.actualOutput !== undefined && r.actualOutput !== null 
+          const out = r.actualOutput !== undefined && r.actualOutput !== null 
             ? String(r.actualOutput).trim() 
-            : (r.error || 'No output');
+            : (r.actual !== undefined && r.actual !== null ? String(r.actual).trim() : (r.error || 'No output'));
+          curQ.testcases[idx].yourOutput = out;
           curQ.testcases[idx].status = r.passed ? 'Passed' : 'Failed';
         }
       });
 
       renderTestCases(curQ);
 
-      if (data.allPassed) {
+      const contestId = getContestId();
+      if (!curQ.userCode) curQ.userCode = {};
+      curQ.userCode[lang] = code;
+      localStorage.setItem(getContestCodeKey(contestId, curQ.id, lang), code);
+      localStorage.setItem(getCodeStorageKey(curQ.id, lang), code);
+
+      if (isAllPassed) {
         // ALL TEST CASES PASSED -> Mark Solved!
         curQ.solved = true;
-        if (!curQ.userCode) curQ.userCode = {};
-        curQ.userCode[lang] = code;
         curQ.submittedCode = code;
         curQ.submittedLang = lang;
+
+        // Persist solved state & submitted code to localStorage
+        localStorage.setItem(getContestSolvedKey(contestId, curQ.id), 'true');
+        localStorage.setItem(`kuizu_contest_q_${curQ.id}_solved`, 'true');
+        localStorage.setItem(`kuizu_contest_${contestId}_q_${curQ.id}_submitted_code`, code);
+        localStorage.setItem(`kuizu_contest_${contestId}_q_${curQ.id}_submitted_lang`, lang);
+
         renderQuestionsSidebar();
 
         const diffLower = (curQ.difficulty || 'Easy').toLowerCase();
@@ -1105,8 +1172,6 @@ submitBtn?.addEventListener('click', async () => {
         // Submit solve to backend to award real strict XP & increment streak
         const userEmail = localStorage.getItem('kuizu_user_email') || '';
         const userName = localStorage.getItem('kuizu_user_name') || '';
-        const contestUrlParams = new URLSearchParams(window.location.search);
-        const currentContestId = contestUrlParams.get('contestId') || contestUrlParams.get('id') || '';
         let awardedXp = rewardXp;
         let isFirst = true;
 
@@ -1116,7 +1181,9 @@ submitBtn?.addEventListener('click', async () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               email: userEmail,
+              userEmail: userEmail,
               name: userName,
+              userName: userName,
               difficulty: curQ.difficulty,
               code,
               language: lang,
@@ -1124,7 +1191,7 @@ submitBtn?.addEventListener('click', async () => {
               totalCount: data.totalCount,
               status: 'accepted',
               source: 'contest',
-              contestId: currentContestId
+              contestId
             })
           });
           const subData = await res.json();
@@ -1309,12 +1376,16 @@ function renderSummaryQuestionTabs() {
 }
 
 function openContestSummaryModal(autoTriggered = false) {
+  const contestId = getContestId();
+
   // 1. Save currently written code for the active question
   if (codeEditor && questions[currentIndex]) {
     const curQ = questions[currentIndex];
     const curLang = langSelect?.value || 'cpp';
     if (!curQ.userCode) curQ.userCode = {};
     curQ.userCode[curLang] = codeEditor.value;
+    localStorage.setItem(getContestCodeKey(contestId, curQ.id, curLang), codeEditor.value);
+    localStorage.setItem(getCodeStorageKey(curQ.id, curLang), codeEditor.value);
   }
 
   // 2. Compute solved count & XP
@@ -1336,12 +1407,12 @@ function openContestSummaryModal(autoTriggered = false) {
     summaryXpEarned.textContent = `+${totalXp} XP`;
   }
   if (summaryStatusLabel) {
-    summaryStatusLabel.textContent = 'Submitted';
+    summaryStatusLabel.textContent = 'Completed';
   }
   if (summaryModalTitle) {
     summaryModalTitle.textContent = autoTriggered
       ? 'All Questions Solved! Contest Completed!'
-      : 'Contest Submitted Successfully!';
+      : 'Contest Completed & Submitted!';
   }
 
   // 3. Render tabs and display current question code
@@ -1349,24 +1420,55 @@ function openContestSummaryModal(autoTriggered = false) {
   renderSummaryQuestionTabs();
   renderSummaryQuestionCode(selectedSummaryIndex);
 
-  // 4. Send contest submission record to server
-  const urlParams = new URLSearchParams(window.location.search);
-  const contestId = urlParams.get('contestId') || urlParams.get('id');
+  // 4. Mark contest as COMPLETED in localStorage
+  try {
+    const completedList = JSON.parse(localStorage.getItem('kuizu_completed_contests') || '[]');
+    if (!completedList.includes(contestId)) {
+      completedList.push(contestId);
+      localStorage.setItem('kuizu_completed_contests', JSON.stringify(completedList));
+    }
+  } catch {}
+
+  localStorage.setItem(`kuizu_contest_${contestId}_completed`, 'true');
+  localStorage.setItem(`kuizu_contest_${contestId}_completed_date`, new Date().toISOString());
+  localStorage.setItem(`kuizu_contest_${contestId}_solved_count`, String(solvedCount));
+  localStorage.setItem(`kuizu_contest_${contestId}_total_questions`, String(questions.length));
+  localStorage.setItem(`kuizu_contest_${contestId}_score`, String(totalXp));
+
+  // If weekly or biweekly contest
+  const docTitle = document.title.toLowerCase();
+  const isBiweekly = contestId.toLowerCase().includes('biweekly') || docTitle.includes('biweekly');
+  if (isBiweekly) {
+    localStorage.setItem('kuizu_biweekly_contest_completed', 'true');
+  } else {
+    localStorage.setItem('kuizu_weekly_contest_completed', 'true');
+  }
+
+  // 5. Send contest submission record to server
   const userEmail = localStorage.getItem('kuizu_user_email') || '';
   const userName = localStorage.getItem('kuizu_user_name') || '';
 
-  if (contestId) {
-    fetch(`/api/contests/${contestId}/submit`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: userEmail, name: userName })
-    }).catch(() => {});
-  }
+  fetch(`/api/contests/${contestId}/submit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: userEmail,
+      userEmail,
+      name: userName,
+      userName,
+      solvedCount,
+      totalCount: questions.length,
+      xp: totalXp
+    })
+  }).catch(() => {});
 
-  // 5. Open Modal & switch to review mode
+  // 6. Unlock Contest Warrior badge
+  unlockBadge('contest-warrior');
+
+  // 7. Open Modal & switch to review mode
   updateAntiGamingStatus(false);
   modalContestSummary?.classList.add('open');
-  showToast('Contest submitted successfully! +25 XP earned!', 3500);
+  showToast('Contest marked as Completed! +25 XP awarded!', 3500);
 }
 
 function closeContestSummaryModal() {
@@ -1521,7 +1623,28 @@ async function loadContestData() {
     }
   }
 
-  // Initial render of first question
+  // Check and restore solved status & code for all questions from localStorage
+  const activeContestId = getContestId();
+  questions.forEach(q => {
+    const isSolved = 
+      localStorage.getItem(getContestSolvedKey(activeContestId, q.id)) === 'true' ||
+      localStorage.getItem(`kuizu_contest_q_${q.id}_solved`) === 'true';
+
+    if (isSolved) {
+      q.solved = true;
+      const subCode = localStorage.getItem(`kuizu_contest_${activeContestId}_q_${q.id}_submitted_code`);
+      const subLang = localStorage.getItem(`kuizu_contest_${activeContestId}_q_${q.id}_submitted_lang`);
+      if (subCode) {
+        q.submittedCode = subCode;
+        q.submittedLang = subLang || 'cpp';
+        if (!q.userCode) q.userCode = {};
+        q.userCode[q.submittedLang] = subCode;
+      }
+    }
+  });
+
+  // Initial render of first question and sidebar
+  renderQuestionsSidebar();
   renderQuestion(0);
 }
 

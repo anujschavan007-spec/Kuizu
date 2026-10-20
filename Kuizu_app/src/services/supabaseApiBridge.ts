@@ -1029,6 +1029,37 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
     return jsonResponse({ success: true, contestId, registeredCount: newCount });
   }
 
+  if ((pathname.includes('/submit') || pathname.includes('/complete')) && pathname.startsWith('/api/contests/')) {
+    const contestId = pathname.replace('/api/contests/', '').replace('/submit', '').replace('/complete', '');
+    const { userEmail, email, userId, solvedCount = 0, totalCount = 0, xp = 25 } = body;
+    const effectiveEmail = userEmail || email || '';
+
+    if (effectiveEmail || userId) {
+      const { data: user } = await supabase
+        .from('users')
+        .select('*')
+        .or(`id.eq.${userId},email.ilike.${effectiveEmail}`)
+        .maybeSingle();
+
+      if (user) {
+        let attended: string[] = [];
+        try { attended = JSON.parse(user.attended_contests_json || '[]'); } catch {}
+        if (!attended.includes(contestId)) attended.push(contestId);
+
+        await supabase
+          .from('users')
+          .update({
+            attended_contests_json: JSON.stringify(attended),
+            xp: (user.xp || 0) + (Number(xp) || 25),
+            last_active: 'Today'
+          })
+          .eq('id', user.id);
+      }
+    }
+
+    return jsonResponse({ success: true, contestId, completed: true, solvedCount, totalCount });
+  }
+
   if (pathname === '/api/contests' && (method === 'POST' || method === 'PUT')) {
     const { title, type = 'weekly', startDate, endDate, duration = '60', problems = [] } = body;
     const contestId = `contest-${Date.now()}`;
@@ -1181,7 +1212,9 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
         visibility: tc.visibility || 'Sample',
         input: stdinInput,
         expected: expectedOut,
+        expectedOutput: expectedOut,
         actual: actualOut,
+        actualOutput: actualOut,
         passed,
         error: tcError,
         exitCode: tcExitCode,
@@ -1191,6 +1224,7 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
 
     return jsonResponse({
       success: true,
+      allPassed: !anyFailed,
       passed: !anyFailed,
       passedCount: results.filter(r => r.passed).length,
       totalCount: results.length,

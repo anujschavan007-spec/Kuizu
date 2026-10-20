@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let activeLiveContestId: string = '';
   let activeContestId: string = '';
 
-  // Registration helpers
+  // Registration & Completion helpers
   function getRegisteredContests(): string[] {
     try {
       return JSON.parse(localStorage.getItem('kuizu_registered_contests') || '[]');
@@ -92,8 +92,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Calculate dynamic live/upcoming/completed status based on real date & time
+  function getCompletedContests(): string[] {
+    try {
+      return JSON.parse(localStorage.getItem('kuizu_completed_contests') || '[]');
+    } catch {
+      return [];
+    }
+  }
+
+  function isContestCompleted(contestId: string, contestObj?: any): boolean {
+    if (!contestId) return false;
+    const completedList = getCompletedContests();
+    if (completedList.includes(contestId)) return true;
+    if (localStorage.getItem(`kuizu_contest_${contestId}_completed`) === 'true') return true;
+
+    const type = (contestObj?.type || '').toLowerCase();
+    const title = (contestObj?.title || '').toLowerCase();
+    if ((type === 'weekly' || title.includes('weekly')) && localStorage.getItem('kuizu_weekly_contest_completed') === 'true') {
+      return true;
+    }
+    if ((type === 'biweekly' || title.includes('biweekly')) && localStorage.getItem('kuizu_biweekly_contest_completed') === 'true') {
+      return true;
+    }
+    return false;
+  }
+
+  // Calculate dynamic live/upcoming/completed status based on real date & time and user completion
   function getContestStatus(c: any): 'live' | 'upcoming' | 'completed' {
+    if (isContestCompleted(c?.id, c)) {
+      return 'completed';
+    }
     if (!c.startDate) return (c.status?.toLowerCase() === 'completed') ? 'completed' : 'upcoming';
     const start = new Date(c.startDate).getTime();
     if (isNaN(start)) return (c.status?.toLowerCase() || 'upcoming') as any;
@@ -191,22 +219,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const weekly = contestsList.find(c => c.type === 'weekly') || contestsList[0];
     const biweekly = contestsList.find(c => c.type === 'biweekly') || contestsList[1];
 
+    const weeklyCard = document.querySelector('.card-weekly') as HTMLElement | null;
     const weeklyTitle = document.querySelector('.card-weekly .featured-contest-title');
+    const weeklyBadge = document.querySelector('.card-weekly .featured-badge');
     const weeklyDuration = document.querySelector('.card-weekly .meta-val-blue');
     const weeklyBtn = document.querySelector('.card-weekly .btn-contest-details') as HTMLButtonElement | null;
     if (weekly && weeklyTitle) {
       weeklyTitle.textContent = weekly.title;
       if (weeklyDuration) weeklyDuration.textContent = weekly.duration?.includes('m') || weekly.duration?.includes('h') ? weekly.duration : `${weekly.duration || 60} mins`;
       if (weeklyBtn) weeklyBtn.setAttribute('data-contest-id', weekly.id);
+
+      const isWeeklyDone = isContestCompleted(weekly.id, weekly);
+      if (isWeeklyDone) {
+        weeklyCard?.classList.add('contest-completed-card');
+        if (weeklyBadge) {
+          weeklyBadge.className = 'featured-badge badge-completed-pill';
+          weeklyBadge.innerHTML = '✓ Completed';
+        }
+        if (weeklyBtn) {
+          weeklyBtn.className = 'btn-contest-details btn-details-completed';
+          weeklyBtn.innerHTML = '<span>Completed</span><span class="btn-arrow">✓</span>';
+        }
+      }
     }
 
+    const biweeklyCard = document.querySelector('.card-biweekly') as HTMLElement | null;
     const biweeklyTitle = document.querySelector('.card-biweekly .featured-contest-title');
+    const biweeklyBadge = document.querySelector('.card-biweekly .featured-badge');
     const biweeklyDuration = document.querySelector('.card-biweekly .meta-val-purple');
     const biweeklyBtn = document.querySelector('.card-biweekly .btn-contest-details') as HTMLButtonElement | null;
     if (biweekly && biweeklyTitle) {
       biweeklyTitle.textContent = biweekly.title;
       if (biweeklyDuration) biweeklyDuration.textContent = biweekly.duration?.includes('m') || biweekly.duration?.includes('h') ? biweekly.duration : `${biweekly.duration || 60} mins`;
       if (biweeklyBtn) biweeklyBtn.setAttribute('data-contest-id', biweekly.id);
+
+      const isBiweeklyDone = isContestCompleted(biweekly.id, biweekly);
+      if (isBiweeklyDone) {
+        biweeklyCard?.classList.add('contest-completed-card');
+        if (biweeklyBadge) {
+          biweeklyBadge.className = 'featured-badge badge-completed-pill';
+          biweeklyBadge.innerHTML = '✓ Completed';
+        }
+        if (biweeklyBtn) {
+          biweeklyBtn.className = 'btn-contest-details btn-details-completed';
+          biweeklyBtn.innerHTML = '<span>Completed</span><span class="btn-arrow">✓</span>';
+        }
+      }
     }
   }
 
@@ -592,7 +650,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (modalDetailsTitle) modalDetailsTitle.textContent = contest.title;
     if (modalDetailsBadge) {
-      if (status === 'live') {
+      if (status === 'completed') {
+        modalDetailsBadge.textContent = 'Completed Contest';
+        modalDetailsBadge.className = 'featured-badge badge-completed-pill';
+      } else if (status === 'live') {
         modalDetailsBadge.textContent = 'Live Contest';
         modalDetailsBadge.className = 'featured-badge badge-live';
       } else {
@@ -615,10 +676,15 @@ document.addEventListener('DOMContentLoaded', () => {
           const diff = probObj ? probObj.difficulty : (i === 0 ? 'Easy' : (i < 3 ? 'Medium' : 'Hard'));
           const diffColor = diff === 'Easy' ? '#10B981' : (diff === 'Hard' ? '#EF4444' : '#F59E0B');
 
-          // If upcoming, solve action is locked until live
-          const solveAction = status === 'live' 
-            ? `<a href="/problem/contest/arena?id=${contest.id}&q=${i}" class="btn-solve-contest-prob" style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 8px; background: #EEF2FF; color: #4F46E5; font-size: 12px; font-weight: 700; text-decoration: none;"><span>Solve</span><span>→</span></a>`
-            : `<span style="display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; background: #f1f5f9; color: #94a3b8; font-size: 11.5px; font-weight: 600;">Opens when Live</span>`;
+          // If completed, allow reviewing in arena; if upcoming, solve action is locked until live
+          let solveAction = '';
+          if (status === 'completed') {
+            solveAction = `<a href="/problem/contest/arena?id=${contest.id}&q=${i}" class="btn-solve-contest-prob" style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 8px; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; font-size: 12px; font-weight: 700; text-decoration: none;"><span>Review</span><span>✓</span></a>`;
+          } else if (status === 'live') {
+            solveAction = `<a href="/problem/contest/arena?id=${contest.id}&q=${i}" class="btn-solve-contest-prob" style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 8px; background: #EEF2FF; color: #4F46E5; font-size: 12px; font-weight: 700; text-decoration: none;"><span>Solve</span><span>→</span></a>`;
+          } else {
+            solveAction = `<span style="display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; background: #f1f5f9; color: #94a3b8; font-size: 11.5px; font-weight: 600;">Opens when Live</span>`;
+          }
 
           return `
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
