@@ -117,6 +117,13 @@ export function updateBackgroundImages(isDark: boolean): void {
     const target = isDark ? '/images/quiz_clean_map_bg_dark.png' : '/images/quiz_clean_map_bg.jpg';
     if (img.getAttribute('src') !== target) img.src = target;
   });
+
+  const questCards = document.querySelectorAll<HTMLElement>('.quest-landscape-card, #quest-landscape-map');
+  questCards.forEach((card) => {
+    card.style.backgroundImage = isDark
+      ? "url('/images/quest_clean_bg_dark.png')"
+      : "url('/images/quest_clean_bg.jpg')";
+  });
 }
 
 export function setTheme(theme: 'light' | 'dark' | 'system'): void {

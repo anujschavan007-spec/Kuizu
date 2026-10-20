@@ -67,12 +67,14 @@
                 document.querySelectorAll('.home-landscape-img').forEach(function(el){ el.src = '/images/home_landscape_dark.png'; });
                 document.querySelectorAll('.settings-mountains-art').forEach(function(el){ el.src = '/images/settings_mountains_dark.png'; });
                 document.querySelectorAll('.quiz-map-base-art').forEach(function(el){ el.src = '/images/quiz_clean_map_bg_dark.png'; });
+                document.querySelectorAll('.quest-landscape-card, #quest-landscape-map').forEach(function(el){ el.style.backgroundImage = "url('/images/quest_clean_bg_dark.png')"; });
               }
             });
           } else if (isDark) {
             document.querySelectorAll('.home-landscape-img').forEach(function(el){ el.src = '/images/home_landscape_dark.png'; });
             document.querySelectorAll('.settings-mountains-art').forEach(function(el){ el.src = '/images/settings_mountains_dark.png'; });
             document.querySelectorAll('.quiz-map-base-art').forEach(function(el){ el.src = '/images/quiz_clean_map_bg_dark.png'; });
+            document.querySelectorAll('.quest-landscape-card, #quest-landscape-map').forEach(function(el){ el.style.backgroundImage = "url('/images/quest_clean_bg_dark.png')"; });
           }
         } catch (_) {}
       })();

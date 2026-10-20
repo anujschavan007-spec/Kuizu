@@ -19289,9 +19289,16 @@ html.dark-mode .filter-menu-item:hover {
 }
 
 /* Quest Page */
-html.dark-mode .quest-landscape-card,
 html.dark-mode .quest-node-card {
   background: #111827 !important;
+  border-color: #1e293b !important;
+}
+
+html.dark-mode .quest-landscape-card {
+  background-image: url('/images/quest_clean_bg_dark.png') !important;
+  background-size: cover !important;
+  background-position: center bottom !important;
+  background-repeat: repeat-x !important;
   border-color: #1e293b !important;
 }
 
