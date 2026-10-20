@@ -5,6 +5,7 @@ import { showFirstProblemSolverBadgeModal } from './services/firstProblemBadgeMo
 import { showQuickThinkerBadgeModal } from './services/quickThinkerBadgeModal';
 import { highlightCode } from './services/codeHighlighter';
 import { getCompilerSettings, saveCompilerTheme, applyCompilerTheme } from './services/compilerThemeManager';
+import { unlockBadge } from './services/badgeManager';
 
 interface ProblemSpec {
   id: string;
@@ -1358,18 +1359,19 @@ document.addEventListener('DOMContentLoaded', async () => {
           const hasEarnedQuickThinker = localStorage.getItem('kuizu_quick_thinker_earned') === 'true';
 
           if (isHardProblem && isUnder10Mins && isFirstAttempt && !hasEarnedQuickThinker) {
-            localStorage.setItem('kuizu_quick_thinker_earned', 'true');
+            unlockBadge('consistent-coder');
             setTimeout(() => {
               showQuickThinkerBadgeModal(() => {
                 // If this is also the user's very first problem solved overall, show first problem badge afterwards
                 if (!localStorage.getItem('kuizu_first_problem_solved')) {
-                  localStorage.setItem('kuizu_first_problem_solved', 'true');
+                  unlockBadge('first-problem-solver');
                   showFirstProblemSolverBadgeModal();
                 }
               });
             }, 650);
           } else {
             // Congratulate 1st problem solver with slowly moving 3D badge modal popup in center of screen
+            unlockBadge('first-problem-solver');
             setTimeout(() => {
               showFirstProblemSolverBadgeModal();
             }, 650);

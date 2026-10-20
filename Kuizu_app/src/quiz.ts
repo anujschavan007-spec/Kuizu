@@ -4,6 +4,7 @@ import type { QuizLevel, QuizQuestion, QuizResult } from './types';
 import './services/adminAuthGuard';
 import { soundManager } from './services/soundManager';
 import { showFirstQuizLevelBadgeModal } from './services/firstQuizLevelBadgeModal';
+import { unlockBadge } from './services/badgeManager';
 
 // State
 let levels: QuizLevel[] = [];
@@ -496,6 +497,7 @@ async function handleQuizSubmit(): Promise<void> {
 
     if (isLevelOne && earnedThreeStars) {
       // Pop up the 3D Pink Badge Modal in the center of the screen
+      unlockBadge('speedster');
       showFirstQuizLevelBadgeModal(() => {
         modalQuizResults?.classList.add('show');
       });
