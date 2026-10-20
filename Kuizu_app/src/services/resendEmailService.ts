@@ -3,7 +3,7 @@
  * 
  * Handles sending transactional emails via Resend:
  * 1. Welcome email upon new user sign-up
- * 2. Badge achievement emails when unlocking trophies (including 3D .glb file attachments & 360° inspection links)
+ * 2. Orange Fire themed badge congratulations email with "View Your Badge" action button
  */
 
 export interface EmailAttachment {
@@ -139,8 +139,8 @@ export async function sendWelcomeEmail(toEmail: string, userName?: string): Prom
                       <tr>
                         <td width="36" valign="top" style="font-size: 24px; line-height: 1;">🏆</td>
                         <td style="padding-left: 12px;">
-                          <strong style="color: #a855f7; font-size: 15px; display: block;">Collectible 3D GLB Badges</strong>
-                          <span style="color: #94a3b8; font-size: 13px; line-height: 1.5; display: block; margin-top: 4px;">Earn 6 distinct 3D badges with custom metallic shaders. When you win, you receive the raw .glb model directly in your email!</span>
+                          <strong style="color: #a855f7; font-size: 15px; display: block;">Collectible 3D Badges</strong>
+                          <span style="color: #94a3b8; font-size: 13px; line-height: 1.5; display: block; margin-top: 4px;">Earn 6 distinct 3D badges with custom metallic shaders and view them in 360° anytime!</span>
                         </td>
                       </tr>
                     </table>
@@ -193,12 +193,13 @@ export async function sendWelcomeEmail(toEmail: string, userName?: string): Prom
 }
 
 /**
- * Send Badge Achievement Email when a user earns a badge
- * Includes:
- * 1. Rich congratulations template styled with the badge's accent color
- * 2. Attached 3D .glb model file
- * 3. Direct link to interactive 3D 360° viewer on Kuizu
- * 4. Direct download link for the .glb file
+ * Send Badge Achievement Email with Orange Fire Theme
+ * Features:
+ * - Blazing Orange Fire theme with radiant flame gradients
+ * - Big CONGRATULATIONS header text
+ * - "View Your Badge" action button linking directly to /badge?id=...
+ * - Fully mobile responsive layout
+ * - No .glb file attachment
  */
 export async function sendBadgeWinEmail(
   toEmail: string,
@@ -207,57 +208,77 @@ export async function sendBadgeWinEmail(
 ): Promise<boolean> {
   if (!toEmail || !toEmail.includes('@')) return false;
   const name = userName?.trim() || 'Champion';
-  const accent = badge.accentColor || '#38bdf8';
-  const glbUrl = `https://kuizu-app.vercel.app${badge.glbModel}`;
-  const interactiveViewUrl = `https://kuizu-app.vercel.app/badge?id=${encodeURIComponent(badge.id)}`;
-  const glbFilename = `${badge.title.replace(/[^a-zA-Z0-9]/g, '_')}_3D_Badge.glb`;
+  const badgeViewUrl = `https://kuizu-app.vercel.app/badge?id=${encodeURIComponent(badge.id)}`;
 
   const html = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>🏆 Badge Unlocked: ${escapeHtml(badge.title)} — KUIZU</title>
+  <title>🔥 CONGRATULATIONS! Badge Unlocked: ${escapeHtml(badge.title)} — KUIZU</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="margin: 0; padding: 0; background-color: #080c16; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: #f8fafc;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #080c16; padding: 40px 12px;">
+<body style="margin: 0; padding: 0; background-color: #080302; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: #f8fafc;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #080302; padding: 36px 12px;">
     <tr>
       <td align="center">
-        <!-- Main Card Container -->
-        <table role="presentation" width="100%" style="max-width: 600px; background: linear-gradient(180deg, #0f172a 0%, #090e1a 100%); border-radius: 18px; border: 1px solid rgba(148, 163, 184, 0.2); box-shadow: 0 25px 65px rgba(0, 0, 0, 0.7); overflow: hidden;">
+        <!-- Main Card Container: Radiant Fire Border & Flame Gradient -->
+        <table role="presentation" width="100%" style="max-width: 580px; background: linear-gradient(180deg, #180904 0%, #0e0503 100%); border-radius: 20px; border: 1px solid rgba(255, 107, 0, 0.45); box-shadow: 0 25px 75px rgba(255, 69, 0, 0.35); overflow: hidden;">
           
-          <!-- Trophy Badge Header -->
+          <!-- Blazing Flame Header Banner -->
           <tr>
-            <td style="background: radial-gradient(circle at center, rgba(56, 189, 248, 0.15) 0%, rgba(15, 23, 42, 0.95) 75%); padding: 42px 32px 24px 32px; text-align: center; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
-              <div style="font-size: 58px; line-height: 1; filter: drop-shadow(0 8px 18px ${accent}66);">
-                🏆
+            <td style="background: linear-gradient(135deg, #d82b00 0%, #ff5100 45%, #ff8800 100%); padding: 44px 28px 30px 28px; text-align: center; border-bottom: 2px solid rgba(255, 200, 0, 0.35);">
+              
+              <!-- Fire Badge Pill -->
+              <div style="display: inline-block; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 230, 150, 0.45); border-radius: 9999px; padding: 6px 18px; font-size: 11px; font-weight: 900; color: #fff3e0; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;">
+                🔥 TROPHY UNLOCKED 🔥
               </div>
-              <div style="display: inline-block; margin-top: 16px; background: rgba(56, 189, 248, 0.12); border: 1px solid ${accent}66; border-radius: 9999px; padding: 5px 16px; font-size: 11px; font-weight: 800; color: ${accent}; letter-spacing: 1.5px; text-transform: uppercase;">
-                Achievement Unlocked
-              </div>
-              <h1 style="margin: 14px 0 6px 0; font-size: 28px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
-                ${escapeHtml(badge.title)}
+
+              <!-- BIG CONGRATULATIONS TEXT -->
+              <h1 style="margin: 8px 0 4px 0; font-size: 36px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #ffffff; text-shadow: 0 3px 18px rgba(0, 0, 0, 0.7); line-height: 1.15;">
+                CONGRATULATIONS!
               </h1>
-              <p style="margin: 0; font-size: 15px; color: #94a3b8; font-weight: 500;">
-                ${escapeHtml(badge.subtitle)}
-              </p>
+              
+              <!-- Subtitle -->
+              <div style="font-size: 17px; font-weight: 800; color: #ffe0b2; letter-spacing: 0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.5); margin-top: 6px;">
+                YOU'VE EARNED A NEW BADGE!
+              </div>
+
             </td>
           </tr>
 
           <!-- Body Content -->
           <tr>
-            <td style="padding: 32px 36px 36px 36px;">
-              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #cbd5e1; text-align: center;">
-                Outstanding performance, <strong style="color: #ffffff;">${escapeHtml(name)}</strong>! You've accomplished the requirements and officially added this exclusive trophy to your showcase.
+            <td style="padding: 34px 32px 38px 32px;">
+              
+              <!-- User Greeting -->
+              <p style="margin: 0 0 22px 0; font-size: 16px; line-height: 1.6; color: #fed7aa; text-align: center;">
+                Way to go, <strong style="color: #ffffff; font-size: 18px;">${escapeHtml(name)}</strong>! You've conquered the challenge and unlocked an official trophy on KUIZU.
               </p>
 
-              <!-- Badge Stats Card -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 22px 0; background: rgba(30, 41, 59, 0.65); border-radius: 14px; border: 1px solid rgba(148, 163, 184, 0.15); padding: 20px;">
+              <!-- Badge Title Card with Orange Flame Glow -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 18px 0 24px 0; background: linear-gradient(135deg, rgba(255, 81, 0, 0.16) 0%, rgba(255, 153, 0, 0.08) 100%); border-radius: 16px; border: 1px solid rgba(255, 120, 0, 0.4); padding: 22px; text-align: center;">
                 <tr>
                   <td>
-                    <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #64748b;">Criterion Met</div>
-                    <div style="font-size: 14px; color: #f1f5f9; font-weight: 600; margin-top: 4px; line-height: 1.4;">
+                    <div style="font-size: 52px; line-height: 1; filter: drop-shadow(0 6px 16px rgba(255, 107, 0, 0.6)); margin-bottom: 10px;">
+                      🏆
+                    </div>
+                    <h2 style="margin: 0 0 6px 0; font-size: 26px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; text-shadow: 0 2px 10px rgba(255, 100, 0, 0.3);">
+                      ${escapeHtml(badge.title)}
+                    </h2>
+                    <p style="margin: 0; font-size: 14.5px; color: #fdba74; font-weight: 600;">
+                      ${escapeHtml(badge.subtitle)}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Criteria & Reward Box -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 20px 0 28px 0; background: rgba(20, 8, 4, 0.7); border-radius: 14px; border: 1px solid rgba(255, 107, 0, 0.22); padding: 18px 20px;">
+                <tr>
+                  <td>
+                    <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #ea580c;">Requirement Completed</div>
+                    <div style="font-size: 14.5px; color: #f8fafc; font-weight: 600; margin-top: 4px; line-height: 1.45;">
                       ✅ ${escapeHtml(badge.condition)}
                     </div>
                   </td>
@@ -265,63 +286,36 @@ export async function sendBadgeWinEmail(
                 <tr><td height="14"></td></tr>
                 <tr>
                   <td>
-                    <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #64748b;">Reward Level Boost</div>
-                    <div style="font-size: 15px; color: #10b981; font-weight: 700; margin-top: 4px;">
-                      ⚡ +100 XP added to your Kuizu profile
+                    <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #ea580c;">Reward Added</div>
+                    <div style="font-size: 15px; color: #f59e0b; font-weight: 800; margin-top: 4px;">
+                      🔥 +100 XP Flame Boost added to your account
                     </div>
                   </td>
                 </tr>
               </table>
 
-              <!-- 3D Model Attachment & Interactive Viewer Showcase Box -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 26px 0; background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%); border-radius: 14px; border: 1px solid ${accent}55; padding: 22px;">
-                <tr>
-                  <td>
-                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                      <span style="font-size: 20px; margin-right: 8px;">📦</span>
-                      <strong style="color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 0.3px;">
-                        3D .GLB Model Delivered
-                      </strong>
-                    </div>
-                    <p style="margin: 0 0 14px 0; font-size: 13.5px; line-height: 1.55; color: #cbd5e1;">
-                      We have attached the official 3D binary GLTF (<code style="background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 4px; color: ${accent};">${glbFilename}</code>) model directly to this email!
-                    </p>
-                    <ul style="margin: 0; padding-left: 20px; font-size: 12.5px; line-height: 1.6; color: #94a3b8;">
-                      <li><strong style="color: #e2e8f0;">Attached File:</strong> Included as an email attachment below.</li>
-                      <li><strong style="color: #e2e8f0;">macOS / iOS:</strong> Tap or press Spacebar to view with native 3D QuickLook & AR.</li>
-                      <li><strong style="color: #e2e8f0;">Windows:</strong> Double click the attachment to open in 3D Viewer.</li>
-                      <li><strong style="color: #e2e8f0;">Creators:</strong> Ready for Blender, Three.js, Unity, or 3D printing.</li>
-                    </ul>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Call To Action Buttons -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 28px 0 12px 0;">
+              <!-- Primary Action Button: "View Your Badge" (Blazing Fire Gradient) -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 32px 0 16px 0;">
                 <tr>
                   <td align="center">
-                    <!-- Primary CTA: 360 Interactive Viewer -->
-                    <a href="${interactiveViewUrl}" style="display: block; max-width: 380px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 700; padding: 15px 24px; border-radius: 12px; box-shadow: 0 6px 24px rgba(79, 70, 229, 0.45); letter-spacing: 0.3px; text-align: center; margin-bottom: 12px;">
-                      🎮 Inspect in 3D (360° Interactive View) →
-                    </a>
-                    <!-- Secondary CTA: Direct GLB Download -->
-                    <a href="${glbUrl}" style="display: inline-block; background: rgba(30, 41, 59, 0.85); color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 600; padding: 10px 22px; border-radius: 8px; border: 1px solid rgba(148, 163, 184, 0.25); letter-spacing: 0.2px;">
-                      ⬇️ Direct Download .GLB File
+                    <a href="${badgeViewUrl}" style="display: block; max-width: 380px; background: linear-gradient(135deg, #ff3d00 0%, #ff8800 100%); color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 900; padding: 17px 32px; border-radius: 12px; box-shadow: 0 8px 30px rgba(255, 61, 0, 0.6); letter-spacing: 0.5px; text-align: center; text-transform: uppercase;">
+                      🔥 View Your Badge →
                     </a>
                   </td>
                 </tr>
               </table>
 
-              <p style="margin: 22px 0 0 0; font-size: 12.5px; color: #64748b; text-align: center; line-height: 1.5;">
-                Keep conquering daily quizzes and 1v1 arenas to unlock all 6 official 3D trophies!
+              <!-- Encouragement Footnote -->
+              <p style="margin: 22px 0 0 0; font-size: 13px; color: #9a3412; text-align: center; line-height: 1.5;">
+                Keep igniting your coding streak, conquer quizzes, and unlock all 6 trophies!
               </p>
             </td>
           </tr>
 
           <!-- Footer -->
           <tr>
-            <td style="padding: 24px 36px; background: #070b13; border-top: 1px solid rgba(148, 163, 184, 0.1); text-align: center;">
-              <p style="margin: 0; font-size: 12px; color: #475569;">
+            <td style="padding: 22px 28px; background: #060201; border-top: 1px solid rgba(255, 81, 0, 0.15); text-align: center;">
+              <p style="margin: 0; font-size: 12px; color: #7c2d12;">
                 © 2026 KUIZU Gaming Platform. All rights reserved.
               </p>
             </td>
@@ -335,19 +329,12 @@ export async function sendBadgeWinEmail(
 </html>
   `.trim();
 
-  const attachments: EmailAttachment[] = [
-    {
-      filename: glbFilename,
-      path: glbUrl
-    }
-  ];
-
+  // No attachments array: lightweight, fast, no .glb file attached
   const result = await sendEmail({
     to: toEmail,
-    subject: `🏆 Badge Unlocked: ${badge.title} — KUIZU`,
+    subject: `🔥 CONGRATULATIONS! You Unlocked: ${badge.title} — KUIZU`,
     html,
-    text: `Congratulations ${name}! You unlocked "${badge.title}" on KUIZU! Inspect your 3D trophy at ${interactiveViewUrl} or download the attached 3D .glb model.`,
-    attachments
+    text: `CONGRATULATIONS ${name}! You unlocked "${badge.title}" on KUIZU! View your badge at: ${badgeViewUrl}`
   });
 
   return result.success;
