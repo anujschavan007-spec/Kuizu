@@ -269,13 +269,10 @@ if (form) {
       return;
     }
 
-    // Clerk security setting check
-    if (isSignUp && password.length < 15) {
-      setInlineError(
-        'Password must be at least 15 characters long (e.g. <code>MySecurePassword123!</code>). This is required by your Clerk instance security settings.',
-        'password'
-      );
-      showToast('Password must be 15+ characters', '⚠️', true);
+    // Basic password length check (minimum 8 characters)
+    if (isSignUp && password.length < 8) {
+      setInlineError('Password must be at least 8 characters long.', 'password');
+      showToast('Password must be at least 8 characters', '⚠️', true);
       return;
     }
 
@@ -399,10 +396,10 @@ if (form) {
       let errorField: 'email' | 'password' | undefined;
 
       if (code === 'form_password_length_too_short') {
-        msg = 'Password must be at least 15 characters long (e.g. <code>MySecurePassword123!</code>). This is enforced by your Clerk project security settings.';
+        msg = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || 'Password must be at least 8 characters long.';
         errorField = 'password';
       } else if (code === 'form_password_pwned') {
-        msg = 'This password was found in a public data breach. Please choose a more unique password (e.g. <code>KuizuSecret#2026!XYZ</code>).';
+        msg = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || 'Please choose a more secure password.';
         errorField = 'password';
       } else if (code === 'form_identifier_exists') {
         msg = 'An account with this email already exists. <a href="/sign-in">Click here to Sign In</a>';
