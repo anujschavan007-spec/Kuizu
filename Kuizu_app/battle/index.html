@@ -11,6 +11,72 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/src/style.css" />
+      
+      <!-- Global Theme & Accent Synchronous Preloader -->
+    <script id="kuizu-theme-preloader">
+      (function() {
+        try {
+          var fast = localStorage.getItem('kuizu_accent_color');
+          var raw = localStorage.getItem('kuizu_user_settings_v1');
+          var parsed = raw ? JSON.parse(raw) : null;
+          var color = fast || (parsed && parsed.accentColor) || '#2563EB';
+          var theme = (parsed && parsed.theme) || 'light';
+          var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var root = document.documentElement;
+          if (isDark) {
+            root.classList.add('dark-mode');
+            if (document.body) document.body.classList.add('dark-mode');
+          } else {
+            root.classList.remove('dark-mode');
+            if (document.body) document.body.classList.remove('dark-mode');
+          }
+          function hexRgb(h, a) {
+            var c = h.replace('#', '').trim();
+            if (c.length === 3) c = c.split('').map(function(x){return x+x;}).join('');
+            var n = parseInt(c, 16);
+            if (isNaN(n) || c.length !== 6) return 'rgba(37, 99, 235, ' + a + ')';
+            return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+          }
+          function adjB(h, p) {
+            var c = h.replace('#', '').trim();
+            if (c.length === 3) c = c.split('').map(function(x){return x+x;}).join('');
+            var n = parseInt(c, 16);
+            if (isNaN(n) || c.length !== 6) return h;
+            var r = Math.min(255, Math.max(0, Math.round(((n >> 16) & 255) * (1 + p / 100))));
+            var g = Math.min(255, Math.max(0, Math.round(((n >> 8) & 255) * (1 + p / 100))));
+            var b = Math.min(255, Math.max(0, Math.round((n & 255) * (1 + p / 100))));
+            return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+          }
+          var darker = adjB(color, -16);
+          var lightBg = isDark ? hexRgb(color, 0.22) : hexRgb(color, 0.08);
+          root.style.setProperty('--primary-accent', color);
+          root.style.setProperty('--color-primary', color);
+          root.style.setProperty('--primary-accent-hover', darker);
+          root.style.setProperty('--color-primary-hover', darker);
+          root.style.setProperty('--primary-accent-light', lightBg);
+          root.style.setProperty('--color-primary-light', lightBg);
+          root.style.setProperty('--primary-accent-subtle', hexRgb(color, 0.14));
+          root.style.setProperty('--primary-accent-glow', hexRgb(color, 0.38));
+          root.style.setProperty('--primary-accent-border', hexRgb(color, 0.4));
+          root.style.setProperty('--color-primary-border', hexRgb(color, 0.4));
+
+          // Immediate background image dark sync
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+              if (root.classList.contains('dark-mode')) {
+                document.querySelectorAll('.home-landscape-img').forEach(function(el){ el.src = '/images/home_landscape_dark.png'; });
+                document.querySelectorAll('.settings-mountains-art').forEach(function(el){ el.src = '/images/settings_mountains_dark.png'; });
+                document.querySelectorAll('.quiz-map-base-art').forEach(function(el){ el.src = '/images/quiz_clean_map_bg_dark.png'; });
+              }
+            });
+          } else if (isDark) {
+            document.querySelectorAll('.home-landscape-img').forEach(function(el){ el.src = '/images/home_landscape_dark.png'; });
+            document.querySelectorAll('.settings-mountains-art').forEach(function(el){ el.src = '/images/settings_mountains_dark.png'; });
+            document.querySelectorAll('.quiz-map-base-art').forEach(function(el){ el.src = '/images/quiz_clean_map_bg_dark.png'; });
+          }
+        } catch (_) {}
+      })();
+    </script>
   </head>
   <body class="battle-page-body">
     <!-- Top Navigation Header matching img5_battle.png -->

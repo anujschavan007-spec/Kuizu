@@ -38,6 +38,16 @@ class SoundManager {
       this.enabled = savedEnabled === 'true';
     }
 
+    try {
+      const userRaw = localStorage.getItem('kuizu_user_settings_v1');
+      if (userRaw) {
+        const u = JSON.parse(userRaw);
+        if (u.additional && typeof u.additional.soundEffects === 'boolean') {
+          this.enabled = u.additional.soundEffects;
+        }
+      }
+    } catch (_) {}
+
     if (this.audio) {
       this.audio.volume = this.volume;
     }

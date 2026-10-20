@@ -764,6 +764,60 @@ document.addEventListener('DOMContentLoaded', async () => {
   const highlightLayer = document.getElementById('editor-highlight-layer') as HTMLElement | null;
   const gutter = document.getElementById('editor-gutter');
   const langSelect = document.getElementById('code-language-select') as HTMLSelectElement | null;
+  const editorBody = document.getElementById('editor-body');
+
+  // Load User Learning Preferences
+  let savedSettings: any = null;
+  try {
+    const rawSettings = localStorage.getItem('kuizu_user_settings_v1');
+    if (rawSettings) savedSettings = JSON.parse(rawSettings);
+  } catch (err) {
+    console.warn('Could not read user settings', err);
+  }
+
+  const learning = savedSettings?.learning || {
+    defaultLanguage: 'C++',
+    autoSaveCode: true,
+    fontSize: 'Medium',
+    editorTheme: 'Monokai'
+  };
+
+  // 1. Apply Editor Theme to compiler body
+  const themeClassMap: Record<string, string> = {
+    'Monokai': 'editor-theme-monokai',
+    'VS Code Dark': 'editor-theme-vscode-dark',
+    'GitHub Light': 'editor-theme-github-light',
+    'Dracula': 'editor-theme-dracula',
+    'One Dark': 'editor-theme-onedark'
+  };
+  const activeThemeCls = themeClassMap[learning.editorTheme] || 'editor-theme-monokai';
+  editorBody?.classList.add(activeThemeCls);
+
+  // 2. Apply Font Size to compiler body
+  const sizeClassMap: Record<string, string> = {
+    'Small': 'editor-size-small',
+    'Medium': 'editor-size-medium',
+    'Large': 'editor-size-large'
+  };
+  const activeSizeCls = sizeClassMap[learning.fontSize] || 'editor-size-medium';
+  editorBody?.classList.add(activeSizeCls);
+
+  // 3. Set default language selector value if not yet set
+  const langKeyMap: Record<string, string> = {
+    'C++': 'cpp',
+    'Python': 'python',
+    'JavaScript': 'javascript',
+    'TypeScript': 'typescript',
+    'Java': 'java',
+    'C': 'cpp'
+  };
+
+  if (langSelect && learning.defaultLanguage) {
+    const targetVal = langKeyMap[learning.defaultLanguage];
+    if (targetVal && Array.from(langSelect.options).some(o => o.value === targetVal)) {
+      langSelect.value = targetVal;
+    }
+  }
 
   function updateEditor() {
     if (!editor) return;
@@ -806,7 +860,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function loadCodeForLanguage(lang: string) {
     if (!editor) return;
-    const saved = localStorage.getItem(getCodeStorageKey(problem.id, lang));
+    const saved = localStorage.getItem(getCodeStorageKey(problem.id, lang)) || 
+                  (learning.autoSaveCode ? localStorage.getItem(`kuizu_problem_draft_${problem.id}_${lang}`) : null);
     if (saved !== null && saved !== undefined) {
       editor.value = saved;
     } else if (problem.starters && problem.starters[lang]) {
@@ -842,6 +897,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const curLang = langSelect.value || 'cpp';
     loadCodeForLanguage(curLang);
   }
+
+  // Auto-Save code on typing
+  let autoSaveDraftTimer: any = null;
+  editor?.addEventListener('input', () => {
+    if (!editor || !langSelect) return;
+    const activeLang = langSelect.value;
+    localStorage.setItem(getCodeStorageKey(problem.id, activeLang), editor.value);
+    if (!learning.autoSaveCode) return;
+    clearTimeout(autoSaveDraftTimer);
+    autoSaveDraftTimer = setTimeout(() => {
+      localStorage.setItem(`kuizu_problem_draft_${problem.id}_${activeLang}`, editor.value);
+    }, 600);
+  });
 
   // Language switch updates code boilerplate / cached code and refreshes syntax colors
   langSelect?.addEventListener('change', () => {
@@ -946,7 +1014,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 7. Fullscreen Toggle
   const fullscreenBtn = document.getElementById('btn-fullscreen');
-  const editorBody = document.getElementById('editor-body');
   fullscreenBtn?.addEventListener('click', () => {
     editorBody?.classList.toggle('fullscreen');
     showToast(editorBody?.classList.contains('fullscreen') ? 'Fullscreen code editor enabled' : 'Exited fullscreen');

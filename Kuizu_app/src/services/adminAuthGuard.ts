@@ -1,3 +1,4 @@
+import '../theme';
 import { getClerk, syncClerkUserToLocalStorage, signOutClerk } from './clerkService';
 
 export const AUTHORIZED_ADMIN_EMAIL = 'anujschavan007@gmail.com';

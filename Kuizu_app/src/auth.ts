@@ -1,3 +1,4 @@
+import './theme';
 import confetti from 'canvas-confetti';
 import { getClerk, syncClerkUserToLocalStorage } from './services/clerkService';
 

@@ -1,3 +1,4 @@
+import './theme';
 import confetti from 'canvas-confetti';
 
 // Interactive confetti effect on Get Started

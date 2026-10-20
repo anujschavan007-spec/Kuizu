@@ -9,6 +9,72 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/src/style.css" />
+      
+      <!-- Global Theme & Accent Synchronous Preloader -->
+    <script id="kuizu-theme-preloader">
+      (function() {
+        try {
+          var fast = localStorage.getItem('kuizu_accent_color');
+          var raw = localStorage.getItem('kuizu_user_settings_v1');
+          var parsed = raw ? JSON.parse(raw) : null;
+          var color = fast || (parsed && parsed.accentColor) || '#2563EB';
+          var theme = (parsed && parsed.theme) || 'light';
+          var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var root = document.documentElement;
+          if (isDark) {
+            root.classList.add('dark-mode');
+            if (document.body) document.body.classList.add('dark-mode');
+          } else {
+            root.classList.remove('dark-mode');
+            if (document.body) document.body.classList.remove('dark-mode');
+          }
+          function hexRgb(h, a) {
+            var c = h.replace('#', '').trim();
+            if (c.length === 3) c = c.split('').map(function(x){return x+x;}).join('');
+            var n = parseInt(c, 16);
+            if (isNaN(n) || c.length !== 6) return 'rgba(37, 99, 235, ' + a + ')';
+            return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+          }
+          function adjB(h, p) {
+            var c = h.replace('#', '').trim();
+            if (c.length === 3) c = c.split('').map(function(x){return x+x;}).join('');
+            var n = parseInt(c, 16);
+            if (isNaN(n) || c.length !== 6) return h;
+            var r = Math.min(255, Math.max(0, Math.round(((n >> 16) & 255) * (1 + p / 100))));
+            var g = Math.min(255, Math.max(0, Math.round(((n >> 8) & 255) * (1 + p / 100))));
+            var b = Math.min(255, Math.max(0, Math.round((n & 255) * (1 + p / 100))));
+            return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+          }
+          var darker = adjB(color, -16);
+          var lightBg = isDark ? hexRgb(color, 0.22) : hexRgb(color, 0.08);
+          root.style.setProperty('--primary-accent', color);
+          root.style.setProperty('--color-primary', color);
+          root.style.setProperty('--primary-accent-hover', darker);
+          root.style.setProperty('--color-primary-hover', darker);
+          root.style.setProperty('--primary-accent-light', lightBg);
+          root.style.setProperty('--color-primary-light', lightBg);
+          root.style.setProperty('--primary-accent-subtle', hexRgb(color, 0.14));
+          root.style.setProperty('--primary-accent-glow', hexRgb(color, 0.38));
+          root.style.setProperty('--primary-accent-border', hexRgb(color, 0.4));
+          root.style.setProperty('--color-primary-border', hexRgb(color, 0.4));
+
+          // Immediate background image dark sync
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+              if (root.classList.contains('dark-mode')) {
+                document.querySelectorAll('.home-landscape-img').forEach(function(el){ el.src = '/images/home_landscape_dark.png'; });
+                document.querySelectorAll('.settings-mountains-art').forEach(function(el){ el.src = '/images/settings_mountains_dark.png'; });
+                document.querySelectorAll('.quiz-map-base-art').forEach(function(el){ el.src = '/images/quiz_clean_map_bg_dark.png'; });
+              }
+            });
+          } else if (isDark) {
+            document.querySelectorAll('.home-landscape-img').forEach(function(el){ el.src = '/images/home_landscape_dark.png'; });
+            document.querySelectorAll('.settings-mountains-art').forEach(function(el){ el.src = '/images/settings_mountains_dark.png'; });
+            document.querySelectorAll('.quiz-map-base-art').forEach(function(el){ el.src = '/images/quiz_clean_map_bg_dark.png'; });
+          }
+        } catch (_) {}
+      })();
+    </script>
   </head>
   <body class="daily-quiz-body" style="background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #fdf4ff 100%); min-height: 100vh; display: flex; flex-direction: column; font-family: 'Inter', sans-serif;">
 
@@ -27,7 +93,7 @@
             <span>KUIZU</span>
           </a>
 
-          <a href="/home" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #64748b; font-weight: 600; font-size: 13.5px; padding: 6px 12px; border-radius: 8px; background: #f1f5f9; transition: all 0.2s;">
+          <a href="/home" class="daily-back-btn" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #64748b; font-weight: 600; font-size: 13.5px; padding: 6px 12px; border-radius: 8px; background: #f1f5f9; transition: all 0.2s;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
             <span>Back to Home</span>
           </a>
@@ -78,7 +144,7 @@
       </div>
 
       <!-- Main Quiz Arena Card -->
-      <section class="admin-card" style="background: #ffffff; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); padding: 32px; overflow: hidden; position: relative;">
+      <section class="admin-card daily-arena-card" style="background: #ffffff; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); padding: 32px; overflow: hidden; position: relative;">
         
         <!-- Header Row inside Card -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid #f1f5f9;">
@@ -99,7 +165,7 @@
 
           <!-- Timer & Question Counter -->
           <div style="display: flex; align-items: center; gap: 16px;">
-            <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 8px 16px; border-radius: 12px;">
+            <div class="daily-timer-pill" style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 8px 16px; border-radius: 12px;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #6366f1;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
               <span id="arena-timer" style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: #1e1b4b;">05:00</span>
             </div>
@@ -150,7 +216,7 @@
 
     <!-- Quiz Results Modal -->
     <div id="daily-results-modal" class="admin-modal-backdrop" style="display: none;">
-      <div class="admin-modal-dialog" style="max-width: 520px; text-align: center; padding: 36px 32px;">
+      <div class="admin-modal-dialog daily-results-dialog" style="max-width: 520px; text-align: center; padding: 36px 32px;">
         
         <div style="width: 72px; height: 72px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px auto; border: 2px solid #bfdbfe;">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
