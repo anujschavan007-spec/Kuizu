@@ -12,6 +12,73 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/src/style.css" />
+    
+      
+      <!-- Global Theme & Accent Synchronous Preloader -->
+    <script id="kuizu-theme-preloader">
+      (function() {
+        try {
+          var fast = localStorage.getItem('kuizu_accent_color');
+          var raw = localStorage.getItem('kuizu_user_settings_v1');
+          var parsed = raw ? JSON.parse(raw) : null;
+          var color = fast || (parsed && parsed.accentColor) || '#2563EB';
+          var theme = (parsed && parsed.theme) || 'light';
+          var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var root = document.documentElement;
+          if (isDark) {
+            root.classList.add('dark-mode');
+            if (document.body) document.body.classList.add('dark-mode');
+          } else {
+            root.classList.remove('dark-mode');
+            if (document.body) document.body.classList.remove('dark-mode');
+          }
+          function hexRgb(h, a) {
+            var c = h.replace('#', '').trim();
+            if (c.length === 3) c = c.split('').map(function(x){return x+x;}).join('');
+            var n = parseInt(c, 16);
+            if (isNaN(n) || c.length !== 6) return 'rgba(37, 99, 235, ' + a + ')';
+            return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+          }
+          function adjB(h, p) {
+            var c = h.replace('#', '').trim();
+            if (c.length === 3) c = c.split('').map(function(x){return x+x;}).join('');
+            var n = parseInt(c, 16);
+            if (isNaN(n) || c.length !== 6) return h;
+            var r = Math.min(255, Math.max(0, Math.round(((n >> 16) & 255) * (1 + p / 100))));
+            var g = Math.min(255, Math.max(0, Math.round(((n >> 8) & 255) * (1 + p / 100))));
+            var b = Math.min(255, Math.max(0, Math.round((n & 255) * (1 + p / 100))));
+            return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+          }
+          var darker = adjB(color, -16);
+          var lightBg = isDark ? hexRgb(color, 0.22) : hexRgb(color, 0.08);
+          root.style.setProperty('--primary-accent', color);
+          root.style.setProperty('--color-primary', color);
+          root.style.setProperty('--primary-accent-hover', darker);
+          root.style.setProperty('--color-primary-hover', darker);
+          root.style.setProperty('--primary-accent-light', lightBg);
+          root.style.setProperty('--color-primary-light', lightBg);
+          root.style.setProperty('--primary-accent-subtle', hexRgb(color, 0.14));
+          root.style.setProperty('--primary-accent-glow', hexRgb(color, 0.38));
+          root.style.setProperty('--primary-accent-border', hexRgb(color, 0.4));
+          root.style.setProperty('--color-primary-border', hexRgb(color, 0.4));
+
+          // Immediate background image dark sync
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+              if (root.classList.contains('dark-mode')) {
+                document.querySelectorAll('.home-landscape-img').forEach(function(el){ el.src = '/images/home_landscape_dark.png'; });
+                document.querySelectorAll('.settings-mountains-art').forEach(function(el){ el.src = '/images/settings_mountains_dark.png'; });
+                document.querySelectorAll('.quiz-map-base-art').forEach(function(el){ el.src = '/images/quiz_clean_map_bg_dark.png'; });
+              }
+            });
+          } else if (isDark) {
+            document.querySelectorAll('.home-landscape-img').forEach(function(el){ el.src = '/images/home_landscape_dark.png'; });
+            document.querySelectorAll('.settings-mountains-art').forEach(function(el){ el.src = '/images/settings_mountains_dark.png'; });
+            document.querySelectorAll('.quiz-map-base-art').forEach(function(el){ el.src = '/images/quiz_clean_map_bg_dark.png'; });
+          }
+        } catch (_) {}
+      })();
+    </script>
   </head>
   <body class="problems-page-body settings-page-body">
     <!-- Top Navigation Header -->
@@ -19,34 +86,27 @@
       <div class="container home-nav-container">
         <!-- Brand Logo -->
         <a href="/home" class="brand-logo" aria-label="KUIZU Home">
-          <svg class="brand-icon" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M12.5 3C7.5 3 3 7 3 13V22C3 28 8 33 13.5 33C17.5 33 21 30.5 22.5 26.5L24 23L25.5 26.5C27 30.5 30.5 33 34.5 33C40 33 45 28 45 22V13C45 7 40.5 3 35.5 3H12.5Z"
-              fill="url(#leadBrandGrad)"
-            />
-            <path d="M11 15H17M14 12V18" stroke="white" stroke-width="2.5" stroke-linecap="round" />
-            <circle cx="31.5" cy="17.5" r="2.2" fill="white" />
-            <circle cx="36.5" cy="13.5" r="2.2" fill="white" />
-            <defs>
-              <linearGradient id="leadBrandGrad" x1="3" y1="3" x2="45" y2="33" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#4F46E5" />
-                <stop offset="1" stop-color="#7C3AED" />
-              </linearGradient>
-            </defs>
+          <svg class="brand-icon" viewBox="0 0 40 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 4C5 4 2 8 2 15C2 22 6 26 11 26C15 26 18 22 20 18C22 22 25 26 29 26C34 26 38 22 38 15C38 8 35 4 30 4H10Z" fill="#5850EC"/>
+            <path d="M8 15H14M11 12V18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="26" cy="15" r="1.5" fill="white"/>
+            <circle cx="32" cy="15" r="1.5" fill="white"/>
+            <circle cx="29" cy="12" r="1.5" fill="white"/>
+            <circle cx="29" cy="18" r="1.5" fill="white"/>
           </svg>
           <span class="brand-text">KUIZU</span>
         </a>
 
         <!-- Middle Navigation Tabs -->
         <nav class="home-nav-tabs">
-          <a href="/home" class="nav-tab nav-tab-inactive" id="tab-nav-home">
-            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+          <a href="/home" class="nav-tab nav-tab-inactive" id="tab-home">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10.5L12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 20v-9.5z" />
             </svg>
             <span>Home</span>
           </a>
 
-          <a href="/problems" class="nav-tab active" id="tab-nav-problems">
+          <a href="/problems" class="nav-tab nav-tab-inactive" id="tab-problems">
             <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="16 18 22 12 16 6"></polyline>
               <polyline points="8 6 2 12 8 18"></polyline>
@@ -54,7 +114,7 @@
             <span>Problems</span>
           </a>
 
-          <a href="/quiz" class="nav-tab nav-tab-inactive" id="tab-nav-quiz">
+          <a href="/quiz" class="nav-tab nav-tab-inactive" id="tab-quiz">
             <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
               <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
@@ -63,7 +123,7 @@
             <span>Quiz</span>
           </a>
 
-          <a href="/battle" class="nav-tab nav-tab-inactive" id="tab-nav-battle">
+          <a href="/battle" class="nav-tab nav-tab-inactive" id="tab-battle">
             <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="14.5" y1="9.5" x2="21" y2="3"></line>
               <line x1="3" y1="21" x2="9.5" y2="14.5"></line>
@@ -297,41 +357,115 @@
             <!-- Accent Color Sub-Section -->
             <div class="settings-group">
               <h4 class="settings-group-label">Accent Color</h4>
-              <div class="accent-colors-row">
-                <!-- Color 1: Blue (Default Selected) -->
-                <button type="button" class="accent-circle-btn active" data-color="#2563EB" style="background-color: #2563EB;" aria-label="Blue Accent">
+              <div class="accent-colors-row" id="accent-colors-container">
+                <!-- Color 1: Royal Blue (Default) -->
+                <button type="button" class="accent-circle-btn active" data-color="#2563EB" style="background-color: #2563EB;" aria-label="Royal Blue Accent" title="Royal Blue">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </button>
 
-                <!-- Color 2: Purple -->
-                <button type="button" class="accent-circle-btn" data-color="#7C3AED" style="background-color: #7C3AED;" aria-label="Purple Accent">
+                <!-- Color 2: Indigo -->
+                <button type="button" class="accent-circle-btn" data-color="#4F46E5" style="background-color: #4F46E5;" aria-label="Indigo Accent" title="Indigo">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </button>
 
-                <!-- Color 3: Green -->
-                <button type="button" class="accent-circle-btn" data-color="#10B981" style="background-color: #10B981;" aria-label="Emerald Accent">
+                <!-- Color 3: Purple -->
+                <button type="button" class="accent-circle-btn" data-color="#7C3AED" style="background-color: #7C3AED;" aria-label="Purple Accent" title="Purple">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </button>
 
-                <!-- Color 4: Orange -->
-                <button type="button" class="accent-circle-btn" data-color="#F59E0B" style="background-color: #F59E0B;" aria-label="Orange Accent">
+                <!-- Color 4: Fuchsia -->
+                <button type="button" class="accent-circle-btn" data-color="#C026D3" style="background-color: #C026D3;" aria-label="Fuchsia Accent" title="Fuchsia">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </button>
 
                 <!-- Color 5: Pink -->
-                <button type="button" class="accent-circle-btn" data-color="#EC4899" style="background-color: #EC4899;" aria-label="Pink Accent">
+                <button type="button" class="accent-circle-btn" data-color="#EC4899" style="background-color: #EC4899;" aria-label="Pink Accent" title="Pink">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </button>
+
+                <!-- Color 6: Rose -->
+                <button type="button" class="accent-circle-btn" data-color="#F43F5E" style="background-color: #F43F5E;" aria-label="Rose Accent" title="Rose">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 7: Crimson Red -->
+                <button type="button" class="accent-circle-btn" data-color="#EF4444" style="background-color: #EF4444;" aria-label="Crimson Red Accent" title="Crimson Red">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 8: Sunset Orange -->
+                <button type="button" class="accent-circle-btn" data-color="#F97316" style="background-color: #F97316;" aria-label="Sunset Orange Accent" title="Sunset Orange">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 9: Amber -->
+                <button type="button" class="accent-circle-btn" data-color="#F59E0B" style="background-color: #F59E0B;" aria-label="Amber Accent" title="Amber">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 10: Cyber Yellow -->
+                <button type="button" class="accent-circle-btn" data-color="#EAB308" style="background-color: #EAB308;" aria-label="Yellow Accent" title="Yellow">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 11: Lime -->
+                <button type="button" class="accent-circle-btn" data-color="#84CC16" style="background-color: #84CC16;" aria-label="Lime Accent" title="Lime">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 12: Emerald Green -->
+                <button type="button" class="accent-circle-btn" data-color="#10B981" style="background-color: #10B981;" aria-label="Emerald Green Accent" title="Emerald Green">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 13: Teal -->
+                <button type="button" class="accent-circle-btn" data-color="#14B8A6" style="background-color: #14B8A6;" aria-label="Teal Accent" title="Teal">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Color 14: Electric Cyan -->
+                <button type="button" class="accent-circle-btn" data-color="#06B6D4" style="background-color: #06B6D4;" aria-label="Cyan Accent" title="Cyan">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Custom Color Picker -->
+                <div class="accent-custom-btn-wrap" title="Custom color picker">
+                  <input type="color" id="accent-custom-picker" value="#2563EB" class="accent-custom-input" aria-label="Custom accent color picker" />
+                  <div class="accent-circle-btn accent-custom-btn" aria-hidden="true" title="Pick any custom color">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -614,6 +748,61 @@
                   <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <polyline points="6 9 12 15 18 9"></polyline>
                   </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Interactive Code Editor Preview -->
+            <div class="learning-editor-preview-container" id="learning-editor-preview-container">
+              <div class="learning-preview-header">
+                <div class="preview-header-left">
+                  <div class="preview-window-dots">
+                    <span class="preview-dot dot-red"></span>
+                    <span class="preview-dot dot-yellow"></span>
+                    <span class="preview-dot dot-green"></span>
+                  </div>
+                  <div class="preview-tab">
+                    <svg class="preview-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    <span id="preview-tab-filename">main.cpp</span>
+                  </div>
+                </div>
+                <div class="preview-header-right">
+                  <span class="preview-badge" id="preview-theme-badge">Monokai</span>
+                  <span class="preview-badge" id="preview-size-badge">14px</span>
+                  <span class="preview-autosave-badge" id="preview-autosave-badge">
+                    <span class="autosave-indicator-dot"></span>
+                    <span class="autosave-indicator-text">Auto-save on</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="learning-preview-editor-body editor-theme-monokai editor-size-medium" id="learning-preview-editor-body">
+                <div class="learning-preview-gutter" id="learning-preview-gutter">
+                  <!-- Generated dynamically -->
+                </div>
+                <div class="learning-preview-textarea-wrap">
+                  <div class="learning-preview-highlight" id="learning-preview-highlight"></div>
+                  <textarea id="learning-preview-editor" class="learning-preview-textarea" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+                </div>
+              </div>
+
+              <div class="learning-preview-footer">
+                <div class="preview-footer-info">
+                  <span id="preview-cursor-pos">Ln 1, Col 1</span>
+                  <span class="preview-footer-sep">•</span>
+                  <span id="preview-lang-display">C++</span>
+                </div>
+                <div class="preview-footer-actions">
+                  <button type="button" class="btn-preview-action" id="btn-reset-preview-code" title="Reset to default language template">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                      <path d="M3 3v5h5"></path>
+                    </svg>
+                    <span>Reset</span>
+                  </button>
                 </div>
               </div>
             </div>

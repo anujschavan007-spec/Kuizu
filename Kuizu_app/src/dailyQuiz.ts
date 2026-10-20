@@ -1,3 +1,4 @@
+import './theme';
 import confetti from 'canvas-confetti';
 import { soundManager } from './services/soundManager';
 import { showFirstDailyKuizuBadgeModal } from './services/firstDailyKuizuBadgeModal';
@@ -216,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const badgeText = isSelected ? '#ffffff' : '#64748b';
 
         return `
-          <button type="button" class="daily-option-btn" data-option="${opt.key}" style="
+          <button type="button" class="daily-option-btn ${isSelected ? 'selected' : ''}" data-option="${opt.key}" style="
             display: flex;
             align-items: center;
             gap: 14px;
@@ -230,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: ${isSelected ? '0 4px 12px rgba(79, 70, 229, 0.12)' : 'none'};
           ">
-            <span style="
+            <span class="daily-option-badge" style="
               width: 32px;
               height: 32px;
               border-radius: 8px;
@@ -243,7 +244,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               justify-content: center;
               flex-shrink: 0;
             ">${opt.key}</span>
-            <span style="font-size: 15px; font-weight: 600; color: ${textCol}; flex: 1;">
+            <span class="daily-option-text" style="font-size: 15px; font-weight: 600; color: ${textCol}; flex: 1;">
               ${opt.text || `Option ${opt.key}`}
             </span>
             ${isSelected ? `<span style="color: #4f46e5; font-size: 18px; font-weight: 800;">✓</span>` : ''}
