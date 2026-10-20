@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+dist/
+dist-ssr/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Vercel & IDE
+.vercel/
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+
+# Build caches & logs
+*.tsbuildinfo
+*.log
+*.lock
