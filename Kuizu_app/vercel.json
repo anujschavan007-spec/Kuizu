@@ -14,6 +14,8 @@
     { "source": "/dailyquiz", "destination": "/dailyquiz/index.html" },
     { "source": "/daily-quiz", "destination": "/dailyquiz/index.html" },
     { "source": "/battle", "destination": "/battle/index.html" },
+    { "source": "/badge", "destination": "/badge/index.html" },
+    { "source": "/badges", "destination": "/badge/index.html" },
     { "source": "/profile", "destination": "/profile/index.html" },
     { "source": "/settings", "destination": "/settings/index.html" },
     { "source": "/problem/qlibrary/compiler/submission", "destination": "/problem/qlibrary/compiler/submission/index.html" },

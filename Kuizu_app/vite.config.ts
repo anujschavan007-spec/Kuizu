@@ -108,6 +108,13 @@ function multiPageRewritePlugin(): Plugin {
         ) {
           req.url = `/problem/leaderboard/index.html${q}`;
         } else if (
+          pathname === '/badge' ||
+          pathname === '/badge/' ||
+          pathname === '/badges' ||
+          pathname === '/badges/'
+        ) {
+          req.url = `/badge/index.html${q}`;
+        } else if (
           pathname === '/profile' ||
           pathname === '/profile/' ||
           pathname === '/user/profile' ||
@@ -308,7 +315,8 @@ export default defineConfig({
         leaderboard: resolve(import.meta.dirname, 'problem/leaderboard/index.html'),
         mainleaderboard: resolve(import.meta.dirname, 'problem/mainleaderboard/index.html'),
         settings: resolve(import.meta.dirname, 'settings/index.html'),
-        profile: resolve(import.meta.dirname, 'profile/index.html')
+        profile: resolve(import.meta.dirname, 'profile/index.html'),
+        badge: resolve(import.meta.dirname, 'badge/index.html')
       }
     }
   }

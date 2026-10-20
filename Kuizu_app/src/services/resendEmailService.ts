@@ -209,7 +209,7 @@ export async function sendBadgeWinEmail(
   const name = userName?.trim() || 'Champion';
   const accent = badge.accentColor || '#38bdf8';
   const glbUrl = `https://kuizu-app.vercel.app${badge.glbModel}`;
-  const interactiveViewUrl = `https://kuizu-app.vercel.app/home?badge=${encodeURIComponent(badge.id)}`;
+  const interactiveViewUrl = `https://kuizu-app.vercel.app/badge?id=${encodeURIComponent(badge.id)}`;
   const glbFilename = `${badge.title.replace(/[^a-zA-Z0-9]/g, '_')}_3D_Badge.glb`;
 
   const html = `
