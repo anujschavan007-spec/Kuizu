@@ -1,3 +1,4 @@
+import './supabaseApiBridge';
 import type { BattleRoom, CreateBattlePayload, BattleQuestion } from '../types';
 
 /**

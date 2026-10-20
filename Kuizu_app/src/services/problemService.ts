@@ -1,3 +1,4 @@
+import './supabaseApiBridge';
 import type { Problem, Badge, FilterOptions } from '../types/index.ts';
 
 /**

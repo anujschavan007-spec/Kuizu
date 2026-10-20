@@ -1,3 +1,4 @@
+import './supabaseApiBridge';
 import { Clerk } from '@clerk/clerk-js';
 
 export const CLERK_PUBLISHABLE_KEY =

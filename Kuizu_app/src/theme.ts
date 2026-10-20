@@ -1,3 +1,5 @@
+import './services/supabaseApiBridge';
+
 /**
  * Global Theme & Accent Color Manager for KUIZU
  * Synchronizes and applies user accent colors and dark/light mode across all pages.

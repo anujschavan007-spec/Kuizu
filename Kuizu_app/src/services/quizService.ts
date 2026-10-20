@@ -1,3 +1,4 @@
+import './supabaseApiBridge';
 import type { QuizLevel, QuizQuestion, QuizResult } from '../types';
 
 /**
