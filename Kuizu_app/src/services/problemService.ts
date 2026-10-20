@@ -101,6 +101,10 @@ export async function fetchProblems(filters?: FilterOptions): Promise<Problem[]>
       if (filters?.searchQuery) params.append('q', filters.searchQuery);
       if (filters?.difficulty && filters.difficulty !== 'All') params.append('difficulty', filters.difficulty);
       if (filters?.topic && filters.topic !== 'All') params.append('topic', filters.topic);
+      const userEmail = localStorage.getItem('kuizu_user_email');
+      const userName = localStorage.getItem('kuizu_user_name');
+      if (userEmail) params.append('email', userEmail);
+      if (userName) params.append('name', userName);
 
       const res = await fetch(`${API_BASE_URL}/problems?${params.toString()}`);
       if (!res.ok) throw new Error(`HTTP error ${res.status}`);

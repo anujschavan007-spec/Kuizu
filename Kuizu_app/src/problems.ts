@@ -173,11 +173,23 @@ function renderProblems(): void {
   problemsContainer.innerHTML = filtered.map(p => {
     const diffClass = p.difficulty === 'Easy' ? 'diff-easy' : p.difficulty === 'Medium' ? 'diff-medium' : 'diff-hard';
     const topicIcon = getTopicIcon(p.topic.name);
+    const isSolved = Boolean(p.solved);
 
     return `
-      <div class="problem-row" data-id="${p.id}" tabindex="0" role="button" aria-label="Open problem ${p.id} ${p.title}">
-        <span class="row-id">${p.id}</span>
-        <span class="row-title">${p.title}</span>
+      <div class="problem-row ${isSolved ? 'row-is-solved' : ''}" data-id="${p.id}" tabindex="0" role="button" aria-label="Open problem ${p.id} ${p.title}">
+        <span class="row-id">
+          ${isSolved ? `
+            <span class="solved-check-badge" title="Solved">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#16a34a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+          ` : p.id}
+        </span>
+        <span class="row-title">
+          <span class="title-text">${p.title}</span>
+          ${isSolved ? `<span class="solved-pill">Solved</span>` : ''}
+        </span>
         <span class="row-diff">
           <span class="pill-difficulty ${diffClass}">${p.difficulty}</span>
         </span>
@@ -188,7 +200,9 @@ function renderProblems(): void {
           <span class="topic-label">${p.topic.name}</span>
         </span>
         <span class="row-reward">
-          <span class="star-gold">⭐</span>
+          <svg class="star-svg" viewBox="0 0 24 24" width="14" height="14" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.5">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
           <span class="reward-val">+${p.rewardXp} XP</span>
         </span>
         <span class="row-arrow">›</span>

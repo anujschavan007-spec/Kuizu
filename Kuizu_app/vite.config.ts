@@ -32,14 +32,36 @@ function multiPageRewritePlugin(): Plugin {
         } else if (pathname === '/battle' || pathname === '/battle/') {
           req.url = `/battle/index.html${q}`;
         } else if (
+          pathname === '/problem/qlibrary/compiler/submission' ||
+          pathname === '/problem/qlibrary/compiler/submission/' ||
+          pathname === '/problems/qlibrary/compiler/submission' ||
+          pathname === '/problems/qlibrary/compiler/submission/' ||
+          pathname === '/qlibrary/compiler/submission' ||
+          pathname === '/qlibrary/compiler/submission/'
+        ) {
+          req.url = `/problem/qlibrary/compiler/submission/index.html${q}`;
+        } else if (
           pathname === '/problem/qlibrary/compiler' ||
           pathname === '/problem/qlibrary/compiler/' ||
           pathname === '/problems/qlibrary/compiler' ||
           pathname === '/problems/qlibrary/compiler/' ||
           pathname === '/problem/compiler' ||
-          pathname === '/problem/compiler/'
+          pathname === '/problem/compiler/' ||
+          pathname === '/qlibrary/compiler' ||
+          pathname === '/qlibrary/compiler/'
         ) {
           req.url = `/problem/qlibrary/compiler/index.html${q}`;
+        } else if (
+          pathname === '/problem/contest/arena' ||
+          pathname === '/problem/contest/arena/' ||
+          pathname === '/problems/contest/arena' ||
+          pathname === '/problems/contest/arena/' ||
+          pathname === '/contest/arena' ||
+          pathname === '/contest/arena/' ||
+          pathname === '/problem/contest/compiler' ||
+          pathname === '/problem/contest/compiler/'
+        ) {
+          req.url = `/problem/contest/arena/index.html${q}`;
         } else if (
           pathname === '/problem/contest' ||
           pathname === '/problem/contest/' ||
@@ -267,10 +289,12 @@ export default defineConfig({
         home: resolve(import.meta.dirname, 'home/index.html'),
         problems: resolve(import.meta.dirname, 'problems/index.html'),
         problemQlibraryCompiler: resolve(import.meta.dirname, 'problem/qlibrary/compiler/index.html'),
+        problemCompilerSubmission: resolve(import.meta.dirname, 'problem/qlibrary/compiler/submission/index.html'),
         quiz: resolve(import.meta.dirname, 'quiz/index.html'),
         dailyquiz: resolve(import.meta.dirname, 'dailyquiz/index.html'),
         battle: resolve(import.meta.dirname, 'battle/index.html'),
         contest: resolve(import.meta.dirname, 'problem/contest/index.html'),
+        contestArena: resolve(import.meta.dirname, 'problem/contest/arena/index.html'),
         quest: resolve(import.meta.dirname, 'problem/quest/index.html'),
         leaderboard: resolve(import.meta.dirname, 'problem/leaderboard/index.html'),
         mainleaderboard: resolve(import.meta.dirname, 'problem/mainleaderboard/index.html'),

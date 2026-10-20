@@ -4,6 +4,7 @@ import { signOutClerk } from './services/clerkService';
 import { showFirstProblemSolverBadgeModal } from './services/firstProblemBadgeModal';
 import { showQuickThinkerBadgeModal } from './services/quickThinkerBadgeModal';
 import { highlightCode } from './services/codeHighlighter';
+import { getCompilerSettings, saveCompilerTheme, applyCompilerTheme } from './services/compilerThemeManager';
 
 interface ProblemSpec {
   id: string;
@@ -798,25 +799,55 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Set initial editor boilerplate
-  if (editor && langSelect) {
-    const curLang = langSelect.value || 'cpp';
-    if (problem.starters && problem.starters[curLang]) {
-      editor.value = problem.starters[curLang];
+  // Helper to get local storage code key
+  function getCodeStorageKey(problemId: string, lang: string): string {
+    return `kuizu_problem_code_${problemId}_${lang}`;
+  }
+
+  function loadCodeForLanguage(lang: string) {
+    if (!editor) return;
+    const saved = localStorage.getItem(getCodeStorageKey(problem.id, lang));
+    if (saved !== null && saved !== undefined) {
+      editor.value = saved;
+    } else if (problem.starters && problem.starters[lang]) {
+      editor.value = problem.starters[lang];
     } else if (problem.starters && problem.starters['cpp']) {
       editor.value = problem.starters['cpp'];
     }
     updateEditor();
   }
 
-  // Language switch updates code boilerplate and refreshes syntax colors
+  // Connect Theme & Font Size from User Settings
+  const selectCompilerTheme = document.getElementById('select-compiler-theme') as HTMLSelectElement | null;
+  const editorCard = document.querySelector('.editor-card') as HTMLElement | null;
+  const editorBodyEl = document.getElementById('editor-body');
+
+  const compilerSettings = getCompilerSettings();
+  applyCompilerTheme(editorBodyEl, compilerSettings.editorTheme, compilerSettings.fontSize);
+  if (editorCard) applyCompilerTheme(editorCard, compilerSettings.editorTheme, compilerSettings.fontSize);
+
+  if (selectCompilerTheme) {
+    selectCompilerTheme.value = compilerSettings.editorTheme || 'Monokai';
+    selectCompilerTheme.addEventListener('change', () => {
+      const chosen = selectCompilerTheme.value;
+      saveCompilerTheme(chosen);
+      applyCompilerTheme(editorBodyEl, chosen);
+      if (editorCard) applyCompilerTheme(editorCard, chosen);
+      showToast(`Editor theme changed to ${chosen}`);
+    });
+  }
+
+  // Set initial editor boilerplate / saved code
+  if (editor && langSelect) {
+    const curLang = langSelect.value || 'cpp';
+    loadCodeForLanguage(curLang);
+  }
+
+  // Language switch updates code boilerplate / cached code and refreshes syntax colors
   langSelect?.addEventListener('change', () => {
     const lang = langSelect.value;
-    if (editor && problem.starters[lang]) {
-      editor.value = problem.starters[lang];
-      updateEditor();
-      showToast(`Language set to ${langSelect.options[langSelect.selectedIndex].text}`);
-    }
+    loadCodeForLanguage(lang);
+    showToast(`Language set to ${langSelect.options[langSelect.selectedIndex].text}`);
   });
 
   // Auto-complete closing tags, brackets, and quotes mapping
@@ -906,7 +937,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  editor?.addEventListener('input', updateEditor);
+  editor?.addEventListener('input', () => {
+    updateEditor();
+    const curLang = langSelect?.value || 'cpp';
+    localStorage.setItem(getCodeStorageKey(problem.id, curLang), editor.value);
+  });
   updateEditor();
 
   // 7. Fullscreen Toggle
@@ -1213,18 +1248,37 @@ document.addEventListener('DOMContentLoaded', async () => {
             spread: 85,
             origin: { y: 0.6 }
           });
-          showToast(`Accepted! 100% (${data.totalCount}/${data.totalCount}) Test Cases Passed! +${problem.rewardXp} XP Awarded!`, 4500);
 
-          // Submit problem solve to backend to award real strict XP
+          // Submit problem solve to backend to award real strict XP and store submission code
           try {
             const userEmail = localStorage.getItem('kuizu_user_email') || '';
             const userName = localStorage.getItem('kuizu_user_name') || '';
-            fetch(`/api/problems/${problem.id}/submit`, {
+            const userCode = editor?.value || '';
+            const userLang = langSelect?.value || 'cpp';
+            const subRes = await fetch(`/api/problems/${problem.id}/submit`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email: userEmail, name: userName, difficulty: problem.difficulty })
-            }).catch(() => {});
-          } catch {}
+              body: JSON.stringify({
+                email: userEmail,
+                name: userName,
+                difficulty: problem.difficulty,
+                code: userCode,
+                language: userLang,
+                passedCount: data.passedCount || data.totalCount || 0,
+                totalCount: data.totalCount || 0,
+                status: 'accepted',
+                source: 'practice'
+              })
+            });
+            const subData = await subRes.json();
+            if (subData?.isFirstSolve) {
+              showToast(`Accepted! 100% (${data.totalCount}/${data.totalCount}) Test Cases Passed! +${subData.rewardXp} XP Awarded!`, 4500);
+            } else {
+              showToast(`Accepted! All test cases passed! (Already solved previously • +0 XP)`, 4500);
+            }
+          } catch {
+            showToast(`Accepted! 100% (${data.totalCount}/${data.totalCount}) Test Cases Passed!`, 4500);
+          }
 
           // Calculate time taken in seconds
           const elapsedSeconds = Math.floor((Date.now() - problemStartTime) / 1000);
@@ -1254,6 +1308,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             }, 650);
           }
         } else {
+          // Record failed submission into history as well
+          try {
+            const userEmail = localStorage.getItem('kuizu_user_email') || '';
+            const userName = localStorage.getItem('kuizu_user_name') || '';
+            const userCode = editor?.value || '';
+            const userLang = langSelect?.value || 'cpp';
+            fetch(`/api/problems/${problem.id}/submit`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: userEmail,
+                name: userName,
+                difficulty: problem.difficulty,
+                code: userCode,
+                language: userLang,
+                passedCount: data.passedCount || 0,
+                totalCount: data.totalCount || 0,
+                status: 'failed',
+                source: 'practice'
+              })
+            }).catch(() => {});
+          } catch {}
           showToast(`Failed on Case ${data.passedCount + 1}: ${data.results[data.passedCount]?.status || 'Wrong Answer'}.`, 4500);
         }
       } else {
@@ -1291,6 +1367,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   compilerBtn?.addEventListener('click', () => {
     document.getElementById('tab-myoutput')?.click();
     showToast('Viewing compiler stdout & execution environment.');
+  });
+
+  // 14. Submissions Button
+  const submissionsBtn = document.getElementById('btn-view-submissions');
+  submissionsBtn?.addEventListener('click', () => {
+    const curProblemId = problem?.id || '001';
+    window.location.href = `/problem/qlibrary/compiler/submission?id=${curProblemId}`;
   });
 
   // Expose for testing and external triggers

@@ -62,17 +62,23 @@ export function computeUserStrictXp(user: any): StrictUserXpBreakdown {
   }
   const dailyKuizuXp = (Array.isArray(completedDailyKuizu) ? completedDailyKuizu.length : 0) * 15;
 
-  // 6. Problems Solved (from real verified accepted submissions)
+  // 6. Problems Solved (from real verified accepted submissions - each problem awards XP only once)
   let problemsSolvedXp = 0;
   let realSolvedCount = 0;
   try {
     const row = db.query(`
-      SELECT COUNT(DISTINCT problem_id) as cnt, COALESCE(SUM(reward_xp), 0) as total_xp
-      FROM user_problem_submissions 
-      WHERE (user_id = ? OR user_email = ?) AND status = 'accepted'
+      SELECT 
+        COUNT(DISTINCT problem_id) as cnt, 
+        COALESCE(SUM(max_xp), 0) as total_xp
+      FROM (
+        SELECT problem_id, MAX(reward_xp) as max_xp
+        FROM user_problem_submissions 
+        WHERE (user_id = ? OR LOWER(user_email) = LOWER(?)) AND status = 'accepted'
+        GROUP BY problem_id
+      )
     `).get(user.id, user.email) as any;
     realSolvedCount = Number(row?.cnt) || 0;
-    problemsSolvedXp = Number(row?.total_xp) || (realSolvedCount * 10);
+    problemsSolvedXp = Number(row?.total_xp) || 0;
   } catch {
     realSolvedCount = 0;
     problemsSolvedXp = 0;
@@ -283,28 +289,75 @@ export function recordContestAttendance(contestIdOrName: string, userQuery: { id
 }
 
 /**
- * Record problem solve (+10 Easy, +20 Medium, +40 Hard) and count streak day
+ * Record problem solve (+10 Easy, +20 Medium, +40 Hard for first solve, 0 XP for duplicate solves)
+ * and ALWAYS store a new submission row in history with full code, language, and date/time.
  */
-export function recordProblemSolved(problemId: string, difficulty: string, userQuery: { id?: string; email?: string; name?: string }) {
+export function recordProblemSolved(
+  problemId: string,
+  difficulty: string,
+  userQuery: { id?: string; email?: string; name?: string },
+  codeDetails?: { code?: string; language?: string; passedCount?: number; totalCount?: number; status?: string; source?: string; contestId?: string }
+) {
   const user = findUserInDb(userQuery);
-  if (!user) return null;
+  if (!user) return { user: null, isFirstSolve: false, rewardXp: 0 };
 
-  // Check if problem already recorded for this user
-  const existingSub = db.query("SELECT * FROM user_problem_submissions WHERE (user_id = ? OR user_email = ?) AND problem_id = ?").get(
-    user.id,
-    user.email,
-    problemId
-  );
+  const paddedId = String(problemId).padStart(3, '0');
+  const unpaddedId = String(problemId).replace(/^0+/, '') || '0';
+
+  // Check if this problem was already successfully solved with status 'accepted' by this user
+  const alreadyAccepted = db.query(`
+    SELECT id, reward_xp FROM user_problem_submissions 
+    WHERE (user_id = ? OR LOWER(user_email) = LOWER(?)) 
+      AND (
+        problem_id = ? 
+        OR problem_id = ? 
+        OR problem_id = ?
+        OR CAST(problem_id AS INTEGER) = CAST(? AS INTEGER)
+      )
+      AND status = 'accepted'
+    LIMIT 1
+  `).get(user.id, user.email, problemId, paddedId, unpaddedId, problemId) as any;
 
   const diffLower = String(difficulty || "easy").toLowerCase();
-  const rewardXp = diffLower === "hard" ? 40 : (diffLower === "medium" ? 20 : 10);
+  const baseRewardXp = diffLower === "hard" ? 40 : (diffLower === "medium" ? 20 : 10);
 
-  if (!existingSub) {
-    db.prepare(`
-      INSERT INTO user_problem_submissions (user_id, user_email, problem_id, difficulty, reward_xp, status, submitted_at)
-      VALUES (?, ?, ?, ?, ?, 'accepted', ?)
-    `).run(user.id, user.email, problemId, difficulty, rewardXp, new Date().toISOString());
+  const status = codeDetails?.status || 'accepted';
+  const isAccepted = status === 'accepted';
+  // First solve is true ONLY if this submission is accepted AND user never had an accepted submission before
+  const isFirstSolve = isAccepted && !alreadyAccepted;
 
+  // Strict rule: XP awarded ONLY on the first accepted solve of this problem!
+  const rewardXp = isFirstSolve ? baseRewardXp : 0;
+
+  const code = codeDetails?.code || "";
+  const language = codeDetails?.language || "cpp";
+  const passedCount = codeDetails?.passedCount || 0;
+  const totalCount = codeDetails?.totalCount || 0;
+  const source = codeDetails?.source || 'practice';
+  const contestId = codeDetails?.contestId || '';
+
+  // ALWAYS insert a new row in history for every submission attempt with date & time!
+  db.prepare(`
+    INSERT INTO user_problem_submissions (user_id, user_email, problem_id, difficulty, reward_xp, status, code, language, passed_count, total_count, source, contest_id, submitted_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    user.id,
+    user.email,
+    problemId,
+    difficulty,
+    rewardXp,
+    status,
+    code,
+    language,
+    passedCount,
+    totalCount,
+    source,
+    contestId,
+    new Date().toISOString()
+  );
+
+  // Increment problems_solved count only if this is the very first accepted solve
+  if (isFirstSolve) {
     const currentSolved = Math.max(0, Number(user.problems_solved) || 0) + 1;
     db.prepare("UPDATE users SET problems_solved = ? WHERE id = ?").run(currentSolved, user.id);
   }
@@ -313,7 +366,12 @@ export function recordProblemSolved(problemId: string, difficulty: string, userQ
   recordStreakActivity(userQuery);
   syncAllUsersXpAndRanks();
 
-  return db.query("SELECT * FROM users WHERE id = ?").get(user.id);
+  const updatedUser = db.query("SELECT * FROM users WHERE id = ?").get(user.id);
+  return {
+    user: updatedUser,
+    isFirstSolve,
+    rewardXp
+  };
 }
 
 /**

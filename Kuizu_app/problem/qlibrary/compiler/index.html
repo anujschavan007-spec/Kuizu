@@ -293,24 +293,51 @@
           
           <!-- Editor Top Toolbar -->
           <div class="editor-toolbar">
-            <!-- Left: Language Dropdown Selector -->
-            <div class="language-select-wrapper">
-              <select id="code-language-select" class="language-dropdown-select">
-                <option value="cpp" selected>C++</option>
-                <option value="python">Python 3</option>
-                <option value="java">Java</option>
-                <option value="javascript">JavaScript</option>
-                <option value="typescript">TypeScript</option>
-                <option value="csharp">C#</option>
-                <option value="go">Go</option>
-              </select>
-              <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
+            <!-- Left: Language Dropdown Selector & Theme Selector -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div class="language-select-wrapper">
+                <select id="code-language-select" class="language-dropdown-select">
+                  <option value="cpp" selected>C++</option>
+                  <option value="python">Python 3</option>
+                  <option value="java">Java</option>
+                  <option value="javascript">JavaScript</option>
+                  <option value="typescript">TypeScript</option>
+                  <option value="csharp">C#</option>
+                  <option value="go">Go</option>
+                </select>
+                <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+
+              <div class="compiler-theme-select-wrapper" style="position: relative; display: inline-flex; align-items: center;">
+                <select id="select-compiler-theme" class="compiler-theme-select" title="Editor Theme" style="appearance: none; -webkit-appearance: none; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 6px 26px 6px 9px; font-size: 12.5px; font-weight: 600; color: #1e293b; cursor: pointer;">
+                  <option value="Monokai">Monokai</option>
+                  <option value="VS Code Dark">VS Code Dark</option>
+                  <option value="Dracula">Dracula</option>
+                  <option value="One Dark">One Dark</option>
+                  <option value="GitHub Light">GitHub Light</option>
+                </select>
+                <svg style="position: absolute; right: 7px; pointer-events: none; width: 13px; height: 13px; color: #64748b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
             </div>
 
             <!-- Right: Action Buttons -->
             <div class="editor-actions-group">
+              <!-- Submissions Button -->
+              <button type="button" class="btn-editor-action btn-submissions" id="btn-view-submissions" title="View all submitted codes">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span>Submissions</span>
+              </button>
+
               <!-- Compiler Button -->
               <button type="button" class="btn-editor-action btn-compiler" id="btn-toggle-compiler" title="Compiler info">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">

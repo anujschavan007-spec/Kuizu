@@ -315,6 +315,24 @@ const server = Bun.serve({
         const difficulty = url.searchParams.get("difficulty");
         const topic = url.searchParams.get("topic");
         const search = url.searchParams.get("search")?.toLowerCase();
+        const userEmail = url.searchParams.get("email") || "";
+        const userName = url.searchParams.get("name") || "";
+
+        // Collect set of problem IDs solved by this user
+        const solvedProblemIds = new Set<string>();
+        if (userEmail || userName) {
+          const solvedRows = db.query(`
+            SELECT DISTINCT s.problem_id
+            FROM user_problem_submissions s
+            LEFT JOIN users u ON u.id = s.user_id
+            WHERE (
+              (? != '' AND LOWER(s.user_email) = LOWER(?))
+              OR (? != '' AND (LOWER(u.email) = LOWER(?) OR LOWER(u.name) = LOWER(?)))
+            )
+            AND s.status = 'accepted'
+          `).all(userEmail, userEmail, userName, userName, userName) as any[];
+          solvedRows.forEach(r => solvedProblemIds.add(String(r.problem_id)));
+        }
 
         let query = "SELECT * FROM problems WHERE 1=1";
         const params: any[] = [];
@@ -349,6 +367,7 @@ const server = Bun.serve({
             icon: p.topic_icon || p.topic_name.toLowerCase()
           },
           rewardXp: p.reward_xp,
+          solved: solvedProblemIds.has(String(p.id)) || solvedProblemIds.has(String(p.slug)),
           description: p.description,
           statement: p.statement,
           inputFormat: p.input_format,
@@ -356,10 +375,81 @@ const server = Bun.serve({
           sampleInput: p.sample_input,
           sampleOutput: p.sample_output,
           createdAt: p.created_at,
-          testCaseCount: p.test_cases_json ? (JSON.parse(p.test_cases_json)?.length || 0) : 0
+          testCaseCount: p.test_cases_json ? (JSON.parse(p.test_cases_json)?.length || 0) : 0,
+          testCases: p.test_cases_json ? JSON.parse(p.test_cases_json) : []
         }));
 
         return jsonResponse({ success: true, count: formatted.length, problems: formatted });
+      }
+
+      // GET /api/problems/submissions - return user submissions history
+      if (pathname === "/api/problems/submissions" && method === "GET") {
+        const userEmail = url.searchParams.get("email") || "";
+        const userName = url.searchParams.get("name") || "";
+        const problemId = url.searchParams.get("problemId") || "";
+        const source = url.searchParams.get("source") || "all";
+
+        let sql = `
+          SELECT s.*, p.title as problem_title, p.difficulty as problem_difficulty, p.topic_name
+          FROM user_problem_submissions s
+          LEFT JOIN problems p ON (
+            p.id = s.problem_id 
+            OR p.slug = s.problem_id
+            OR CAST(p.id AS INTEGER) = CAST(s.problem_id AS INTEGER)
+          )
+          LEFT JOIN users u ON u.id = s.user_id
+          WHERE 1=1
+        `;
+        const params: any[] = [];
+
+        if (source && source !== "all") {
+          sql += " AND LOWER(s.source) = LOWER(?)";
+          params.push(source);
+        }
+
+        if (problemId) {
+          const padded = String(problemId).padStart(3, "0");
+          const unpadded = String(problemId).replace(/^0+/, "") || "0";
+          sql += " AND (s.problem_id = ? OR s.problem_id = ? OR s.problem_id = ? OR p.slug = ? OR p.id = ? OR p.id = ?)";
+          params.push(problemId, padded, unpadded, problemId, padded, unpadded);
+        }
+
+        if (userEmail || userName) {
+          sql += " AND (";
+          const subClauses: string[] = [];
+          if (userEmail) {
+            subClauses.push("LOWER(s.user_email) = LOWER(?)");
+            params.push(userEmail);
+          }
+          if (userName) {
+            subClauses.push("(LOWER(u.email) = LOWER(?) OR LOWER(u.name) = LOWER(?))");
+            params.push(userName, userName);
+          }
+          sql += subClauses.join(" OR ") + ")";
+        }
+
+        sql += " ORDER BY s.id DESC";
+
+        const rows = db.query(sql).all(...params) as any[];
+        return jsonResponse({
+          success: true,
+          submissions: rows.map(r => ({
+            id: r.id,
+            problemId: r.problem_id,
+            problemTitle: r.problem_title || `Problem ${r.problem_id}`,
+            difficulty: r.problem_difficulty || r.difficulty || "Easy",
+            topicName: r.topic_name || "General",
+            rewardXp: typeof r.reward_xp === 'number' ? r.reward_xp : 0,
+            status: r.status || "accepted",
+            code: r.code || "",
+            language: r.language || "cpp",
+            passedCount: r.passed_count || 0,
+            totalCount: r.total_count || 0,
+            source: r.source || "practice",
+            contestId: r.contest_id || "",
+            submittedAt: r.submitted_at
+          }))
+        });
       }
 
       if (pathname.startsWith("/api/problems/") && method === "GET") {
@@ -395,17 +485,34 @@ const server = Bun.serve({
         const body = await req.json().catch(() => ({}));
         const p = db.query("SELECT * FROM problems WHERE id = ? OR slug = ?").get(problemId, problemId) as any;
         const diff = p?.difficulty || body.difficulty || "Easy";
-        const updatedUser = recordProblemSolved(p?.id || problemId, diff, {
-          id: body.id,
-          email: body.email,
-          name: body.name
-        });
-        const rewardXp = diff.toLowerCase() === "hard" ? 40 : (diff.toLowerCase() === "medium" ? 20 : 10);
+        const result = recordProblemSolved(
+          p?.id || problemId,
+          diff,
+          {
+            id: body.id,
+            email: body.email,
+            name: body.name
+          },
+          {
+            code: body.code,
+            language: body.language,
+            passedCount: body.passedCount,
+            totalCount: body.totalCount,
+            status: body.status || 'accepted',
+            source: body.source || 'practice',
+            contestId: body.contestId || ''
+          }
+        );
+        const rewardXp = result?.rewardXp ?? 0;
+        const isFirstSolve = result?.isFirstSolve ?? false;
         return jsonResponse({
           success: true,
-          message: `Problem submission accepted (+${rewardXp} XP)`,
+          isFirstSolve,
           rewardXp,
-          user: updatedUser
+          message: isFirstSolve
+            ? `Problem solved successfully! (+${rewardXp} XP)`
+            : `Solution accepted! (Already solved previously • +0 XP)`,
+          user: result?.user
         });
       }
 
@@ -1558,6 +1665,25 @@ const server = Bun.serve({
         return jsonResponse({
           success: true,
           message: "Club Activity / Contest registered (+25 XP)",
+          rewardXp: 25,
+          user: updatedUser
+        });
+      }
+
+      // Submit Contest Completion
+      if (pathname.endsWith("/submit") && pathname.startsWith("/api/contests/") && method === "POST") {
+        const id = pathname.replace("/api/contests/", "").replace("/submit", "");
+        const body = await req.json().catch(() => ({}));
+        const c = db.query("SELECT * FROM contests WHERE id = ?").get(id) as any;
+        const contestTitle = c ? (c.title || c.id) : id;
+        const updatedUser = recordContestAttendance(contestTitle, {
+          id: body.id,
+          email: body.email,
+          name: body.name
+        });
+        return jsonResponse({
+          success: true,
+          message: "Contest submitted successfully! (+25 XP)",
           rewardXp: 25,
           user: updatedUser
         });

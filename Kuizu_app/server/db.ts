@@ -70,6 +70,12 @@ db.exec(`
     difficulty TEXT,
     reward_xp INTEGER DEFAULT 10,
     status TEXT DEFAULT 'accepted',
+    code TEXT DEFAULT '',
+    language TEXT DEFAULT 'cpp',
+    passed_count INTEGER DEFAULT 0,
+    total_count INTEGER DEFAULT 0,
+    source TEXT DEFAULT 'practice',
+    contest_id TEXT DEFAULT '',
     submitted_at TEXT NOT NULL
   );
 
@@ -197,6 +203,14 @@ try {
 } catch {
   // Column already exists
 }
+
+// Ensure user_problem_submissions has code, language, passed_count, total_count, source, contest_id columns
+try { db.run("ALTER TABLE user_problem_submissions ADD COLUMN code TEXT DEFAULT '';"); } catch {}
+try { db.run("ALTER TABLE user_problem_submissions ADD COLUMN language TEXT DEFAULT 'cpp';"); } catch {}
+try { db.run("ALTER TABLE user_problem_submissions ADD COLUMN passed_count INTEGER DEFAULT 0;"); } catch {}
+try { db.run("ALTER TABLE user_problem_submissions ADD COLUMN total_count INTEGER DEFAULT 0;"); } catch {}
+try { db.run("ALTER TABLE user_problem_submissions ADD COLUMN source TEXT DEFAULT 'practice';"); } catch {}
+try { db.run("ALTER TABLE user_problem_submissions ADD COLUMN contest_id TEXT DEFAULT '';"); } catch {}
 
 // Ensure quizzes have 30 XP per level completion
 try {
