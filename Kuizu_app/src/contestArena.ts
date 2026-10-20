@@ -415,6 +415,25 @@ function updateEditor() {
   }
 }
 
+// ===========================================================
+// ANTI-GAMING: COPY/PASTE & INSPECT BLOCKERS (SELECTION ALLOWED)
+// ===========================================================
+const isInspectShortcut = (e: KeyboardEvent): boolean => {
+  if (e.key === 'F12') return true;
+  const isCmdOrCtrl = e.ctrlKey || e.metaKey;
+  if ((e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) ||
+      (e.metaKey && e.altKey && ['I', 'i', 'J', 'j', 'C', 'c', 'U', 'u'].includes(e.key))) {
+    return true;
+  }
+  if (isCmdOrCtrl && (e.key === 'u' || e.key === 'U')) {
+    return true;
+  }
+  if (isCmdOrCtrl && (e.key === 's' || e.key === 'S')) {
+    return true;
+  }
+  return false;
+};
+
 if (codeEditor) {
   codeEditor.addEventListener('input', () => {
     const curQ = questions[currentIndex];
@@ -437,25 +456,6 @@ if (codeEditor) {
       gutter.scrollTop = codeEditor.scrollTop;
     }
   });
-
-  // ===========================================================
-  // ANTI-GAMING: COPY/PASTE & INSPECT BLOCKERS (SELECTION ALLOWED)
-  // ===========================================================
-  const isInspectShortcut = (e: KeyboardEvent): boolean => {
-    if (e.key === 'F12') return true;
-    const isCmdOrCtrl = e.ctrlKey || e.metaKey;
-    if ((e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) ||
-        (e.metaKey && e.altKey && ['I', 'i', 'J', 'j', 'C', 'c', 'U', 'u'].includes(e.key))) {
-      return true;
-    }
-    if (isCmdOrCtrl && (e.key === 'u' || e.key === 'U')) {
-      return true;
-    }
-    if (isCmdOrCtrl && (e.key === 's' || e.key === 'S')) {
-      return true;
-    }
-    return false;
-  };
 
   codeEditor.addEventListener('keydown', (e) => {
     // 1. Allow Tab for code indentation
