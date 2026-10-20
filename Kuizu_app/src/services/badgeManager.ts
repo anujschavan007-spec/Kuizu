@@ -102,12 +102,12 @@ export const ALL_BADGE_DEFINITIONS: BadgeDefinition[] = [
     title: 'First Looser',
     subtitle: 'Fought with warrior honor',
     defaultDate: '15 Apr 2025',
-    glbModel: '/badges/kuizu_first_battle_participant_red_badge_big_swords.glb',
+    glbModel: '/badges/kuizu_first_looser_devil_fixed.glb',
     accentColor: '#ef4444',
     glowColor: 'rgba(239, 68, 68, 0.35)',
     modal: 'firstLooser',
     storageKey: 'kuizu_first_looser_earned',
-    condition: 'Experience your first defeat in Battle Arena with warrior honor'
+    condition: 'Attend an Admin Battle and finish within the last 3 ranks'
   }
 ];
 

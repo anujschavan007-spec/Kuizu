@@ -95,6 +95,8 @@ export interface BattleRoom {
   timePerQuestion: number;
   status: BattleStatus;
   hostId: string;
+  hostName?: string;
+  isAdminBattle?: boolean;
   maxPlayers: number;
   players: BattlePlayer[];
   createdAt: string;

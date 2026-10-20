@@ -84,8 +84,8 @@ export function showFirstLooserBadgeModal(onCloseCallback?: () => void): void {
       <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 26px; font-weight: 800; color: #0f172a; margin: 0 0 8px 0; letter-spacing: -0.02em;">
         First Looser
       </h2>
-      <p style="font-size: 14px; color: #64748b; margin: 0 auto 20px auto; max-width: 340px; line-height: 1.5;">
-        Every legend faces defeat before triumph. You fought with true warrior spirit in the Battle Arena!
+      <p style="font-size: 14px; color: #64748b; margin: 0 auto 20px auto; max-width: 360px; line-height: 1.5;">
+        Every legend faces defeat before triumph. You fought with true warrior spirit in the Admin Battle Arena and claimed your Devil First Looser trophy!
       </p>
 
       <!-- 3D Canvas Box -->
@@ -285,7 +285,7 @@ export function showFirstLooserBadgeModal(onCloseCallback?: () => void): void {
 
   // Load GLB Model
   const loader = new GLTFLoader();
-  const badgeModelPath = '/badges/kuizu_first_battle_participant_red_badge_big_swords.glb';
+  const badgeModelPath = '/badges/kuizu_first_looser_devil_fixed.glb';
 
   loader.load(
     badgeModelPath,

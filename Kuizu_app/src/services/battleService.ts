@@ -80,6 +80,8 @@ export async function fetchPublicBattleRooms(): Promise<BattleRoom[]> {
           timePerQuestion: b.timePerQuestion || 24,
           status: b.status || 'waiting',
           hostId: b.hostId || 'usr-host',
+          hostName: b.hostName || 'Host',
+          isAdminBattle: Boolean(b.isAdminBattle || b.hostName === 'Admin' || b.hostId === 'usr_admin' || b.hostId === 'usr-admin'),
           maxPlayers: b.maxPlayers || 4,
           players: Array.isArray(b.players) && b.players.length > 0 ? b.players : [
             { id: b.hostId || 'usr-host', name: b.hostName || 'Host', avatar: '/images/home_avatar.png', isHost: true, score: 0, ready: true }
@@ -223,6 +225,8 @@ export async function joinBattleRoom(roomCode: string): Promise<BattleRoom> {
           timePerQuestion: b.timePerQuestion || 24,
           status: b.status || 'waiting',
           hostId: b.hostId || 'usr-host',
+          hostName: b.hostName || 'Host',
+          isAdminBattle: Boolean(b.isAdminBattle || b.hostName === 'Admin' || b.hostId === 'usr_admin' || b.hostId === 'usr-admin'),
           maxPlayers: b.maxPlayers || 4,
           players: Array.isArray(b.players) ? b.players : [],
           createdAt: b.createdAt || new Date().toISOString()
