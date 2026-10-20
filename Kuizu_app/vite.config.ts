@@ -183,6 +183,13 @@ function multiPageRewritePlugin(): Plugin {
         ) {
           req.url = `/admin/admincontest/index.html${q}`;
         } else if (
+          pathname === '/admin/cheatinglogs' ||
+          pathname === '/admin/cheatinglogs/' ||
+          pathname === '/admin/cheating-logs' ||
+          pathname === '/admin/cheating-logs/'
+        ) {
+          req.url = `/admin/cheatinglogs/index.html${q}`;
+        } else if (
           pathname === '/admin/adminbattle/createbattle' ||
           pathname === '/admin/adminbattle/createbattle/' ||
           pathname === '/admin/battle/create' ||
@@ -305,6 +312,7 @@ export default defineConfig({
         adminCreateBattle: resolve(import.meta.dirname, 'admin/adminbattle/createbattle/index.html'),
         adminContest: resolve(import.meta.dirname, 'admin/admincontest/index.html'),
         adminCreateContest: resolve(import.meta.dirname, 'admin/admincontest/createcontest/index.html'),
+        adminCheatingLogs: resolve(import.meta.dirname, 'admin/cheatinglogs/index.html'),
         adminQuest: resolve(import.meta.dirname, 'admin/adminquest/index.html'),
         adminCreateQuest: resolve(import.meta.dirname, 'admin/adminquest/createquest/index.html'),
         adminSettings: resolve(import.meta.dirname, 'admin/settings/index.html'),

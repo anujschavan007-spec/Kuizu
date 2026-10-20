@@ -57,6 +57,8 @@
     { "source": "/admin/admincontest", "destination": "/admin/admincontest/index.html" },
     { "source": "/admin/contest/create", "destination": "/admin/admincontest/createcontest/index.html" },
     { "source": "/admin/contests", "destination": "/admin/admincontest/index.html" },
+    { "source": "/admin/cheatinglogs", "destination": "/admin/cheatinglogs/index.html" },
+    { "source": "/admin/cheating-logs", "destination": "/admin/cheatinglogs/index.html" },
     { "source": "/admin/adminquest/createquest", "destination": "/admin/adminquest/createquest/index.html" },
     { "source": "/admin/adminquest", "destination": "/admin/adminquest/index.html" },
     { "source": "/admin/quest/create", "destination": "/admin/adminquest/createquest/index.html" },

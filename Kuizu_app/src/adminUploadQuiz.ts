@@ -111,14 +111,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     levelsContainer.innerHTML = filtered.map((q, idx) => {
       const badgeText = `Q${idx + 1}`;
-      const dateText = formatDate((q as any).createdAt);
+      const dateText = formatDate((q as any).createdAt || (q as any).created_at);
       return `
         <div class="admin-level-card admin-quiz-card-clickable" data-id="${q.id}" data-title="${q.name}">
           <div class="admin-level-card-left">
             <div class="admin-level-badge">${badgeText}</div>
             <div class="admin-level-details">
               <h3 class="admin-level-name">${q.name}</h3>
-              <span class="admin-level-quizzes-count">Level ${(q as any).levelNumber || 1} • 1 Quiz • ${q.rewardXp || 150} XP</span>
+              <span class="admin-level-quizzes-count">Level ${(q as any).levelNumber || (q as any).level_number || 1} • 1 Quiz • ${(q as any).rewardXp || (q as any).reward_xp || 150} XP</span>
             </div>
           </div>
 
@@ -194,16 +194,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll<HTMLButtonElement>('.btn-delete-quiz').forEach((btn) => {
       btn.addEventListener('click', async (e) => {
         e.stopPropagation();
+        // Close all dropdown menus immediately
+        document.querySelectorAll('.admin-dropdown-menu').forEach((m) => m.classList.remove('show'));
+
         const id = btn.getAttribute('data-id');
-        if (!id || !confirm('Are you sure you want to delete this quiz?')) return;
+        if (!id) return;
+
+        const card = btn.closest<HTMLElement>('.admin-level-card');
+        const quizName = card?.getAttribute('data-title') || 'this quiz';
+
+        if (!confirm(`Are you sure you want to permanently delete "${quizName}"? This action cannot be undone.`)) {
+          return;
+        }
+
+        btn.disabled = true;
         try {
           const res = await fetch(`/api/quizzes/${id}`, { method: 'DELETE' });
           if (res.ok) {
-            showToast('Quiz deleted successfully');
+            showToast('Quiz deleted permanently');
+            // Optimistically remove from list immediately for fast UI feedback
+            quizzesList = quizzesList.filter((item) => String(item.id) !== String(id));
+            renderLevels();
+            // Re-sync with backend
             await loadQuizzes();
+          } else {
+            const errData = await res.json().catch(() => ({}));
+            showToast(errData.error || 'Failed to delete quiz');
+            btn.disabled = false;
           }
         } catch (err) {
-          console.error(err);
+          console.error('Delete quiz error:', err);
+          showToast('Network error while deleting quiz');
+          btn.disabled = false;
         }
       });
     });

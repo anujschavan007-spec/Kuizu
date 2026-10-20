@@ -223,12 +223,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       setTimeout(() => {
         window.location.href = '/admin/uploadquiz';
       }, 900);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Quiz save error:', err);
-      showToast('Quiz saved successfully! Redirecting...');
-      setTimeout(() => {
-        window.location.href = '/admin/uploadquiz';
-      }, 900);
+      showToast(err?.message || 'Failed to save quiz. Please check required fields.');
     }
   }
 

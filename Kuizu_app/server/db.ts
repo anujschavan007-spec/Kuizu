@@ -168,6 +168,20 @@ db.exec(`
     problems_json TEXT,
     created_at TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS contest_violations (
+    id TEXT PRIMARY KEY,
+    contest_id TEXT NOT NULL,
+    contest_title TEXT NOT NULL,
+    username TEXT NOT NULL,
+    user_email TEXT DEFAULT '',
+    user_avatar TEXT DEFAULT '',
+    violation_type TEXT NOT NULL,
+    details TEXT NOT NULL,
+    severity TEXT DEFAULT 'warning',
+    timestamp TEXT NOT NULL,
+    status TEXT DEFAULT 'flagged'
+  );
 `);
 
 // Safe column migrations for existing databases

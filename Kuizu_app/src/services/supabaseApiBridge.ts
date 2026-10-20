@@ -95,7 +95,18 @@ export function computeUserStrictXp(user: any, submissions: any[] = []): { total
 export async function handleSupabaseApiRoute(pathname: string, search: string, init?: RequestInit): Promise<Response> {
   const method = (init?.method || 'GET').toUpperCase();
   const searchParams = new URLSearchParams(search);
-  const body = init?.body ? (typeof init.body === 'string' ? JSON.parse(init.body) : init.body) : {};
+  let body: any = {};
+  if (init?.body) {
+    if (typeof init.body === 'string') {
+      try {
+        body = JSON.parse(init.body);
+      } catch {
+        body = {};
+      }
+    } else {
+      body = init.body;
+    }
+  }
 
   // ----------------------------------------------------
   // USERS
@@ -445,7 +456,193 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
   if (pathname === '/api/quizzes' && method === 'GET') {
     const { data: quizzes, error } = await supabase.from('quizzes').select('*').order('id', { ascending: false });
     if (error) return jsonResponse({ success: false, error: error.message }, 500);
-    return jsonResponse({ success: true, count: (quizzes || []).length, quizzes: quizzes || [] });
+
+    const formatted = (quizzes || []).map((q: any) => ({
+      id: q.id,
+      name: q.name,
+      description: q.description || '',
+      levelNumber: q.level_number || 1,
+      level_number: q.level_number || 1,
+      status: q.status || 'unlocked',
+      stars: q.stars || 0,
+      maxStars: q.max_stars || 3,
+      questionCount: q.question_count || 1,
+      rewardXp: q.reward_xp || 150,
+      reward_xp: q.reward_xp || 150,
+      timeLimitSeconds: q.time_limit_seconds || 600,
+      questionContent: q.question_content || '',
+      options: {
+        a: q.option_a || '',
+        b: q.option_b || '',
+        c: q.option_c || '',
+        d: q.option_d || ''
+      },
+      correctOption: q.correct_option || 'A',
+      createdAt: q.created_at,
+      created_at: q.created_at
+    }));
+
+    return jsonResponse({ success: true, count: formatted.length, quizzes: formatted });
+  }
+
+  if (pathname === '/api/quizzes' && method === 'POST') {
+    const {
+      name,
+      description = '',
+      levelNumber = 1,
+      questionCount = 1,
+      rewardXp = 150,
+      questionContent = '',
+      optionA = '',
+      optionB = '',
+      optionC = '',
+      optionD = '',
+      correctOption = 'A'
+    } = body || {};
+
+    if (!name) {
+      return jsonResponse({ success: false, error: 'Quiz name/title is required' }, 400);
+    }
+
+    // Dual-sync forward to local server if running
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1'))) {
+      try {
+        await nativeFetch(pathname, init);
+      } catch {}
+    }
+
+    const newQuiz = {
+      name,
+      description,
+      level_number: Number(levelNumber) || 1,
+      status: 'unlocked',
+      stars: 0,
+      max_stars: 3,
+      question_count: Number(questionCount) || 1,
+      reward_xp: Number(rewardXp) || 150,
+      time_limit_seconds: 600,
+      position_left: 15.0,
+      position_top: 70.0,
+      question_content: questionContent,
+      option_a: optionA,
+      option_b: optionB,
+      option_c: optionC,
+      option_d: optionD,
+      correct_option: correctOption,
+      created_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase.from('quizzes').insert([newQuiz]).select().single();
+    if (error) return jsonResponse({ success: false, error: error.message }, 500);
+
+    return jsonResponse({ success: true, id: data?.id, quiz: data }, 201);
+  }
+
+  if (pathname.startsWith('/api/quizzes/') && !pathname.startsWith('/api/quizzes/levels') && method === 'GET') {
+    const id = pathname.replace('/api/quizzes/', '');
+    const numId = Number(id);
+    const filter = isNaN(numId) ? { id } : { id: numId };
+
+    const { data: q, error } = await supabase.from('quizzes').select('*').match(filter).maybeSingle();
+    if (error) return jsonResponse({ success: false, error: error.message }, 500);
+    if (!q) return jsonResponse({ success: false, error: 'Quiz not found' }, 404);
+
+    return jsonResponse({
+      success: true,
+      quiz: {
+        id: q.id,
+        name: q.name,
+        description: q.description || '',
+        levelNumber: q.level_number || 1,
+        status: q.status,
+        stars: q.stars,
+        maxStars: q.max_stars,
+        questionCount: q.question_count,
+        rewardXp: q.reward_xp,
+        timeLimitSeconds: q.time_limit_seconds,
+        questionContent: q.question_content || '',
+        options: {
+          a: q.option_a || '',
+          b: q.option_b || '',
+          c: q.option_c || '',
+          d: q.option_d || ''
+        },
+        correctOption: q.correct_option || 'A',
+        createdAt: q.created_at
+      }
+    });
+  }
+
+  if (pathname.startsWith('/api/quizzes/') && !pathname.startsWith('/api/quizzes/levels') && method === 'PUT') {
+    const id = pathname.replace('/api/quizzes/', '');
+    const numId = Number(id);
+    const {
+      name,
+      description = '',
+      levelNumber = 1,
+      questionCount = 1,
+      rewardXp = 150,
+      questionContent = '',
+      optionA = '',
+      optionB = '',
+      optionC = '',
+      optionD = '',
+      correctOption = 'A'
+    } = body || {};
+
+    if (!name) {
+      return jsonResponse({ success: false, error: 'Quiz title is required' }, 400);
+    }
+
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1'))) {
+      try {
+        await nativeFetch(pathname, init);
+      } catch {}
+    }
+
+    const filterId = isNaN(numId) ? id : numId;
+    const updateData: any = {
+      name,
+      description,
+      level_number: Number(levelNumber) || 1,
+      question_count: Number(questionCount) || 1,
+      reward_xp: Number(rewardXp) || 150,
+      question_content: questionContent,
+      option_a: optionA,
+      option_b: optionB,
+      option_c: optionC,
+      option_d: optionD,
+      correct_option: correctOption
+    };
+
+    const { error } = await supabase.from('quizzes').update(updateData).eq('id', filterId);
+    if (error) return jsonResponse({ success: false, error: error.message }, 500);
+
+    return jsonResponse({ success: true, message: 'Quiz updated successfully' });
+  }
+
+  if (pathname.startsWith('/api/quizzes/') && !pathname.startsWith('/api/quizzes/levels') && method === 'DELETE') {
+    const id = pathname.replace('/api/quizzes/', '');
+    const numId = Number(id);
+    const filterId = isNaN(numId) ? id : numId;
+
+    // Dual-sync: Forward to local backend SQLite if running on localhost
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1'))) {
+      try {
+        await nativeFetch(pathname, init);
+      } catch (e) {
+        console.warn('Local server delete forward failed, proceeding with Supabase delete:', e);
+      }
+    }
+
+    // Permanently delete from Supabase
+    const { error } = await supabase.from('quizzes').delete().eq('id', filterId);
+    if (error) {
+      console.error('Supabase quiz delete error:', error);
+      return jsonResponse({ success: false, error: error.message }, 500);
+    }
+
+    return jsonResponse({ success: true, message: 'Quiz deleted successfully' });
   }
 
   if (pathname === '/api/quizzes/levels' && method === 'GET') {
@@ -1085,6 +1282,186 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
 
     if (error) return jsonResponse({ success: false, error: error.message }, 500);
     return jsonResponse({ success: true, contest: created }, 201);
+  }
+
+  // ----------------------------------------------------
+  // CONTEST CHEATING & VIOLATION LOGS
+  // ----------------------------------------------------
+  if (pathname === '/api/contests/violations' && method === 'GET') {
+    const filterContestId = searchParams.get('contestId');
+    const filterSeverity = searchParams.get('severity');
+    const filterType = searchParams.get('type');
+    const filterSearch = searchParams.get('search')?.toLowerCase();
+
+    let logs: any[] = [];
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('kuizu_contest_violations');
+        if (stored) logs = JSON.parse(stored);
+      } catch {}
+    }
+
+    try {
+      const { data: dbLogs } = await supabase
+        .from('contest_violations')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(200);
+
+      if (dbLogs && Array.isArray(dbLogs)) {
+        const existingIds = new Set(logs.map(l => l.id));
+        for (const item of dbLogs) {
+          if (!existingIds.has(item.id)) {
+            logs.push({
+              id: item.id,
+              contestId: item.contest_id || item.contestId || 'active-contest',
+              contestTitle: item.contest_title || item.contestTitle || 'Live Contest',
+              username: item.username || 'Candidate',
+              userEmail: item.user_email || item.userEmail || '',
+              userAvatar: item.user_avatar || item.userAvatar || '',
+              violationType: item.violation_type || item.violationType || 'TAB_SWITCH',
+              details: item.details || '',
+              severity: item.severity || 'warning',
+              timestamp: item.timestamp || new Date().toISOString(),
+              status: item.status || 'flagged'
+            });
+          }
+        }
+      }
+    } catch {
+      // Fallback to client-side localStorage logs
+    }
+
+    let filtered = logs;
+    if (filterContestId && filterContestId !== 'all') {
+      filtered = filtered.filter(l => l.contestId === filterContestId);
+    }
+    if (filterSeverity && filterSeverity !== 'all') {
+      filtered = filtered.filter(l => (l.severity || '').toLowerCase() === filterSeverity.toLowerCase());
+    }
+    if (filterType && filterType !== 'all') {
+      filtered = filtered.filter(l => (l.violationType || '').toLowerCase() === filterType.toLowerCase());
+    }
+    if (filterSearch) {
+      filtered = filtered.filter(l =>
+        (l.username || '').toLowerCase().includes(filterSearch) ||
+        (l.userEmail || '').toLowerCase().includes(filterSearch) ||
+        (l.contestTitle || '').toLowerCase().includes(filterSearch) ||
+        (l.details || '').toLowerCase().includes(filterSearch) ||
+        (l.violationType || '').toLowerCase().includes(filterSearch)
+      );
+    }
+
+    filtered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+    return jsonResponse({ success: true, count: filtered.length, violations: filtered });
+  }
+
+  if (pathname === '/api/contests/violations' && method === 'POST') {
+    const {
+      id = `viol_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      contestId = 'active-contest',
+      contestTitle = 'Live Coding Contest',
+      username = 'Candidate',
+      userEmail = '',
+      userAvatar = '',
+      violationType = 'TAB_SWITCH',
+      details = 'Anti-cheat violation detected during contest session.',
+      severity = 'warning',
+      timestamp = new Date().toISOString(),
+      status = 'flagged'
+    } = body;
+
+    const newRecord = {
+      id,
+      contestId,
+      contestTitle,
+      username,
+      userEmail,
+      userAvatar,
+      violationType,
+      details,
+      severity,
+      timestamp,
+      status
+    };
+
+    if (typeof window !== 'undefined') {
+      try {
+        let currentLogs: any[] = [];
+        const raw = localStorage.getItem('kuizu_contest_violations');
+        if (raw) currentLogs = JSON.parse(raw);
+        // Avoid duplicate within 2 seconds for identical user, violationType & details
+        const isDuplicate = currentLogs.some((l: any) =>
+          l.username === username &&
+          l.violationType === violationType &&
+          Math.abs(new Date(l.timestamp).getTime() - new Date(timestamp).getTime()) < 2000
+        );
+        if (!isDuplicate) {
+          currentLogs.unshift(newRecord);
+          if (currentLogs.length > 500) currentLogs = currentLogs.slice(0, 500);
+          localStorage.setItem('kuizu_contest_violations', JSON.stringify(currentLogs));
+          window.dispatchEvent(new CustomEvent('kuizu_violation_recorded', { detail: newRecord }));
+          try {
+            // Also notify other tabs via storage trigger
+            localStorage.setItem('kuizu_last_violation_signal', JSON.stringify({ id, timestamp }));
+          } catch {}
+        }
+      } catch {}
+    }
+
+    try {
+      await supabase.from('contest_violations').insert({
+        id: newRecord.id,
+        contest_id: newRecord.contestId,
+        contest_title: newRecord.contestTitle,
+        username: newRecord.username,
+        user_email: newRecord.userEmail,
+        user_avatar: newRecord.userAvatar,
+        violation_type: newRecord.violationType,
+        details: newRecord.details,
+        severity: newRecord.severity,
+        timestamp: newRecord.timestamp,
+        status: newRecord.status
+      });
+    } catch {}
+
+    return jsonResponse({ success: true, violation: newRecord }, 201);
+  }
+
+  if (pathname === '/api/contests/violations/action' && method === 'POST') {
+    const { id, status = 'warned' } = body;
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('kuizu_contest_violations');
+        if (raw) {
+          const list = JSON.parse(raw);
+          const item = list.find((l: any) => l.id === id);
+          if (item) {
+            item.status = status;
+            localStorage.setItem('kuizu_contest_violations', JSON.stringify(list));
+            window.dispatchEvent(new CustomEvent('kuizu_violation_updated', { detail: item }));
+          }
+        }
+      } catch {}
+    }
+    try {
+      await supabase.from('contest_violations').update({ status }).eq('id', id);
+    } catch {}
+    return jsonResponse({ success: true, id, status });
+  }
+
+  if (pathname === '/api/contests/violations/clear' && method === 'POST') {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('kuizu_contest_violations');
+        window.dispatchEvent(new CustomEvent('kuizu_violations_cleared'));
+      } catch {}
+    }
+    try {
+      await supabase.from('contest_violations').delete().neq('id', '__empty__');
+    } catch {}
+    return jsonResponse({ success: true, message: 'Cheating logs cleared successfully' });
   }
 
   // ----------------------------------------------------

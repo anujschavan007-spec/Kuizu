@@ -108,6 +108,66 @@ function updateAntiGamingStatus(running: boolean) {
   }
 }
 
+// Track last violation times to avoid spamming duplicate events
+const lastRecordedViolationTimes: Record<string, number> = {};
+
+export function recordContestViolation(
+  violationType: 'TAB_SWITCH' | 'CLIPBOARD_PASTE' | 'CLIPBOARD_COPY' | 'CLIPBOARD_CUT' | 'DEVTOOLS_INSPECT' | 'CONTEXT_MENU' | 'TEXT_SELECTION',
+  details: string,
+  severity: 'warning' | 'high' | 'critical' = 'warning'
+) {
+  if (!isContestRunning) return;
+
+  const now = Date.now();
+  const lastTime = lastRecordedViolationTimes[violationType] || 0;
+  if (now - lastTime < 1200) return;
+  lastRecordedViolationTimes[violationType] = now;
+
+  const contestId = getContestId();
+  const contestTitle = 
+    document.title?.replace(' - KUIZU', '')?.replace('KUIZU', '').trim() ||
+    (contestId === 'weekly-default' ? 'Weekly Coding Contest #11' : `Contest ${contestId}`);
+
+  const username = localStorage.getItem('kuizu_user_name') || 'Guest Candidate';
+  const userEmail = localStorage.getItem('kuizu_user_email') || 'candidate@kuizu.io';
+  const userAvatar = localStorage.getItem('kuizu_user_avatar') || '';
+
+  const violationRecord = {
+    id: `viol_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+    contestId,
+    contestTitle,
+    username,
+    userEmail,
+    userAvatar,
+    violationType,
+    details,
+    severity,
+    timestamp: new Date().toISOString(),
+    status: 'flagged' as const
+  };
+
+  // 1. Instantly store to localStorage so live Admin Cheating Logs page receives it in real time
+  try {
+    let list: any[] = [];
+    const raw = localStorage.getItem('kuizu_contest_violations');
+    if (raw) list = JSON.parse(raw);
+    list.unshift(violationRecord);
+    if (list.length > 500) list = list.slice(0, 500);
+    localStorage.setItem('kuizu_contest_violations', JSON.stringify(list));
+    localStorage.setItem('kuizu_last_violation_signal', JSON.stringify({ id: violationRecord.id, t: Date.now() }));
+    window.dispatchEvent(new CustomEvent('kuizu_violation_recorded', { detail: violationRecord }));
+  } catch {}
+
+  // 2. Transmit to backend API
+  try {
+    fetch('/api/contests/violations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(violationRecord)
+    }).catch(() => {});
+  } catch {}
+}
+
 // Initialize active anti-gaming lock for contest session
 updateAntiGamingStatus(true);
 
@@ -516,6 +576,7 @@ if (codeEditor) {
         e.preventDefault();
         e.stopPropagation();
         showAntiGamingWarning('Developer Tools and Inspect are disabled on this page.');
+        recordContestViolation('DEVTOOLS_INSPECT', `Developer Tools shortcut triggered in code editor (${e.key}).`, 'critical');
         return;
       }
 
@@ -524,6 +585,7 @@ if (codeEditor) {
         e.preventDefault();
         e.stopPropagation();
         showAntiGamingWarning('Copying code is disabled during the contest.');
+        recordContestViolation('CLIPBOARD_COPY', 'Attempted to copy code from editor during live contest.', 'warning');
         return;
       }
 
@@ -532,6 +594,7 @@ if (codeEditor) {
         e.preventDefault();
         e.stopPropagation();
         showAntiGamingWarning('Cutting code is disabled during the contest.');
+        recordContestViolation('CLIPBOARD_CUT', 'Attempted to cut code from editor during live contest.', 'warning');
         return;
       }
 
@@ -540,6 +603,7 @@ if (codeEditor) {
         e.preventDefault();
         e.stopPropagation();
         showAntiGamingWarning('Pasting external code is prohibited during the contest.');
+        recordContestViolation('CLIPBOARD_PASTE', 'Attempted to paste external code into contest editor.', 'high');
         return;
       }
 
@@ -554,6 +618,7 @@ if (codeEditor) {
       e.stopPropagation();
       if (e.clipboardData) e.clipboardData.clearData();
       showAntiGamingWarning('Copying code is disabled during the contest.');
+      recordContestViolation('CLIPBOARD_COPY', 'Attempted clipboard copy on editor.', 'warning');
     }
   };
 
@@ -563,6 +628,7 @@ if (codeEditor) {
       e.stopPropagation();
       if (e.clipboardData) e.clipboardData.clearData();
       showAntiGamingWarning('Cutting code is disabled during the contest.');
+      recordContestViolation('CLIPBOARD_CUT', 'Attempted clipboard cut on editor.', 'warning');
     }
   };
 
@@ -571,6 +637,7 @@ if (codeEditor) {
       e.preventDefault();
       e.stopPropagation();
       showAntiGamingWarning('Pasting external code is prohibited during the contest.');
+      recordContestViolation('CLIPBOARD_PASTE', 'Attempted clipboard paste on editor.', 'high');
     }
   };
 
@@ -586,6 +653,7 @@ window.addEventListener('copy', (e) => {
     e.stopPropagation();
     if (e.clipboardData) e.clipboardData.clearData();
     showAntiGamingWarning('Copying code is prohibited during the active contest.');
+    recordContestViolation('CLIPBOARD_COPY', 'Global copy attempt intercepted on contest page.', 'warning');
   }
 }, true);
 
@@ -595,6 +663,7 @@ window.addEventListener('cut', (e) => {
     e.stopPropagation();
     if (e.clipboardData) e.clipboardData.clearData();
     showAntiGamingWarning('Cutting code is prohibited during the active contest.');
+    recordContestViolation('CLIPBOARD_CUT', 'Global cut attempt intercepted on contest page.', 'warning');
   }
 }, true);
 
@@ -603,6 +672,7 @@ window.addEventListener('paste', (e) => {
     e.preventDefault();
     e.stopPropagation();
     showAntiGamingWarning('Pasting is prohibited during the active contest.');
+    recordContestViolation('CLIPBOARD_PASTE', 'Global paste attempt intercepted on contest page.', 'high');
   }
 }, true);
 
@@ -612,6 +682,7 @@ window.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     e.stopPropagation();
     showAntiGamingWarning('Right-click context menu and inspect are disabled on this page.');
+    recordContestViolation('CONTEXT_MENU', 'Right-click context menu / inspect attempted during contest.', 'warning');
   }
 }, true);
 
@@ -624,6 +695,7 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
     e.stopPropagation();
     showAntiGamingWarning('Developer Tools and Inspect are disabled on this page.');
+    recordContestViolation('DEVTOOLS_INSPECT', `Developer Tools shortcut intercepted (${e.key}).`, 'critical');
     return;
   }
 
@@ -632,18 +704,21 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
     e.stopPropagation();
     showAntiGamingWarning('Copying is disabled during the contest.');
+    recordContestViolation('CLIPBOARD_COPY', 'Copy keyboard shortcut (Ctrl/Cmd+C) intercepted.', 'warning');
     return;
   }
   if ((e.ctrlKey || e.metaKey) && (e.key === 'x' || e.key === 'X')) {
     e.preventDefault();
     e.stopPropagation();
     showAntiGamingWarning('Cutting is disabled during the contest.');
+    recordContestViolation('CLIPBOARD_CUT', 'Cut keyboard shortcut (Ctrl/Cmd+X) intercepted.', 'warning');
     return;
   }
   if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
     e.preventDefault();
     e.stopPropagation();
     showAntiGamingWarning('Pasting is prohibited during the contest.');
+    recordContestViolation('CLIPBOARD_PASTE', 'Paste keyboard shortcut (Ctrl/Cmd+V) intercepted.', 'high');
     return;
   }
 }, true);
@@ -653,6 +728,8 @@ document.addEventListener('visibilitychange', () => {
   if (!isContestRunning) return;
   if (document.hidden) {
     tabSwitchViolations++;
+    const severity = tabSwitchViolations >= 3 ? 'critical' : tabSwitchViolations === 2 ? 'high' : 'warning';
+    recordContestViolation('TAB_SWITCH', `Candidate switched tab / minimized exam window (Tab switch #${tabSwitchViolations}).`, severity);
   } else {
     showAntiGamingWarning(`⚠️ Tab switch detected! (Violation #${tabSwitchViolations}). Contest activity is monitored.`, 4000);
   }
@@ -665,6 +742,7 @@ if (problemSpecCard) {
     if (isContestRunning) {
       e.preventDefault();
       showAntiGamingWarning('Text selection is disabled during the contest.');
+      recordContestViolation('TEXT_SELECTION', 'Attempted to highlight/select problem description text.', 'warning');
     }
   });
 }

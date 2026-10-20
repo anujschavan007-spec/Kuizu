@@ -1741,6 +1741,97 @@ const server = Bun.serve({
       }
 
       // ----------------------------------------------------
+      // CONTEST CHEATING & VIOLATION LOGS API
+      // ----------------------------------------------------
+      if (pathname === "/api/contests/violations" && method === "GET") {
+        const filterContestId = url.searchParams.get("contestId");
+        const filterSeverity = url.searchParams.get("severity");
+        const filterType = url.searchParams.get("type");
+        const filterSearch = url.searchParams.get("search")?.toLowerCase();
+
+        let query = "SELECT * FROM contest_violations WHERE 1=1";
+        const params: any[] = [];
+
+        if (filterContestId && filterContestId !== "all") {
+          query += " AND contest_id = ?";
+          params.push(filterContestId);
+        }
+        if (filterSeverity && filterSeverity !== "all") {
+          query += " AND LOWER(severity) = LOWER(?)";
+          params.push(filterSeverity);
+        }
+        if (filterType && filterType !== "all") {
+          query += " AND LOWER(violation_type) = LOWER(?)";
+          params.push(filterType);
+        }
+
+        query += " ORDER BY timestamp DESC LIMIT 200";
+        let rows = db.query(query).all(...params) as any[];
+
+        let formatted = rows.map(r => ({
+          id: r.id,
+          contestId: r.contest_id,
+          contestTitle: r.contest_title,
+          username: r.username,
+          userEmail: r.user_email,
+          userAvatar: r.user_avatar,
+          violationType: r.violation_type,
+          details: r.details,
+          severity: r.severity,
+          timestamp: r.timestamp,
+          status: r.status
+        }));
+
+        if (filterSearch) {
+          formatted = formatted.filter(item =>
+            item.username.toLowerCase().includes(filterSearch) ||
+            item.userEmail.toLowerCase().includes(filterSearch) ||
+            item.contestTitle.toLowerCase().includes(filterSearch) ||
+            item.details.toLowerCase().includes(filterSearch) ||
+            item.violationType.toLowerCase().includes(filterSearch)
+          );
+        }
+
+        return jsonResponse({ success: true, count: formatted.length, violations: formatted });
+      }
+
+      if (pathname === "/api/contests/violations" && method === "POST") {
+        const body = await req.json();
+        const {
+          id = `viol_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+          contestId = "active-contest",
+          contestTitle = "Live Coding Contest",
+          username = "Candidate",
+          userEmail = "",
+          userAvatar = "",
+          violationType = "TAB_SWITCH",
+          details = "Anti-cheat violation detected during contest session.",
+          severity = "warning",
+          timestamp = new Date().toISOString(),
+          status = "flagged"
+        } = body;
+
+        db.prepare(`
+          INSERT INTO contest_violations (id, contest_id, contest_title, username, user_email, user_avatar, violation_type, details, severity, timestamp, status)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(id, contestId, contestTitle, username, userEmail, userAvatar, violationType, details, severity, timestamp, status);
+
+        return jsonResponse({ success: true, id }, 201);
+      }
+
+      if (pathname === "/api/contests/violations/action" && method === "POST") {
+        const body = await req.json();
+        const { id, status = "warned" } = body;
+        db.prepare("UPDATE contest_violations SET status = ? WHERE id = ?").run(status, id);
+        return jsonResponse({ success: true, id, status });
+      }
+
+      if (pathname === "/api/contests/violations/clear" && method === "POST") {
+        db.prepare("DELETE FROM contest_violations").run();
+        return jsonResponse({ success: true, message: "Cheating logs cleared successfully" });
+      }
+
+      // ----------------------------------------------------
       // QUESTS API
       // ----------------------------------------------------
       if (pathname === "/api/quests" && method === "GET") {
