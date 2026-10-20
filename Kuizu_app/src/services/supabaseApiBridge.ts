@@ -28,6 +28,8 @@ function jsonResponse(data: any, status = 200) {
   });
 }
 
+const nativeFetch: typeof fetch = typeof window !== 'undefined' ? window.fetch.bind(window) : fetch;
+
 /**
  * Calculate user strict XP from activities
  */
@@ -1233,6 +1235,61 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
     });
   }
 
+  // ----------------------------------------------------
+  // RESEND EMAIL API DISPATCH
+  // ----------------------------------------------------
+  if (pathname === '/api/email/send' && method === 'POST') {
+    const { to, subject, html, text, from = 'KUIZU <onboarding@resend.dev>' } = body;
+    const resendApiKey =
+      (import.meta as any).env?.VITE_RESEND_API_KEY ||
+      (import.meta as any).env?.RESEND_API_KEY ||
+      '';
+
+    if (!to || !subject) {
+      return jsonResponse({ success: false, error: 'Recipient "to" and "subject" are required' }, 400);
+    }
+
+    if (!resendApiKey) {
+      console.log('ℹ️ [Resend Bridge] Email queued for:', to, subject, '(Provide RESEND_API_KEY to send live)');
+      return jsonResponse({
+        success: true,
+        simulated: true,
+        message: 'Email successfully queued (simulated because RESEND_API_KEY is not yet set in .env)',
+        to,
+        subject
+      });
+    }
+
+    try {
+      const resendRes = await nativeFetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from,
+          to: Array.isArray(to) ? to : [to],
+          subject,
+          html,
+          text
+        })
+      });
+
+      const resendData = await resendRes.json();
+      if (!resendRes.ok) {
+        console.warn('⚠️ [Resend] Resend API error:', resendData);
+        return jsonResponse({ success: false, error: resendData }, resendRes.status);
+      }
+
+      console.log('✅ [Resend] Email successfully sent:', resendData);
+      return jsonResponse({ success: true, data: resendData });
+    } catch (sendErr: any) {
+      console.warn('⚠️ [Resend] Network error sending email:', sendErr);
+      return jsonResponse({ success: false, error: sendErr.message }, 500);
+    }
+  }
+
   // Fallback 404 for unhandled API routes
   return jsonResponse({ success: false, error: `Route ${pathname} not found in Supabase API bridge` }, 404);
 }
@@ -1241,13 +1298,11 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
 // Global Fetch Interceptor
 // ----------------------------------------------------
 if (typeof window !== 'undefined') {
-  const originalFetch = window.fetch.bind(window);
-
   window.fetch = async function (input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
     const urlString = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
 
     if (!urlString.includes('/api/')) {
-      return originalFetch(input, init);
+      return nativeFetch(input, init);
     }
 
     let path = urlString;
@@ -1271,7 +1326,7 @@ if (typeof window !== 'undefined') {
     // Only for /api/execute: if local compiler is active on localhost, try it
     if (path === '/api/execute' && isLocal) {
       try {
-        const netRes = await originalFetch(input, init);
+        const netRes = await nativeFetch(input, init);
         if (netRes.ok) {
           return netRes;
         }

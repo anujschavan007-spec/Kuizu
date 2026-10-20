@@ -4,6 +4,7 @@ import { showFirstLooserBadgeModal } from './firstLooserBadgeModal';
 import { showQuickThinkerBadgeModal } from './quickThinkerBadgeModal';
 import { showFirstQuizLevelBadgeModal } from './firstQuizLevelBadgeModal';
 import { showFirstDailyKuizuBadgeModal } from './firstDailyKuizuBadgeModal';
+import { sendBadgeWinEmail } from './resendEmailService';
 
 export interface BadgeDefinition {
   id: string;
@@ -275,6 +276,19 @@ export function unlockBadge(badgeId: string, customDate?: string): boolean {
       detail: { badgeId: def.id, date: dateToUse, newlyUnlocked: !wasUnlocked }
     })
   );
+
+  // Send badge achievement congratulatory email via Resend
+  if (!wasUnlocked) {
+    try {
+      const userEmail = localStorage.getItem('kuizu_user_email') || '';
+      const userName = localStorage.getItem('kuizu_user_name') || 'Kuizu Champion';
+      if (userEmail) {
+        sendBadgeWinEmail(userEmail, userName, def);
+      }
+    } catch (emailErr) {
+      console.warn('Could not dispatch badge win email via Resend:', emailErr);
+    }
+  }
 
   return !wasUnlocked;
 }

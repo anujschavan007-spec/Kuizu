@@ -2078,6 +2078,59 @@ const server = Bun.serve({
         });
       }
 
+      // ----------------------------------------------------
+      // RESEND EMAIL DISPATCH
+      // ----------------------------------------------------
+      if (pathname === "/api/email/send" && method === "POST") {
+        const body = await req.json();
+        const { to, subject, html, text, from = "KUIZU <onboarding@resend.dev>" } = body;
+        const resendApiKey = process.env.RESEND_API_KEY || process.env.VITE_RESEND_API_KEY || "";
+
+        if (!to || !subject) {
+          return jsonResponse({ success: false, error: 'Recipient "to" and "subject" are required' }, 400);
+        }
+
+        if (!resendApiKey) {
+          console.log(`ℹ️ [Resend Bun Backend] Email queued for: ${to} - "${subject}" (Provide RESEND_API_KEY to send live)`);
+          return jsonResponse({
+            success: true,
+            simulated: true,
+            message: "Email queued (simulated because RESEND_API_KEY is not yet set in .env)",
+            to,
+            subject
+          });
+        }
+
+        try {
+          const resendRes = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${resendApiKey}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              from,
+              to: Array.isArray(to) ? to : [to],
+              subject,
+              html,
+              text
+            })
+          });
+
+          const resendData = await resendRes.json();
+          if (!resendRes.ok) {
+            console.warn("⚠️ [Resend Backend] Error:", resendData);
+            return jsonResponse({ success: false, error: resendData }, resendRes.status);
+          }
+
+          console.log("✅ [Resend Backend] Email sent successfully:", resendData);
+          return jsonResponse({ success: true, data: resendData });
+        } catch (sendErr: any) {
+          console.warn("⚠️ [Resend Backend] Network error:", sendErr);
+          return jsonResponse({ success: false, error: sendErr.message }, 500);
+        }
+      }
+
       return jsonResponse({ error: "Endpoint not found" }, 404);
     } catch (err: any) {
       console.error("[Backend Error]", err);

@@ -1,6 +1,7 @@
 import './theme';
 import confetti from 'canvas-confetti';
 import { getClerk, syncClerkUserToLocalStorage } from './services/clerkService';
+import { sendWelcomeEmail } from './services/resendEmailService';
 
 // Toast helper
 let toastTimeout: number | undefined;
@@ -320,6 +321,7 @@ if (form) {
         if (signUpRes.status === 'complete') {
           await clerk.setActive({ session: signUpRes.createdSessionId });
           syncClerkUserToLocalStorage(clerk.user);
+          sendWelcomeEmail(email, fullName || firstName);
           confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
           showToast('Account created! Welcome to KUIZU!', '🎉');
           setTimeout(() => {
@@ -344,6 +346,7 @@ if (form) {
               if (verifyRes.status === 'complete') {
                 await clerk.setActive({ session: verifyRes.createdSessionId });
                 syncClerkUserToLocalStorage(clerk.user);
+                sendWelcomeEmail(email, fullName || firstName);
                 confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
                 showToast('Email verified! Welcome to KUIZU!', '🎉');
                 setTimeout(() => {
@@ -361,6 +364,7 @@ if (form) {
               localStorage.setItem('kuizu_user_name', fullName || email.split('@')[0]);
               localStorage.setItem('kuizu_user_email', email);
               localStorage.setItem('kuizu_logged_in', 'true');
+              sendWelcomeEmail(email, fullName || email.split('@')[0]);
               window.location.href = '/home';
             }
           );
