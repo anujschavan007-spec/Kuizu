@@ -2448,6 +2448,66 @@ body.home-page-body {
   font-weight: 600;
 }
 
+.badges-count-pill.is-empty {
+  background: rgba(148, 163, 184, 0.12);
+  color: #64748b;
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+.badge-status-dot.is-empty {
+  background: #94a3b8;
+  box-shadow: none;
+  animation: none;
+}
+
+.badges-zero-empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.85) 0%, rgba(241, 245, 249, 0.95) 100%);
+  border: 1.5px dashed rgba(203, 213, 225, 0.9);
+  border-radius: 18px;
+  padding: 24px 28px;
+  margin: 6px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.badges-zero-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary-accent, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.badges-zero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.badges-zero-title {
+  margin: 0;
+  font-family: var(--font-display, 'Plus Jakarta Sans');
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.badges-zero-desc {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #64748b;
+  max-width: 680px;
+}
+
 /* Dark Mode Overrides */
 .dark-mode .achieved-badges-card {
   background: rgba(30, 41, 59, 0.75);
@@ -2503,6 +2563,30 @@ body.home-page-body {
 .dark-mode .badge-inspect-pill {
   background: rgba(255, 255, 255, 0.07);
   color: #cbd5e1;
+}
+
+.dark-mode .badges-count-pill.is-empty {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .badges-zero-empty-state {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.6) 100%);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .badges-zero-icon-wrap {
+  background: rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+}
+
+.dark-mode .badges-zero-title {
+  color: #f1f5f9;
+}
+
+.dark-mode .badges-zero-desc {
+  color: #94a3b8;
 }
 
 /* --- Problems List Table Card --- */

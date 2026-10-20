@@ -5,7 +5,7 @@ import { showFirstProblemSolverBadgeModal } from './services/firstProblemBadgeMo
 import { showQuickThinkerBadgeModal } from './services/quickThinkerBadgeModal';
 import { highlightCode } from './services/codeHighlighter';
 import { getCompilerSettings, saveCompilerTheme, applyCompilerTheme } from './services/compilerThemeManager';
-import { unlockBadge } from './services/badgeManager';
+import { unlockBadge, isBadgeUnlocked } from './services/badgeManager';
 
 interface ProblemSpec {
   id: string;
@@ -1356,20 +1356,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
           // Check if eligible for Quick Thinker Gold Shield 3D Badge:
           // "first time hard problem solver within 10min in 1st attempt of code submission"
-          const hasEarnedQuickThinker = localStorage.getItem('kuizu_quick_thinker_earned') === 'true';
+          const isQuickThinkerEligible = isHardProblem && isUnder10Mins && isFirstAttempt && !isBadgeUnlocked('quick-thinker');
+          const isFirstProblem = !isBadgeUnlocked('first-problem-solver');
 
-          if (isHardProblem && isUnder10Mins && isFirstAttempt && !hasEarnedQuickThinker) {
-            unlockBadge('consistent-coder');
+          if (isQuickThinkerEligible) {
+            unlockBadge('quick-thinker');
+            if (isFirstProblem) unlockBadge('first-problem-solver');
+
             setTimeout(() => {
               showQuickThinkerBadgeModal(() => {
-                // If this is also the user's very first problem solved overall, show first problem badge afterwards
-                if (!localStorage.getItem('kuizu_first_problem_solved')) {
-                  unlockBadge('first-problem-solver');
+                if (isFirstProblem) {
                   showFirstProblemSolverBadgeModal();
                 }
               });
             }, 650);
-          } else {
+          } else if (isFirstProblem) {
             // Congratulate 1st problem solver with slowly moving 3D badge modal popup in center of screen
             unlockBadge('first-problem-solver');
             setTimeout(() => {

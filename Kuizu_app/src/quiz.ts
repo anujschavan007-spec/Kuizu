@@ -4,7 +4,7 @@ import type { QuizLevel, QuizQuestion, QuizResult } from './types';
 import './services/adminAuthGuard';
 import { soundManager } from './services/soundManager';
 import { showFirstQuizLevelBadgeModal } from './services/firstQuizLevelBadgeModal';
-import { unlockBadge } from './services/badgeManager';
+import { unlockBadge, isBadgeUnlocked } from './services/badgeManager';
 
 // State
 let levels: QuizLevel[] = [];
@@ -540,20 +540,21 @@ async function handleQuizSubmit(): Promise<void> {
 
     // Check if user submitted Level 1 and achieved 3 stars:
     // Congratulate them with the 3D slow-moving Pink Quiz Level Solver Badge!
-    const isLevelOne = Number(activeLevel.id) === 1 || Number((activeLevel as any).levelNumber) === 1;
-    const earnedThreeStars = Number(result.starsEarned) >= 3;
+    // Check if user solved their first quiz level:
+    // Congratulate them with the 3D slow-moving Pink Quiz Level Solver Badge!
+    const isFirstQuizLevel = !isBadgeUnlocked('first-quiz-level-solver');
 
     if (btnReopenQuizBadge3D) {
-      if (isLevelOne && earnedThreeStars) {
+      if (isBadgeUnlocked('first-quiz-level-solver') || isFirstQuizLevel) {
         btnReopenQuizBadge3D.style.display = 'inline-flex';
       } else {
         btnReopenQuizBadge3D.style.display = 'none';
       }
     }
 
-    if (isLevelOne && earnedThreeStars) {
+    if (isFirstQuizLevel) {
       // Pop up the 3D Pink Badge Modal in the center of the screen
-      unlockBadge('speedster');
+      unlockBadge('first-quiz-level-solver');
       showFirstQuizLevelBadgeModal(() => {
         modalQuizResults?.classList.add('show');
       });

@@ -2,6 +2,8 @@ import './theme';
 import './services/adminAuthGuard';
 import { highlightCode } from './services/codeHighlighter';
 import { getCompilerSettings, saveCompilerTheme, applyCompilerTheme } from './services/compilerThemeManager';
+import { unlockBadge, isBadgeUnlocked } from './services/badgeManager';
+import { showFirstProblemSolverBadgeModal } from './services/firstProblemBadgeModal';
 
 declare const confetti: any;
 
@@ -1143,6 +1145,14 @@ submitBtn?.addEventListener('click', async () => {
           showToast(`Accepted! +${awardedXp} XP (${curQ.difficulty}) awarded to your profile!`, 4000);
         } else {
           showToast(`Accepted! All test cases passed! (Already solved previously • +0 XP)`, 4000);
+        }
+
+        // Award First Problem Solver badge if not already unlocked
+        if (!isBadgeUnlocked('first-problem-solver')) {
+          unlockBadge('first-problem-solver');
+          setTimeout(() => {
+            showFirstProblemSolverBadgeModal();
+          }, 900);
         }
 
         if (tcBanner && tcBannerText) {

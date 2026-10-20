@@ -6,6 +6,7 @@ import { showQuickThinkerBadgeModal } from './services/quickThinkerBadgeModal';
 import { showFirstBattleParticipantBadgeModal } from './services/firstBattleBadgeModal';
 import { showFirstQuizLevelBadgeModal } from './services/firstQuizLevelBadgeModal';
 import { showFirstDailyKuizuBadgeModal } from './services/firstDailyKuizuBadgeModal';
+import { showFirstLooserBadgeModal } from './services/firstLooserBadgeModal';
 import { getBadges, openBadgeModal, type BadgeRecord } from './services/badgeManager';
 import { initBadge3DCoin, disposeAllBadge3DCoins } from './services/badge3dCoinRenderer';
 
@@ -80,23 +81,57 @@ function getTopicIcon(topic: string): string {
 function renderBadges(): void {
   if (!badgesContainer) return;
 
-  const badges: BadgeRecord[] = getBadges();
-  const unlockedCount = badges.filter((b) => b.unlocked).length;
+  const allBadges: BadgeRecord[] = getBadges();
+  const earnedBadges = allBadges.filter((b) => b.unlocked);
+  const unlockedCount = earnedBadges.length;
 
   // Update header counter pill
   const countText = document.getElementById('badges-count-text');
+  const countPill = document.getElementById('badges-count-pill');
   if (countText) {
-    countText.textContent = `${unlockedCount} / ${badges.length} Unlocked`;
+    countText.textContent = `${unlockedCount} / ${allBadges.length} Unlocked`;
+  }
+  if (countPill) {
+    if (unlockedCount === 0) {
+      countPill.classList.add('is-empty');
+      countPill.style.background = '#f1f5f9';
+      countPill.style.color = '#64748b';
+      countPill.style.borderColor = '#e2e8f0';
+    } else {
+      countPill.classList.remove('is-empty');
+      countPill.style.background = '#ecfdf5';
+      countPill.style.color = '#059669';
+      countPill.style.borderColor = 'rgba(16, 185, 129, 0.25)';
+    }
   }
 
   // Clear any existing active 3D coin instances
   disposeAllBadge3DCoins();
 
-  // Render cards markup with full dimensional structure
-  badgesContainer.innerHTML = badges
+  // If user has not earned any badges yet, show zero badge empty state
+  if (unlockedCount === 0) {
+    badgesContainer.innerHTML = `
+      <div class="badges-zero-empty-state">
+        <div class="badges-zero-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <circle cx="12" cy="8" r="7"></circle>
+            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+          </svg>
+        </div>
+        <div class="badges-zero-info">
+          <h3 class="badges-zero-title">No Badges Earned Yet (0 Unlocked)</h3>
+          <p class="badges-zero-desc">Solve your first coding problem, complete a daily challenge, pass a quiz level, or compete in 1v1 battle to unlock your 3D trophy badges here!</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Render cards markup ONLY for earned badges
+  badgesContainer.innerHTML = earnedBadges
     .map((b) => {
       return `
-        <div class="badge-coin-card ${b.unlocked ? 'is-unlocked' : 'is-locked'}" data-badge-id="${b.id}" tabindex="0" role="button" aria-label="${b.title} Badge">
+        <div class="badge-coin-card is-unlocked" data-badge-id="${b.id}" tabindex="0" role="button" aria-label="${b.title} Badge">
           
           <!-- 3D Coin Stage -->
           <div class="badge-coin-stage">
@@ -115,7 +150,7 @@ function renderBadges(): void {
           <!-- Badge Info -->
           <div class="badge-card-content">
             <h3 class="badge-coin-title">${b.title}</h3>
-            <p class="badge-coin-date">${b.unlocked ? b.unlockedDate : 'Locked'}</p>
+            <p class="badge-coin-date">${b.unlockedDate || 'Unlocked'}</p>
           </div>
 
           <!-- Inspect Pill -->
@@ -125,7 +160,7 @@ function renderBadges(): void {
               <line x1="12" y1="16" x2="12" y2="12"></line>
               <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
-            <span>${b.unlocked ? 'Inspect 3D' : 'View Details'}</span>
+            <span>Inspect 3D</span>
           </div>
 
         </div>
@@ -133,10 +168,10 @@ function renderBadges(): void {
     })
     .join('');
 
-  // Attach click listener & start 3D GLB coin rendering for each card
+  // Attach click listener & start 3D GLB coin rendering for each earned card
   badgesContainer.querySelectorAll<HTMLDivElement>('.badge-coin-card').forEach((card, index) => {
     const badgeId = card.getAttribute('data-badge-id');
-    const badge = badges.find((x) => x.id === badgeId);
+    const badge = earnedBadges.find((x) => x.id === badgeId);
     if (!badge) return;
 
     const openModal = () => {
@@ -446,6 +481,7 @@ async function init(): Promise<void> {
 (window as any).showFirstProblemSolverBadgeModal = showFirstProblemSolverBadgeModal;
 (window as any).showQuickThinkerBadgeModal = showQuickThinkerBadgeModal;
 (window as any).showFirstBattleParticipantBadgeModal = showFirstBattleParticipantBadgeModal;
+(window as any).showFirstLooserBadgeModal = showFirstLooserBadgeModal;
 (window as any).showFirstQuizLevelBadgeModal = showFirstQuizLevelBadgeModal;
 (window as any).showFirstDailyKuizuBadgeModal = showFirstDailyKuizuBadgeModal;
 

@@ -2,7 +2,7 @@ import './theme';
 import confetti from 'canvas-confetti';
 import { soundManager } from './services/soundManager';
 import { showFirstDailyKuizuBadgeModal } from './services/firstDailyKuizuBadgeModal';
-import { unlockBadge } from './services/badgeManager';
+import { unlockBadge, isBadgeUnlocked } from './services/badgeManager';
 
 interface QuizQuestion {
   id: number | string;
@@ -345,10 +345,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Congratulate 1st daily kuizu attended with slowly moving 3D silver badge modal popup in center of screen
-        unlockBadge('contest-warrior');
-        showFirstDailyKuizuBadgeModal(() => {
+        const isFirstDaily = !isBadgeUnlocked('daily-kuizu-solver');
+        if (isFirstDaily) {
+          unlockBadge('daily-kuizu-solver');
+          showFirstDailyKuizuBadgeModal(() => {
+            if (resultsModal) resultsModal.style.display = 'flex';
+          });
+        } else {
           if (resultsModal) resultsModal.style.display = 'flex';
-        });
+        }
       } else {
         showToast('Error recording quiz submission.');
       }

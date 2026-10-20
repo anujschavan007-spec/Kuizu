@@ -11,7 +11,8 @@ import './services/adminAuthGuard';
 import type { BattleRoom, BattleQuestion } from './types';
 import { soundManager } from './services/soundManager';
 import { showFirstBattleParticipantBadgeModal } from './services/firstBattleBadgeModal';
-import { unlockBadge } from './services/badgeManager';
+import { showFirstLooserBadgeModal } from './services/firstLooserBadgeModal';
+import { unlockBadge, isBadgeUnlocked } from './services/badgeManager';
 
 // State management
 let currentRoom: BattleRoom | null = null;
@@ -730,11 +731,31 @@ function evaluateAnswer() {
     }
   } catch {}
 
-  // Congratulate 1st battle participant with slowly moving 3D badge modal popup in center of screen
-  unlockBadge('first-looser');
-  showFirstBattleParticipantBadgeModal(() => {
+  // Award Badges:
+  // 1. First Battle Participant (awarded for completing any 1v1 battle match)
+  // 2. First Looser (awarded when taking your first defeat in a match)
+  const isFirstBattle = !isBadgeUnlocked('first-battle-participation');
+  const isFirstLoss = !isCorrect && !isBadgeUnlocked('first-looser');
+
+  if (isFirstBattle) {
+    unlockBadge('first-battle-participation');
+  }
+
+  if (isFirstLoss) {
+    unlockBadge('first-looser');
+    // Pop up First Looser 3D Modal
+    showFirstLooserBadgeModal(() => {
+      openModal(modalBattleResult);
+    });
+  } else if (isFirstBattle) {
+    // Pop up First Battle Participant 3D Modal
+    showFirstBattleParticipantBadgeModal(() => {
+      openModal(modalBattleResult);
+    });
+  } else {
+    // Already earned previously; directly show results modal
     openModal(modalBattleResult);
-  });
+  }
 }
 
 function escapeHtml(str: string): string {
@@ -743,11 +764,16 @@ function escapeHtml(str: string): string {
 
 // Hook re-inspect 3D badge button
 document.getElementById('btn-view-3d-battle-badge')?.addEventListener('click', () => {
-  showFirstBattleParticipantBadgeModal();
+  if (isBadgeUnlocked('first-looser')) {
+    showFirstLooserBadgeModal();
+  } else {
+    showFirstBattleParticipantBadgeModal();
+  }
 });
 
 // Expose on window for testing & verification
 (window as any).showFirstBattleParticipantBadgeModal = showFirstBattleParticipantBadgeModal;
+(window as any).showFirstLooserBadgeModal = showFirstLooserBadgeModal;
 
 // Bootstrap
 if (document.readyState === 'loading') {
