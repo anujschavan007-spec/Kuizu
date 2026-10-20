@@ -983,23 +983,23 @@ if (typeof window !== 'undefined') {
       } catch {}
     }
 
-    const isProduction =
-      !window.location.hostname.includes('localhost') &&
-      !window.location.hostname.includes('127.0.0.1');
+    const isLocal =
+      window.location.hostname.includes('localhost') ||
+      window.location.hostname.includes('127.0.0.1');
 
-    // In local dev, if Bun backend is active, try network first
-    if (!isProduction) {
+    // Only for /api/execute: if local compiler is active on localhost, try it
+    if (path === '/api/execute' && isLocal) {
       try {
         const netRes = await originalFetch(input, init);
-        if (netRes.status !== 404) {
+        if (netRes.ok) {
           return netRes;
         }
       } catch {
-        // Backend server offline: seamlessly continue to Supabase
+        // Fallback to client runner
       }
     }
 
-    // Handle directly with Supabase
+    // All database endpoints on localhost & production route directly to Supabase
     try {
       return await handleSupabaseApiRoute(path, search, init);
     } catch (err: any) {

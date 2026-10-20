@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "supabase:link": "bunx supabase link --project-ref pjahxopllhifjmnonfdp",
     "supabase:push": "bunx supabase db push",
-    "supabase:sync": "bun run server/syncToSupabase.ts"
+    "supabase:sync": "bun run server/syncToSupabase.ts",
+    "supabase:pull": "bun run server/syncFromSupabase.ts"
   },
   "dependencies": {
     "@clerk/clerk-js": "^6.39.1",

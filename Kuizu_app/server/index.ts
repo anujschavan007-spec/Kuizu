@@ -11,13 +11,17 @@ import {
   findUserInDb
 } from "./xpManager";
 
+import { syncSupabaseToLocalDb } from "./syncFromSupabase";
+
 const PORT = 3001;
 
-// Initial strict XP and dynamic leaderboard ranking sync
+// Initial sync with Supabase Cloud Database on startup
 try {
-  syncAllUsersXpAndRanks();
+  syncSupabaseToLocalDb().then(() => {
+    syncAllUsersXpAndRanks();
+  });
 } catch (e) {
-  console.warn("Initial XP sync error:", e);
+  console.warn("Initial Supabase sync error:", e);
 }
 
 function jsonResponse(data: any, status = 200) {
