@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+  <meta name="theme-color" content="#090d16" />
+  <title>3D Avatar Studio • KUIZU</title>
+  <meta name="description" content="Generate and customize your realistic 3D avatar with face scan, custom hairstyles, and gamer attire for KUIZU." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background-color: #060911;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    #avatar-studio-app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at 50% 0%, #111a2e 0%, #060911 80%);
+    }
+
+    /* Top Studio Header */
+    header.studio-header {
+      position: relative;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      padding-top: max(12px, env(safe-area-inset-top));
+      background: rgba(9, 14, 26, 0.88);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .studio-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .studio-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .studio-back-btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+      transform: translateX(-2px);
+    }
+
+    .studio-title-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .studio-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #38bdf8;
+    }
+
+    .studio-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+    }
+
+    .studio-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .saved-badge-pill {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 9999px;
+      color: #34d399;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    @media (min-width: 640px) {
+      .saved-badge-pill {
+        display: inline-flex;
+      }
+    }
+
+    .preview-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      border: none;
+      border-radius: 10px;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .preview-toggle-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.55);
+    }
+
+    /* Main Studio Stage */
+    #studio-main {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Avaturn Editor Iframe Container */
+    #avaturn-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      background: #090e18;
+      border: none;
+    }
+
+    #avaturn-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Loading / Initializing State */
+    #studio-loading {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #060911;
+      gap: 16px;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .spinner-ring {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #38bdf8;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #e2e8f0;
+      letter-spacing: 0.2px;
+    }
+
+    .loading-hint {
+      font-size: 12.5px;
+      color: #64748b;
+      max-width: 320px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* 3D Export Success Modal / Overlay */
+    #avatar-preview-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(4, 7, 14, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 16px;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    #avatar-preview-overlay.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .preview-card {
+      position: relative;
+      width: 100%;
+      max-width: 540px;
+      background: linear-gradient(180deg, #111a2e 0%, #0b1120 100%);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 22px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.15);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .preview-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: #94a3b8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .preview-close-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+
+    .preview-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .preview-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .preview-subtitle {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+
+    /* 3D Canvas Box in Modal */
+    .preview-canvas-box {
+      width: 100%;
+      height: 280px;
+      background: #060912;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    #preview-three-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      outline: none;
+      cursor: grab;
+    }
+
+    #preview-three-canvas:active {
+      cursor: grabbing;
+    }
+
+    .canvas-hint {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 3px 10px;
+      border-radius: 9999px;
+      pointer-events: none;
+    }
+
+    .preview-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    @media (min-width: 480px) {
+      .preview-actions {
+        flex-direction: row;
+      }
+    }
+
+    .btn-action-primary {
+      flex: 1;
+      padding: 13px 20px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .btn-action-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.55);
+    }
+
+    .btn-action-secondary {
+      flex: 1;
+      padding: 13px 20px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+
+    /* Toast Notification */
+    #studio-toast {
+      position: absolute;
+      top: 70px;
+      left: 50%;
+      transform: translate(-50%, -40px);
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      color: #ffffff;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.35);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #studio-toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="avatar-studio-app">
+    
+    <!-- Studio Header -->
+    <header class="studio-header">
+      <div class="studio-header-left">
+        <a href="/home" class="studio-back-btn" title="Back to Kuizu Dashboard">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Kuizu</span>
+        </a>
+        <div class="studio-title-wrap">
+          <span class="studio-tag">
+            <span>✨</span>
+            <span>Realistic 3D Creator</span>
+          </span>
+          <h1 class="studio-title">3D Avatar Studio</h1>
+        </div>
+      </div>
+
+      <div class="studio-header-right">
+        <div class="saved-badge-pill" id="saved-status-pill">
+          <span>✓</span>
+          <span>Avatar Synced</span>
+        </div>
+
+        <button type="button" class="preview-toggle-btn" id="btn-toggle-saved-preview">
+          <span>🎮</span>
+          <span>View 3D Model</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Studio Main Frame -->
+    <main id="studio-main">
+      
+      <!-- Avaturn Container (Embedded iframe with Camera + Phone QR Scan permissions) -->
+      <div id="avaturn-container">
+        <iframe 
+          id="avaturn-iframe" 
+          src="https://hub.avaturn.me/editor?customization_id=01a15a36-d587-71eb-a6f3-6f54946d8dcb" 
+          allow="camera *; microphone *; clipboard-write *; display-capture *"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <!-- Loading State Overlay -->
+      <div id="studio-loading">
+        <div class="spinner-ring"></div>
+        <div class="loading-title">Connecting to Avaturn 3D Studio...</div>
+        <div class="loading-hint">Scan QR code on your phone to reconstruct your face, or customize hair, clothing, and colors directly!</div>
+      </div>
+
+      <!-- 3D Export Success Modal -->
+      <div id="avatar-preview-overlay">
+        <div class="preview-card">
+          <button type="button" class="preview-close-btn" id="btn-close-preview" aria-label="Close">✕</button>
+          
+          <div class="preview-tag">🎉 Avatar Created & Synced</div>
+          <h2 class="preview-title">Your 3D Avatar Is Ready!</h2>
+          <p class="preview-subtitle">We have saved your realistic 3D character (.glb) to your Kuizu profile.</p>
+
+          <!-- Interactive Three.js Orbit Canvas -->
+          <div class="preview-canvas-box">
+            <canvas id="preview-three-canvas"></canvas>
+            <div class="canvas-hint">Drag to rotate 360° • Scroll to zoom</div>
+          </div>
+
+          <div class="preview-actions">
+            <a href="/battle" class="btn-action-primary">
+              <span>⚔️</span>
+              <span>Enter 1v1 Battle Arena</span>
+            </a>
+            <a href="#" id="btn-download-avatar-glb" class="btn-action-secondary" download="my_kuizu_avatar.glb">
+              <span>⬇️</span>
+              <span>Download .GLB</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Feedback -->
+      <div id="studio-toast">
+        <span id="studio-toast-icon">✨</span>
+        <span id="studio-toast-msg">Avatar saved successfully!</span>
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module" src="/src/avatarStudio.ts"></script>
+</body>
+</html>

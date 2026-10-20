@@ -5,6 +5,7 @@
     "": {
       "name": "kuizu-app",
       "dependencies": {
+        "@avaturn/sdk": "^1.1.4",
         "@clerk/clerk-js": "^6.39.1",
         "@supabase/supabase-js": "^2.118.0",
         "canvas-confetti": "^1.9.4",
@@ -20,6 +21,8 @@
   },
   "packages": {
     "@adraffy/ens-normalize": ["@adraffy/ens-normalize@1.11.1", "", {}, "sha512-nhCBV3quEgesuf7c7KYfperqSS14T8bYuvJ8PcLJp6znkZpFc0AuW4qBtr8eKVyPPe/8RSr7sglCWPU5eaxwKQ=="],
+
+    "@avaturn/sdk": ["@avaturn/sdk@1.1.4", "", {}, "sha512-OAbpcssUowv6Iy+x+OamiBrJnrVYwv3F9JY9xhUAP0OBNK5DADHywYVIYNk/0xknFAFDoB2lMSDqrXb1nIrVJw=="],
 
     "@base-org/account": ["@base-org/account@2.0.1", "", { "dependencies": { "@noble/hashes": "1.4.0", "clsx": "1.2.1", "eventemitter3": "5.0.1", "idb-keyval": "6.2.1", "ox": "0.6.9", "preact": "10.24.2", "viem": "^2.31.7", "zustand": "5.0.3" } }, "sha512-tySVNx+vd6XEynZL0uvB10uKiwnAfThr8AbKTwILVG86mPbLAhEOInQIk+uDnvpTvfdUhC1Bi5T/46JvFoLZQQ=="],
 
