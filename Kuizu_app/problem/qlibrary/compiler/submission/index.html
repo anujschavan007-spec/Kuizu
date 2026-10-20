@@ -9,6 +9,57 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/src/style.css" />
+    
+    <!-- Global Theme & Accent Synchronous Preloader -->
+    <script id="kuizu-theme-preloader">
+      (function() {
+        try {
+          var fast = localStorage.getItem('kuizu_accent_color');
+          var raw = localStorage.getItem('kuizu_user_settings_v1');
+          var parsed = raw ? JSON.parse(raw) : null;
+          var color = fast || (parsed && parsed.accentColor) || '#2563EB';
+          var theme = (parsed && parsed.theme) || 'light';
+          var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var root = document.documentElement;
+          if (isDark) {
+            root.classList.add('dark-mode');
+            if (document.body) document.body.classList.add('dark-mode');
+          } else {
+            root.classList.remove('dark-mode');
+            if (document.body) document.body.classList.remove('dark-mode');
+          }
+          function hexRgb(h, a) {
+            var c = h.replace('#', '').trim();
+            if (c.length === 3) c = c.split('').map(function(x){return x+x;}).join('');
+            var n = parseInt(c, 16);
+            if (isNaN(n) || c.length !== 6) return 'rgba(37, 99, 235, ' + a + ')';
+            return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+          }
+          function adjB(h, p) {
+            var c = h.replace('#', '').trim();
+            if (c.length === 3) c = c.split('').map(function(x){return x+x;}).join('');
+            var n = parseInt(c, 16);
+            if (isNaN(n) || c.length !== 6) return h;
+            var r = Math.min(255, Math.max(0, Math.round(((n >> 16) & 255) * (1 + p / 100))));
+            var g = Math.min(255, Math.max(0, Math.round(((n >> 8) & 255) * (1 + p / 100))));
+            var b = Math.min(255, Math.max(0, Math.round((n & 255) * (1 + p / 100))));
+            return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+          }
+          var darker = adjB(color, -16);
+          var lightBg = isDark ? hexRgb(color, 0.22) : hexRgb(color, 0.08);
+          root.style.setProperty('--primary-accent', color);
+          root.style.setProperty('--color-primary', color);
+          root.style.setProperty('--primary-accent-hover', darker);
+          root.style.setProperty('--color-primary-hover', darker);
+          root.style.setProperty('--primary-accent-light', lightBg);
+          root.style.setProperty('--color-primary-light', lightBg);
+          root.style.setProperty('--primary-accent-subtle', hexRgb(color, 0.14));
+          root.style.setProperty('--primary-accent-glow', hexRgb(color, 0.38));
+          root.style.setProperty('--primary-accent-border', hexRgb(color, 0.4));
+          root.style.setProperty('--color-primary-border', hexRgb(color, 0.4));
+        } catch (_) {}
+      })();
+    </script>
   </head>
   <body class="submissions-page-body">
     
@@ -38,11 +89,11 @@
 
         <!-- User Profile Pill -->
         <div class="user-menu-wrapper" style="position: relative;">
-          <button type="button" class="user-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false" style="padding: 4px 10px; border-radius: 9999px; display: flex; align-items: center; gap: 8px; border: 1.5px solid #e2e8f0; background: #ffffff; cursor: pointer;">
+          <button type="button" class="user-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false" style="padding: 4px 10px; border-radius: 9999px; display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <div class="user-avatar-img-wrap" style="width: 28px; height: 28px; border-radius: 50%; overflow: hidden;">
               <img src="/images/user_avatar.png" alt="Avatar" class="user-avatar-img" id="user-avatar-top" style="width: 100%; height: 100%; object-fit: cover;" />
             </div>
-            <span class="user-name" id="user-display-name" style="font-weight: 700; font-size: 14px; color: #1e293b;">Anuj</span>
+            <span class="user-name" id="user-display-name" style="font-weight: 700; font-size: 14px;">Anuj</span>
             <svg class="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px; color: #64748b;">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>

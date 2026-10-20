@@ -1,3 +1,5 @@
+import './theme';
+import './services/adminAuthGuard';
 import { highlightCode } from './services/codeHighlighter';
 
 interface SubmissionItem {

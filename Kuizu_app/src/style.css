@@ -18969,6 +18969,8 @@ html.dark-mode body.quiz-page-body,
 html.dark-mode body.profile-page-body,
 html.dark-mode body.auth-page-body,
 html.dark-mode body.compiler-page-body,
+html.dark-mode body.submissions-page-body,
+html.dark-mode body.contest-arena-page-body,
 html.dark-mode body.daily-quiz-body {
   background: #0b0f19 !important;
   background-image: none !important;
@@ -20545,5 +20547,415 @@ html.dark-mode .admin-dropdown-item:hover {
   background: #1e293b !important;
   color: #ffffff !important;
 }
+
+/* --- 13. Submissions Page (/problem/qlibrary/compiler/submission) --- */
+html.dark-mode .submissions-page-body {
+  background: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+html.dark-mode .submissions-header-card {
+  background: #111827 !important;
+  border-color: #1e293b !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark-mode .submissions-badge {
+  background: rgba(37, 99, 235, 0.18) !important;
+  color: var(--primary-accent, #3b82f6) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+}
+
+html.dark-mode .submissions-heading {
+  color: #f8fafc !important;
+}
+
+html.dark-mode .submissions-subtitle {
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .submissions-header-back-btn {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #93c5fd !important;
+}
+
+html.dark-mode .submissions-header-back-btn:hover {
+  background: #334155 !important;
+  border-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .btn-sub-action.secondary {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+html.dark-mode .btn-sub-action.secondary:hover {
+  background: #334155 !important;
+  border-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .submissions-list-card,
+html.dark-mode .submissions-viewer-card {
+  background: #111827 !important;
+  border-color: #1e293b !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark-mode .submissions-list-header {
+  background: #111827 !important;
+  border-bottom-color: #1e293b !important;
+}
+
+html.dark-mode .sub-card-title,
+html.dark-mode .viewer-prob-title {
+  color: #f8fafc !important;
+}
+
+html.dark-mode .sub-count-tag {
+  background: #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .sub-filter-toggles {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html.dark-mode .sub-filter-toggle {
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .sub-filter-toggle:hover {
+  color: #f8fafc !important;
+}
+
+html.dark-mode .sub-filter-toggle.active {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark-mode .sub-table-head {
+  background: #0d1322 !important;
+  border-bottom-color: #1e293b !important;
+  color: #64748b !important;
+}
+
+html.dark-mode .sub-row {
+  border-bottom-color: #1e293b !important;
+}
+
+html.dark-mode .sub-row:hover {
+  background: #162032 !important;
+}
+
+html.dark-mode .sub-row.active {
+  background: rgba(37, 99, 235, 0.16) !important;
+  border-left: 3px solid var(--primary-accent, #2563eb) !important;
+}
+
+html.dark-mode .sub-prob-title {
+  color: #f1f5f9 !important;
+}
+
+html.dark-mode .sub-prob-id {
+  color: #64748b !important;
+}
+
+html.dark-mode .sub-lang-tag {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark-mode .sub-status-pill.accepted {
+  background: rgba(22, 163, 74, 0.18) !important;
+  color: #4ade80 !important;
+  border: 1px solid rgba(74, 222, 128, 0.25) !important;
+}
+
+html.dark-mode .sub-status-pill.failed {
+  background: rgba(220, 38, 38, 0.18) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(248, 113, 113, 0.25) !important;
+}
+
+html.dark-mode .sub-source-pill.practice,
+html.dark-mode .sub-source-pill.qlibrary {
+  background: rgba(37, 99, 235, 0.18) !important;
+  color: #93c5fd !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+html.dark-mode .sub-source-pill.contest {
+  background: rgba(147, 51, 234, 0.18) !important;
+  color: #d8b4fe !important;
+  border-color: rgba(168, 85, 247, 0.3) !important;
+}
+
+html.dark-mode .sub-xp-val.awarded {
+  background: rgba(5, 150, 105, 0.2) !important;
+  color: #34d399 !important;
+  border-color: rgba(52, 211, 153, 0.3) !important;
+}
+
+html.dark-mode .sub-xp-val.zero {
+  background: #1e293b !important;
+  color: #64748b !important;
+  border-color: #334155 !important;
+}
+
+html.dark-mode .sub-time-date {
+  color: #cbd5e1 !important;
+}
+
+html.dark-mode .sub-time-clock {
+  color: #64748b !important;
+}
+
+html.dark-mode .sub-empty-state h4 {
+  color: #f1f5f9 !important;
+}
+
+html.dark-mode .sub-empty-state p {
+  color: #64748b !important;
+}
+
+html.dark-mode .viewer-card-header {
+  background: #111827 !important;
+  border-bottom-color: #1e293b !important;
+}
+
+html.dark-mode .viewer-lang-tag {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark-mode .btn-copy-code {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .btn-copy-code:hover {
+  background: #334155 !important;
+  border-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .viewer-details-strip {
+  background: #0d1322 !important;
+  border-bottom-color: #1e293b !important;
+}
+
+html.dark-mode .strip-label {
+  color: #64748b !important;
+}
+
+html.dark-mode .strip-val {
+  color: #cbd5e1 !important;
+}
+
+html.dark-mode .viewer-code-container {
+  background: #0b0f19 !important;
+}
+
+html.dark-mode .viewer-code-pre {
+  background: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+/* --- 14. Contest Arena Page (/problem/contest/arena) --- */
+html.dark-mode .contest-arena-page-body {
+  background: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+html.dark-mode .contest-arena-topbar {
+  background: rgba(15, 23, 42, 0.95) !important;
+  border-bottom: 1.5px solid #1e293b !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+html.dark-mode .arena-back-link {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #93c5fd !important;
+}
+
+html.dark-mode .arena-back-link:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .arena-progress-pill {
+  background: #111827 !important;
+  border-color: #1e293b !important;
+}
+
+html.dark-mode .progress-pill-label,
+html.dark-mode .progress-pill-ratio {
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .progress-pill-track {
+  background: #1e293b !important;
+}
+
+html.dark-mode .btn-arena-step {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark-mode .btn-arena-step:hover:not(:disabled) {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .btn-arena-step:disabled {
+  background: #162032 !important;
+  border-color: #1e293b !important;
+  color: #475569 !important;
+}
+
+html.dark-mode .btn-arena-next {
+  background: var(--primary-accent, #2563eb) !important;
+  border-color: var(--primary-accent, #2563eb) !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .arena-problem-spec-card,
+html.dark-mode .arena-editor-card,
+html.dark-mode .arena-testcases-card {
+  background: #111827 !important;
+  border-color: #1e293b !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark-mode .arena-spec-header,
+html.dark-mode .arena-editor-toolbar,
+html.dark-mode .arena-tc-tabs {
+  background: #111827 !important;
+  border-bottom-color: #1e293b !important;
+}
+
+html.dark-mode .arena-prob-title {
+  color: #f8fafc !important;
+}
+
+html.dark-mode .arena-prob-desc-content {
+  color: #cbd5e1 !important;
+}
+
+html.dark-mode .arena-q-tab {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .arena-q-tab.active {
+  background: var(--primary-accent, #2563eb) !important;
+  color: #ffffff !important;
+  border-color: var(--primary-accent, #2563eb) !important;
+}
+
+html.dark-mode .arena-lang-select,
+html.dark-mode .arena-theme-select {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html.dark-mode .btn-arena-compiler {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark-mode .btn-arena-compiler:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .btn-arena-run {
+  background: #1e293b !important;
+  border-color: var(--primary-accent, #2563eb) !important;
+  color: var(--primary-accent, #2563eb) !important;
+}
+
+html.dark-mode .btn-arena-run:hover {
+  background: var(--primary-accent-light) !important;
+}
+
+html.dark-mode .arena-editor-body {
+  background: #0b0f19 !important;
+}
+
+html.dark-mode .arena-gutter {
+  background: #0d1322 !important;
+  border-right-color: #1e293b !important;
+  color: #475569 !important;
+}
+
+html.dark-mode .arena-textarea-wrap {
+  background: #0b0f19 !important;
+}
+
+html.dark-mode .arena-highlight-layer {
+  color: #f8fafc !important;
+}
+
+html.dark-mode .arena-tc-tab-btn {
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .arena-tc-tab-btn:hover {
+  color: #f8fafc !important;
+}
+
+html.dark-mode .arena-tc-tab-btn.active {
+  color: var(--primary-accent, #2563eb) !important;
+  border-bottom-color: var(--primary-accent, #2563eb) !important;
+}
+
+html.dark-mode .arena-testcases-table-wrap {
+  background: #0d1322 !important;
+}
+
+html.dark-mode .arena-tc-head {
+  background: #111827 !important;
+  border-bottom-color: #1e293b !important;
+  color: #64748b !important;
+}
+
+html.dark-mode .arena-tc-row {
+  border-bottom-color: #1e293b !important;
+}
+
+html.dark-mode .arena-console-box,
+html.dark-mode .arena-expected-box {
+  background: #0b0f19 !important;
+  color: #e2e8f0 !important;
+}
+
+html.dark-mode .modal-contest-summary-content {
+  background: #111827 !important;
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+html.dark-mode .modal-contest-summary-header {
+  border-bottom-color: #1e293b !important;
+}
+
+html.dark-mode .modal-contest-summary-footer {
+  border-top-color: #1e293b !important;
+}
+
 
 

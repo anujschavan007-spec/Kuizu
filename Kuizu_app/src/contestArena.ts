@@ -1,3 +1,5 @@
+import './theme';
+import './services/adminAuthGuard';
 import { highlightCode } from './services/codeHighlighter';
 import { getCompilerSettings, saveCompilerTheme, applyCompilerTheme } from './services/compilerThemeManager';
 
