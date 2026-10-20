@@ -11,6 +11,7 @@ import './services/adminAuthGuard';
 import type { BattleRoom, BattleQuestion } from './types';
 import { soundManager } from './services/soundManager';
 import { showFirstBattleParticipantBadgeModal } from './services/firstBattleBadgeModal';
+import { unlockBadge } from './services/badgeManager';
 
 // State management
 let currentRoom: BattleRoom | null = null;
@@ -730,6 +731,7 @@ function evaluateAnswer() {
   } catch {}
 
   // Congratulate 1st battle participant with slowly moving 3D badge modal popup in center of screen
+  unlockBadge('first-looser');
   showFirstBattleParticipantBadgeModal(() => {
     openModal(modalBattleResult);
   });

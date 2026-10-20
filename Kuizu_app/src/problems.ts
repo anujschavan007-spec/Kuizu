@@ -1,12 +1,16 @@
-import { fetchProblems, fetchBadges } from './services/problemService';
-import type { Problem, Badge, Difficulty } from './types';
+import { fetchProblems } from './services/problemService';
+import type { Problem, Difficulty } from './types';
 import './services/adminAuthGuard';
 import { showFirstProblemSolverBadgeModal } from './services/firstProblemBadgeModal';
 import { showQuickThinkerBadgeModal } from './services/quickThinkerBadgeModal';
+import { showFirstBattleParticipantBadgeModal } from './services/firstBattleBadgeModal';
+import { showFirstQuizLevelBadgeModal } from './services/firstQuizLevelBadgeModal';
+import { showFirstDailyKuizuBadgeModal } from './services/firstDailyKuizuBadgeModal';
+import { getBadges, openBadgeModal, type BadgeRecord } from './services/badgeManager';
+import { initBadge3DCoin, disposeAllBadge3DCoins } from './services/badge3dCoinRenderer';
 
 // State management
 let allProblems: Problem[] = [];
-let allBadges: Badge[] = [];
 let currentFilter: {
   searchQuery: string;
   difficulty: Difficulty | 'All';
@@ -24,6 +28,7 @@ const filterPopover = document.getElementById('filter-popover') as HTMLDivElemen
 const filterTagButtons = document.querySelectorAll<HTMLButtonElement>('.filter-tag-btn');
 const userAvatarBtn = document.getElementById('btn-user-avatar') as HTMLButtonElement | null;
 const userDropdown = document.getElementById('user-dropdown') as HTMLDivElement | null;
+const viewAllBadgesBtn = document.getElementById('btn-view-all-badges') as HTMLButtonElement | null;
 
 /**
  * Topic SVG icons map for crisp rendering
@@ -70,56 +75,87 @@ function getTopicIcon(topic: string): string {
 }
 
 /**
- * Render badges into the achieved badges banner
+ * Render real achieved 3D GLB badge coins into the showcase
  */
-function renderBadges(badges: Badge[]): void {
+function renderBadges(): void {
   if (!badgesContainer) return;
 
-  badgesContainer.innerHTML = badges.map(b => {
-    let emblemClass = 'emblem-green';
-    let innerSvg = `<path d="M12 2l7 4v6c0 5.25-3.5 10-7 11-3.5-1-7-5.75-7-11V6l7-4z" fill="#10b981"/><path d="m9 12 2 2 4-4" stroke="#ffffff"/>`;
+  const badges: BadgeRecord[] = getBadges();
+  const unlockedCount = badges.filter((b) => b.unlocked).length;
 
-    if (b.type === 'streak' || b.iconColor === 'purple') {
-      emblemClass = 'emblem-purple';
-      innerSvg = `<path d="M12 2l7 4v6c0 5.25-3.5 10-7 11-3.5-1-7-5.75-7-11V6l7-4z" fill="#8b5cf6"/><path d="M12 7c-2 2.5-3 4-3 5.5a3 3 0 0 0 6 0c0-1.5-1-3-3-5.5z" fill="#ffffff" stroke="none"/>`;
-    } else if (b.type === 'solver' || b.iconColor === 'blue') {
-      emblemClass = 'emblem-blue';
-      innerSvg = `<path d="M12 2l7 4v6c0 5.25-3.5 10-7 11-3.5-1-7-5.75-7-11V6l7-4z" fill="#3b82f6"/><polygon points="12 8 13.5 11.5 17 11.8 14.5 14 15.3 17.5 12 15.5 8.7 17.5 9.5 14 7 11.8 10.5 11.5 12 8" fill="#ffffff" stroke="none"/>`;
-    } else if (b.type === 'quick' || b.iconColor === 'gold') {
-      emblemClass = 'emblem-gold';
-      innerSvg = `<path d="M12 2l7 4v6c0 5.25-3.5 10-7 11-3.5-1-7-5.75-7-11V6l7-4z" fill="#f59e0b"/><polygon points="13 7 8 13 12 13 11 18 16 12 12 12 13 7" fill="#ffffff" stroke="none"/>`;
-    }
+  // Update header counter pill
+  const countText = document.getElementById('badges-count-text');
+  if (countText) {
+    countText.textContent = `${unlockedCount} / ${badges.length} Unlocked`;
+  }
 
-    const isFirstSolve = b.id === 'badge-1' || b.type === 'first-solve';
-    const isQuickThinker = b.id === 'badge-4' || b.type === 'quick';
-    const isClickable = isFirstSolve || isQuickThinker;
+  // Clear any existing active 3D coin instances
+  disposeAllBadge3DCoins();
 
-    return `
-      <div class="badge-item ${isClickable ? 'clickable-badge' : ''}" data-badge-id="${b.id}" data-badge-type="${b.type}" style="${isClickable ? 'cursor: pointer;' : ''}" title="${isClickable ? 'Click to inspect 3D Badge' : b.title}">
-        <div class="badge-emblem-wrap ${emblemClass}">
-          <svg class="emblem-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            ${innerSvg}
-          </svg>
+  // Render cards markup with full dimensional structure
+  badgesContainer.innerHTML = badges
+    .map((b) => {
+      return `
+        <div class="badge-coin-card ${b.unlocked ? 'is-unlocked' : 'is-locked'}" data-badge-id="${b.id}" tabindex="0" role="button" aria-label="${b.title} Badge">
+          
+          <!-- 3D Coin Stage -->
+          <div class="badge-coin-stage">
+            <div class="badge-coin-ambient-glow" style="background: radial-gradient(circle, ${b.glowColor} 0%, transparent 72%);"></div>
+            <div class="badge-coin-canvas-wrap">
+              <canvas class="badge-3d-coin-canvas" width="110" height="110"></canvas>
+              <div class="badge-coin-spinner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+                  <path d="M12 2a10 10 0 0 1 10 10"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Badge Info -->
+          <div class="badge-card-content">
+            <h3 class="badge-coin-title">${b.title}</h3>
+            <p class="badge-coin-date">${b.unlocked ? b.unlockedDate : 'Locked'}</p>
+          </div>
+
+          <!-- Inspect Pill -->
+          <div class="badge-inspect-pill">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>${b.unlocked ? 'Inspect 3D' : 'View Details'}</span>
+          </div>
+
         </div>
-        <div class="badge-info">
-          <span class="badge-name">${b.title}</span>
-          <span class="badge-desc">${b.subtitle}</span>
-        </div>
-      </div>
-    `;
-  }).join('');
+      `;
+    })
+    .join('');
 
-  // Attach click listener for 3D badges
-  badgesContainer.querySelectorAll<HTMLDivElement>('.clickable-badge').forEach((el) => {
-    el.addEventListener('click', () => {
-      const badgeId = el.getAttribute('data-badge-id');
-      const badgeType = el.getAttribute('data-badge-type');
-      if (badgeId === 'badge-4' || badgeType === 'quick') {
-        showQuickThinkerBadgeModal();
-      } else {
-        showFirstProblemSolverBadgeModal();
+  // Attach click listener & start 3D GLB coin rendering for each card
+  badgesContainer.querySelectorAll<HTMLDivElement>('.badge-coin-card').forEach((card, index) => {
+    const badgeId = card.getAttribute('data-badge-id');
+    const badge = badges.find((x) => x.id === badgeId);
+    if (!badge) return;
+
+    const openModal = () => {
+      openBadgeModal(badge.id);
+    };
+
+    card.addEventListener('click', openModal);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openModal();
       }
     });
+
+    // Initialize 3D GLB canvas
+    const canvas = card.querySelector<HTMLCanvasElement>('.badge-3d-coin-canvas');
+    if (canvas) {
+      initBadge3DCoin(canvas, card, badge.glbModel, badge.id, index);
+    }
   });
 }
 
@@ -371,17 +407,34 @@ function setupControls(): void {
 async function init(): Promise<void> {
   setupControls();
 
+  // Wire View All Badges button
+  viewAllBadgesBtn?.addEventListener('click', () => {
+    openBadgeModal('first-problem-solver');
+  });
+
+  // Listen for real-time badge updates from problem compiler, battles, quizzes
+  window.addEventListener('kuizu:badges-updated', () => {
+    renderBadges();
+  });
+
+  window.addEventListener('storage', (e) => {
+    if (
+      e.key &&
+      (e.key.startsWith('kuizu_badge') ||
+        e.key.startsWith('kuizu_first') ||
+        e.key.startsWith('kuizu_quick') ||
+        e.key.startsWith('kuizu_daily'))
+    ) {
+      renderBadges();
+    }
+  });
+
+  // Initial render of 3D badges
+  renderBadges();
+
   try {
-    // Fetch initial data (from mock or future backend)
-    const [problems, badges] = await Promise.all([
-      fetchProblems(),
-      fetchBadges()
-    ]);
-
+    const problems = await fetchProblems();
     allProblems = problems;
-    allBadges = badges;
-
-    renderBadges(allBadges);
     renderProblems();
   } catch (err) {
     console.error('Failed to load problems data:', err);
@@ -389,8 +442,12 @@ async function init(): Promise<void> {
 }
 
 // Expose helpers globally
+(window as any).renderBadges = renderBadges;
 (window as any).showFirstProblemSolverBadgeModal = showFirstProblemSolverBadgeModal;
 (window as any).showQuickThinkerBadgeModal = showQuickThinkerBadgeModal;
+(window as any).showFirstBattleParticipantBadgeModal = showFirstBattleParticipantBadgeModal;
+(window as any).showFirstQuizLevelBadgeModal = showFirstQuizLevelBadgeModal;
+(window as any).showFirstDailyKuizuBadgeModal = showFirstDailyKuizuBadgeModal;
 
 // Start on DOM ready
 if (document.readyState === 'loading') {

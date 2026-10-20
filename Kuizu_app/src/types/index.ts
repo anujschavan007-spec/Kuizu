@@ -17,8 +17,14 @@ export interface Badge {
   id: string;
   title: string;
   subtitle: string;
-  type: 'first-solve' | 'streak' | 'solver' | 'quick';
-  iconColor: string;
+  type?: string;
+  iconColor?: string;
+  glbModel?: string;
+  unlocked?: boolean;
+  unlockedDate?: string;
+  accentColor?: string;
+  glowColor?: string;
+  condition?: string;
 }
 
 export interface FilterOptions {

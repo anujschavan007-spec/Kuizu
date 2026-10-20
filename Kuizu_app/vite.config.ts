@@ -16,7 +16,16 @@ function multiPageRewritePlugin(): Plugin {
           req.url = `/sign-up/index.html${q}`;
         } else if (pathname === '/home' || pathname === '/home/') {
           req.url = `/home/index.html${q}`;
-        } else if (pathname === '/problems' || pathname === '/problems/') {
+        } else if (
+          pathname === '/problems' ||
+          pathname === '/problems/' ||
+          pathname === '/problem/qlibrary' ||
+          pathname === '/problem/qlibrary/' ||
+          pathname === '/problems/qlibrary' ||
+          pathname === '/problems/qlibrary/' ||
+          pathname === '/qlibrary' ||
+          pathname === '/qlibrary/'
+        ) {
           req.url = `/problems/index.html${q}`;
         } else if (pathname === '/quiz' || pathname === '/quiz/') {
           req.url = `/quiz/index.html${q}`;
