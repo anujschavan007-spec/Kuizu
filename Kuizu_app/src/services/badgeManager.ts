@@ -277,32 +277,58 @@ export function unlockBadge(badgeId: string, customDate?: string): boolean {
     })
   );
 
-  // Send badge achievement congratulatory email via Resend
+  // Send badge achievement congratulatory email via Resend when unlocked
   if (!wasUnlocked) {
-    try {
-      let userEmail = localStorage.getItem('kuizu_user_email') || '';
-      let userName = localStorage.getItem('kuizu_user_name') || 'Kuizu Champion';
-
-      // Fallback: check Clerk if loaded on window
-      if (!userEmail && typeof window !== 'undefined' && (window as any).Clerk?.user) {
-        userEmail = (window as any).Clerk.user.primaryEmailAddress?.emailAddress || '';
-        userName = (window as any).Clerk.user.fullName || (window as any).Clerk.user.firstName || userName;
-      }
-
-      // Fallback to active developer email if none specified in dev/local
-      if (!userEmail) {
-        userEmail = 'anujschavan007@gmail.com';
-      }
-
-      if (userEmail) {
-        sendBadgeWinEmail(userEmail, userName, def);
-      }
-    } catch (emailErr) {
-      console.warn('Could not dispatch badge win email via Resend:', emailErr);
-    }
+    triggerBadgeAwardEmail(def.id);
   }
 
   return !wasUnlocked;
+}
+
+/**
+ * Triggers the congratulatory email for a badge modal pop-up on screen.
+ * Checks deduplication via `kuizu_badge_email_sent_${badgeId}` so email is sent
+ * upon first-time popup display.
+ */
+export async function triggerBadgeAwardEmail(badgeId: string): Promise<boolean> {
+  const def = resolveBadgeDefinition(badgeId);
+  if (!def) return false;
+
+  const sentKey = `kuizu_badge_email_sent_${def.id}`;
+  if (typeof window !== 'undefined' && localStorage.getItem(sentKey)) {
+    return false; // Already sent for this badge
+  }
+
+  try {
+    let userEmail = typeof window !== 'undefined' ? localStorage.getItem('kuizu_user_email') || '' : '';
+    let userName = typeof window !== 'undefined' ? localStorage.getItem('kuizu_user_name') || '' : '';
+
+    // Fallback: check Clerk if loaded on window
+    if (!userEmail && typeof window !== 'undefined' && (window as any).Clerk?.user) {
+      userEmail = (window as any).Clerk.user.primaryEmailAddress?.emailAddress || '';
+      userName = (window as any).Clerk.user.fullName || (window as any).Clerk.user.firstName || userName;
+    }
+
+    // If no user email available, abort sending
+    if (!userEmail) {
+      console.warn('⚠️ [Badge Manager] Cannot send badge win email: no active user email found.');
+      return false;
+    }
+    if (!userName) {
+      userName = 'Kuizu Champion';
+    }
+
+    console.log(`🚀 [Badge Manager] Sending 1st-time badge popup email for ${def.title} to: ${userEmail}`);
+    const success = await sendBadgeWinEmail(userEmail, userName, def);
+
+    if (success && typeof window !== 'undefined') {
+      localStorage.setItem(sentKey, new Date().toISOString());
+    }
+    return success;
+  } catch (emailErr) {
+    console.warn('Could not dispatch badge win email via Resend:', emailErr);
+    return false;
+  }
 }
 
 /**
@@ -377,8 +403,8 @@ export function openBadgeModal(badgeId: string): void {
  */
 export async function testSendBadgeEmail(badgeId: string = 'first-problem-solver', targetEmail?: string): Promise<boolean> {
   const def = resolveBadgeDefinition(badgeId) || ALL_BADGE_DEFINITIONS[0];
-  const userEmail = targetEmail || localStorage.getItem('kuizu_user_email') || 'anujschavan007@gmail.com';
-  const userName = localStorage.getItem('kuizu_user_name') || 'Kuizu Champion';
+  const userEmail = targetEmail || (typeof window !== 'undefined' ? localStorage.getItem('kuizu_user_email') : '') || 'anujschavan007@gmail.com';
+  const userName = (typeof window !== 'undefined' ? localStorage.getItem('kuizu_user_name') : '') || 'Kuizu Champion';
   return sendBadgeWinEmail(userEmail, userName, def);
 }
 

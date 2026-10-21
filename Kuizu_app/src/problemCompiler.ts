@@ -6,6 +6,7 @@ import { showQuickThinkerBadgeModal } from './services/quickThinkerBadgeModal';
 import { highlightCode } from './services/codeHighlighter';
 import { getCompilerSettings, saveCompilerTheme, applyCompilerTheme } from './services/compilerThemeManager';
 import { unlockBadge, isBadgeUnlocked } from './services/badgeManager';
+import { initDiscussionBoard } from './components/discussionBoard';
 
 interface ProblemSpec {
   id: string;
@@ -640,6 +641,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (!problem) {
     problem = PROBLEMS_DATA['001'];
+  }
+
+  // Mount Discussion Board for this question
+  const compilerDiscMount = document.getElementById('compiler-discussion-board-mount');
+  if (compilerDiscMount) {
+    initDiscussionBoard({
+      problemId: problem.id || problemId,
+      containerEl: compilerDiscMount
+    });
   }
 
   // 2. Set Up User Info & Profile Menu

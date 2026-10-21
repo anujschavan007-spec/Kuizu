@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contest Arena • KUIZU</title>
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -75,14 +79,23 @@
         </a>
       </div>
 
-      <!-- Center: Question Progress Tracker & Stepper Pill -->
-      <div class="contest-arena-top-center">
+      <!-- Center: Question Progress Tracker & Stepper Pill & Live LeetCode-style Contest Timer -->
+      <div class="contest-arena-top-center" style="display: flex; align-items: center; gap: 14px;">
         <div class="arena-progress-pill">
           <span class="progress-pill-label" id="arena-question-tracker">Question 1 of 5</span>
           <div class="progress-pill-track">
             <div class="progress-pill-fill" id="arena-progress-bar" style="width: 20%;"></div>
           </div>
           <span class="progress-pill-ratio" id="arena-ratio-tracker">1/5</span>
+        </div>
+
+        <!-- LeetCode-Style Live Contest Duration Countdown Timer -->
+        <div class="arena-timer-pill" id="arena-contest-timer-pill" style="display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 9999px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 700; color: #2563eb; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span id="arena-timer-label">01:00:00</span>
         </div>
       </div>
 
@@ -259,6 +272,9 @@
               <!-- Dynamically rendered examples -->
             </div>
           </div>
+
+          <!-- Question Discussion Board -->
+          <div id="arena-discussion-board-mount"></div>
 
         </div>
       </section>

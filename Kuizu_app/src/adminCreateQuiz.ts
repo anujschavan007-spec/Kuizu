@@ -12,7 +12,7 @@ function showToast(message: string, duration = 3000) {
   }, duration);
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+async function initCreateQuiz() {
   const saveBtn = document.getElementById('save-quiz-btn');
   const form = document.getElementById('create-quiz-form') as HTMLFormElement | null;
   const questionSelect = document.getElementById('quiz-question-select') as HTMLSelectElement | null;
@@ -23,14 +23,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   const optionD = document.getElementById('option-d') as HTMLInputElement | null;
   const titleInput = document.getElementById('quiz-title') as HTMLInputElement | null;
   const descInput = document.getElementById('quiz-description') as HTMLTextAreaElement | null;
+  const levelSelect = document.getElementById('quiz-level-select') as HTMLSelectElement | null;
+  const dateInput = document.getElementById('quiz-date') as HTMLInputElement | null;
+  const dailyToggle = document.getElementById('daily-kuizu-toggle') as HTMLInputElement | null;
   const pageTitle = document.querySelector('.admin-dashboard-title');
   const pageSubtitle = document.querySelector('.admin-dashboard-subtitle');
+
+  if (dateInput && !dateInput.value) {
+    dateInput.value = new Date().toISOString().split('T')[0];
+  }
 
   // Detect Edit Mode from URL query: ?id=...
   const urlParams = new URLSearchParams(window.location.search);
   const editQuizId = urlParams.get('id');
-
-  const levelSelect = document.getElementById('quiz-level-select') as HTMLSelectElement | null;
 
   if (editQuizId) {
     if (pageTitle) pageTitle.textContent = 'Edit Quiz';
@@ -68,8 +73,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Preset question data
-  const questionPresets: Record<string, { q: string; a: string; b: string; c: string; d: string; correct: string }> = {
+  const questionPresets: Record<string, { title: string; q: string; a: string; b: string; c: string; d: string; correct: string }> = {
     q1: {
+      title: 'Binary Search Time Complexity',
       q: 'What is the time complexity of searching an element in a balanced binary search tree (BST)?',
       a: 'O(1)',
       b: 'O(log n)',
@@ -78,6 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       correct: 'B'
     },
     q2: {
+      title: 'FIFO Data Structures',
       q: 'Which data structure follows the First-In, First-Out (FIFO) principle?',
       a: 'Stack',
       b: 'Queue',
@@ -86,6 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       correct: 'B'
     },
     q3: {
+      title: 'CSS Box Sizing Model',
       q: 'In CSS, what does the property "box-sizing: border-box" do?',
       a: 'Adds a default black border to all elements',
       b: 'Includes padding and border in the element\'s total width and height',
@@ -101,6 +109,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       const val = questionSelect.value;
       if (val && questionPresets[val]) {
         const preset = questionPresets[val];
+        if (titleInput && !titleInput.value.trim()) {
+          titleInput.value = preset.title;
+        }
         if (questionBody) questionBody.value = preset.q;
         if (optionA) optionA.value = preset.a;
         if (optionB) optionB.value = preset.b;
@@ -204,7 +215,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       optionB: optionB?.value.trim(),
       optionC: optionC?.value.trim(),
       optionD: optionD?.value.trim(),
-      correctOption: correctOpt
+      correctOption: correctOpt,
+      addToDaily: dailyToggle ? dailyToggle.checked : false,
+      dailyDate: dateInput?.value || new Date().toISOString().split('T')[0]
     };
 
     try {
@@ -217,7 +230,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         body: JSON.stringify(payload)
       });
 
-      if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || `Server error ${res.status}`);
+      }
 
       showToast(editQuizId ? 'Quiz updated successfully! Redirecting...' : 'Quiz created successfully! Redirecting...');
       setTimeout(() => {
@@ -226,6 +242,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err: any) {
       console.error('Quiz save error:', err);
       showToast(err?.message || 'Failed to save quiz. Please check required fields.');
+      isSubmitting = false;
+      if (saveBtn) {
+        saveBtn.removeAttribute('disabled');
+        saveBtn.style.opacity = '1';
+        saveBtn.style.pointerEvents = 'auto';
+        const labelSpan = saveBtn.querySelector('span');
+        if (labelSpan) labelSpan.textContent = editQuizId ? 'Save Quiz' : 'Save Quiz';
+      }
     }
   }
 
@@ -242,4 +266,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       handleSave(e);
     });
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCreateQuiz);
+} else {
+  initCreateQuiz();
+}

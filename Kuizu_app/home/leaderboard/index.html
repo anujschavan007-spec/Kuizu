@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Leaderboard - KUIZU</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
     <meta name="description" content="Top learners. Highest XP. Keep climbing on KUIZU!" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -210,6 +215,19 @@
                   </div>
                   <span class="menu-item-chevron">›</span>
                 </a>
+
+                <!-- Admin Panel (Strictly shown only if user email is anujschavan007@gmail.com) -->
+                <a href="/admin" class="popup-menu-item popup-menu-admin" id="btn-menu-admin" style="display: none;">
+                  <div class="menu-item-left">
+                    <svg class="menu-icon admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                      <rect x="9" y="11" width="6" height="5" rx="1"></rect>
+                      <path d="M10 11V9a2 2 0 1 1 4 0v2"></path>
+                    </svg>
+                    <span>Admin Panel</span>
+                  </div>
+                  <span class="menu-item-chevron">›</span>
+                </a>
               </div>
 
               <div class="popup-logout-wrap">
@@ -344,15 +362,67 @@
           </div>
         </section>
 
-        <!-- Leaderboard Table (Ranks 1 to 10) -->
+        <!-- Leaderboard Table (Capacity of 300 Students, Realtime Synced) -->
         <section class="main-leaderboard-card" aria-label="Leaderboard Rankings">
+          <!-- Toolbar with Search, 300 Capacity Live Indicator & Descending/Ascending Filter -->
+          <div class="leaderboard-toolbar">
+            <div class="leaderboard-toolbar-left">
+              <div class="leaderboard-search-box">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="leaderboard-search-input" class="leaderboard-search-input" placeholder="Search student by name, student ID, or rank..." />
+              </div>
+            </div>
+
+            <div class="leaderboard-toolbar-right">
+              <span class="live-status-pill" id="live-update-indicator" title="Live updates active">
+                <span class="live-dot-pulse"></span>
+                <span id="capacity-counter-text">Live Rankings</span>
+              </span>
+
+              <!-- Filter / Sort Order: Descending / Ascending -->
+              <div class="time-filter-wrap">
+                <button type="button" class="btn-sort-toggle-pill active-desc" id="btn-sort-order-toggle" aria-expanded="false" title="Click to change order">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                  </svg>
+                  <span id="sort-order-label">XP: High to Low (Desc)</span>
+                  <svg class="chevron-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+
+                <div class="time-filter-dropdown-menu" id="sort-filter-menu" style="min-width: 230px;">
+                  <button type="button" class="time-filter-option sort-option-item active" data-order="desc" data-field="xp">
+                    <span>XP: High to Low (Descending)</span>
+                  </button>
+                  <button type="button" class="time-filter-option sort-option-item" data-order="asc" data-field="xp">
+                    <span>XP: Low to High (Ascending)</span>
+                  </button>
+                  <button type="button" class="time-filter-option sort-option-item" data-order="desc" data-field="streak">
+                    <span>Top Streaks (Descending)</span>
+                  </button>
+                  <button type="button" class="time-filter-option sort-option-item" data-order="desc" data-field="quiz_level">
+                    <span>Highest Level (Descending)</span>
+                  </button>
+                  <button type="button" class="time-filter-option sort-option-item" data-order="asc" data-field="name">
+                    <span>Student Name (A - Z)</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="main-leaderboard-table-wrap">
             <table class="main-leaderboard-table">
               <thead>
                 <tr>
                   <th style="width: 8%;">#</th>
                   <th style="width: 32%;">User</th>
-                  <th style="width: 15%;">Rank</th>
+                  <th style="width: 15%;">Student ID</th>
                   <th style="width: 17%;">XP</th>
                   <th style="width: 16%;">Streak</th>
                   <th style="width: 12%; text-align: right;">
@@ -367,331 +437,23 @@
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                <!-- Rank 1 Row -->
-                <tr class="main-leaderboard-row row-rank-1" tabindex="0">
-                  <td class="col-pos">
-                    <div class="pos-badge-wrap">
-                      <div class="pos-crown-box crown-box-1">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V17H19V19Z"/>
-                        </svg>
-                      </div>
-                      <span class="pos-number">1</span>
-                    </div>
-                  </td>
-                  <td class="col-user">
-                    <div class="user-cell-group">
-                      <img src="/images/home_avatar.png" alt="Anuj Sandeep Chavan" class="user-cell-avatar" />
-                      <span class="user-name-text">Anuj Sandeep Chavan</span>
-                    </div>
-                  </td>
-                  <td class="col-rank-tag">
-                    <span class="rank-tag-text">#12</span>
-                  </td>
-                  <td class="col-xp">
-                    <div class="xp-cell-group">
-                      <svg class="cell-star-icon star-gold" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <span class="xp-val-text">12,450</span>
-                    </div>
-                  </td>
-                  <td class="col-streak">
-                    <div class="streak-cell-group">
-                      <span class="flame-icon">🔥</span>
-                      <span class="streak-val-text">7 days</span>
-                    </div>
-                  </td>
-                  <td class="col-level" style="text-align: right;">
-                    <span class="level-pill-badge pill-blue">Lv. 5</span>
-                  </td>
-                </tr>
-
-                <!-- Rank 2 Row -->
-                <tr class="main-leaderboard-row row-rank-2" tabindex="0">
-                  <td class="col-pos">
-                    <div class="pos-badge-wrap">
-                      <div class="pos-crown-box crown-box-2">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V17H19V19Z"/>
-                        </svg>
-                      </div>
-                      <span class="pos-number">2</span>
-                    </div>
-                  </td>
-                  <td class="col-user">
-                    <div class="user-cell-group">
-                      <img src="/images/avatar_rohan.png" alt="Rohan Sharma" class="user-cell-avatar" />
-                      <span class="user-name-text">Rohan Sharma</span>
-                    </div>
-                  </td>
-                  <td class="col-rank-tag">
-                    <span class="rank-tag-text">#07</span>
-                  </td>
-                  <td class="col-xp">
-                    <div class="xp-cell-group">
-                      <svg class="cell-star-icon star-gold" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <span class="xp-val-text">11,230</span>
-                    </div>
-                  </td>
-                  <td class="col-streak">
-                    <div class="streak-cell-group">
-                      <span class="flame-icon">🔥</span>
-                      <span class="streak-val-text">5 days</span>
-                    </div>
-                  </td>
-                  <td class="col-level" style="text-align: right;">
-                    <span class="level-pill-badge pill-blue">Lv. 5</span>
-                  </td>
-                </tr>
-
-                <!-- Rank 3 Row -->
-                <tr class="main-leaderboard-row row-rank-3" tabindex="0">
-                  <td class="col-pos">
-                    <div class="pos-badge-wrap">
-                      <div class="pos-crown-box crown-box-3">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V17H19V19Z"/>
-                        </svg>
-                      </div>
-                      <span class="pos-number">3</span>
-                    </div>
-                  </td>
-                  <td class="col-user">
-                    <div class="user-cell-group">
-                      <img src="/images/avatar_row8_arjun.png" alt="Vihaan Mehta" class="user-cell-avatar" />
-                      <span class="user-name-text">Vihaan Mehta</span>
-                    </div>
-                  </td>
-                  <td class="col-rank-tag">
-                    <span class="rank-tag-text">#19</span>
-                  </td>
-                  <td class="col-xp">
-                    <div class="xp-cell-group">
-                      <svg class="cell-star-icon star-gold" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <span class="xp-val-text">10,870</span>
-                    </div>
-                  </td>
-                  <td class="col-streak">
-                    <div class="streak-cell-group">
-                      <span class="flame-icon">🔥</span>
-                      <span class="streak-val-text">6 days</span>
-                    </div>
-                  </td>
-                  <td class="col-level" style="text-align: right;">
-                    <span class="level-pill-badge pill-purple">Lv. 4</span>
-                  </td>
-                </tr>
-
-                <!-- Rank 4 Row -->
-                <tr class="main-leaderboard-row" tabindex="0">
-                  <td class="col-pos"><span class="pos-standard-number">4</span></td>
-                  <td class="col-user">
-                    <div class="user-cell-group">
-                      <img src="/images/avatar_row4_aarav.png" alt="Aarav Patel" class="user-cell-avatar" />
-                      <span class="user-name-text">Aarav Patel</span>
-                    </div>
-                  </td>
-                  <td class="col-rank-tag"><span class="rank-tag-text">#23</span></td>
-                  <td class="col-xp">
-                    <div class="xp-cell-group">
-                      <svg class="cell-star-icon star-gold" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <span class="xp-val-text">9,760</span>
-                    </div>
-                  </td>
-                  <td class="col-streak">
-                    <div class="streak-cell-group">
-                      <span class="flame-icon">🔥</span>
-                      <span class="streak-val-text">4 days</span>
-                    </div>
-                  </td>
-                  <td class="col-level" style="text-align: right;">
-                    <span class="level-pill-badge pill-blue">Lv. 4</span>
-                  </td>
-                </tr>
-
-                <!-- Rank 5 Row -->
-                <tr class="main-leaderboard-row" tabindex="0">
-                  <td class="col-pos"><span class="pos-standard-number">5</span></td>
-                  <td class="col-user">
-                    <div class="user-cell-group">
-                      <img src="/images/avatar_sneha.png" alt="Sneha Iyer" class="user-cell-avatar" />
-                      <span class="user-name-text">Sneha Iyer</span>
-                    </div>
-                  </td>
-                  <td class="col-rank-tag"><span class="rank-tag-text">#31</span></td>
-                  <td class="col-xp">
-                    <div class="xp-cell-group">
-                      <svg class="cell-star-icon star-gold" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <span class="xp-val-text">9,120</span>
-                    </div>
-                  </td>
-                  <td class="col-streak">
-                    <div class="streak-cell-group">
-                      <span class="flame-icon">🔥</span>
-                      <span class="streak-val-text">5 days</span>
-                    </div>
-                  </td>
-                  <td class="col-level" style="text-align: right;">
-                    <span class="level-pill-badge pill-blue">Lv. 4</span>
-                  </td>
-                </tr>
-
-                <!-- Rank 6 Row -->
-                <tr class="main-leaderboard-row" tabindex="0">
-                  <td class="col-pos"><span class="pos-standard-number">6</span></td>
-                  <td class="col-user">
-                    <div class="user-cell-group">
-                      <img src="/images/avatar_row6_karthik.png" alt="Karthik Reddy" class="user-cell-avatar" />
-                      <span class="user-name-text">Karthik Reddy</span>
-                    </div>
-                  </td>
-                  <td class="col-rank-tag"><span class="rank-tag-text">#28</span></td>
-                  <td class="col-xp">
-                    <div class="xp-cell-group">
-                      <svg class="cell-star-icon star-gold" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <span class="xp-val-text">8,950</span>
-                    </div>
-                  </td>
-                  <td class="col-streak">
-                    <div class="streak-cell-group">
-                      <span class="flame-icon">🔥</span>
-                      <span class="streak-val-text">3 days</span>
-                    </div>
-                  </td>
-                  <td class="col-level" style="text-align: right;">
-                    <span class="level-pill-badge pill-green">Lv. 3</span>
-                  </td>
-                </tr>
-
-                <!-- Rank 7 Row -->
-                <tr class="main-leaderboard-row" tabindex="0">
-                  <td class="col-pos"><span class="pos-standard-number">7</span></td>
-                  <td class="col-user">
-                    <div class="user-cell-group">
-                      <img src="/images/avatar_row5_diya.png" alt="Diya Shah" class="user-cell-avatar" />
-                      <span class="user-name-text">Diya Shah</span>
-                    </div>
-                  </td>
-                  <td class="col-rank-tag"><span class="rank-tag-text">#14</span></td>
-                  <td class="col-xp">
-                    <div class="xp-cell-group">
-                      <svg class="cell-star-icon star-gold" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <span class="xp-val-text">8,430</span>
-                    </div>
-                  </td>
-                  <td class="col-streak">
-                    <div class="streak-cell-group">
-                      <span class="flame-icon">🔥</span>
-                      <span class="streak-val-text">4 days</span>
-                    </div>
-                  </td>
-                  <td class="col-level" style="text-align: right;">
-                    <span class="level-pill-badge pill-green">Lv. 3</span>
-                  </td>
-                </tr>
-
-                <!-- Rank 8 Row -->
-                <tr class="main-leaderboard-row" tabindex="0">
-                  <td class="col-pos"><span class="pos-standard-number">8</span></td>
-                  <td class="col-user">
-                    <div class="user-cell-group">
-                      <img src="/images/avatar_row8_arjun.png" alt="Arjun Verma" class="user-cell-avatar" />
-                      <span class="user-name-text">Arjun Verma</span>
-                    </div>
-                  </td>
-                  <td class="col-rank-tag"><span class="rank-tag-text">#42</span></td>
-                  <td class="col-xp">
-                    <div class="xp-cell-group">
-                      <svg class="cell-star-icon star-gold" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <span class="xp-val-text">7,980</span>
-                    </div>
-                  </td>
-                  <td class="col-streak">
-                    <div class="streak-cell-group">
-                      <span class="flame-icon">🔥</span>
-                      <span class="streak-val-text">3 days</span>
-                    </div>
-                  </td>
-                  <td class="col-level" style="text-align: right;">
-                    <span class="level-pill-badge pill-green">Lv. 3</span>
-                  </td>
-                </tr>
-
-                <!-- Rank 9 Row -->
-                <tr class="main-leaderboard-row" tabindex="0">
-                  <td class="col-pos"><span class="pos-standard-number">9</span></td>
-                  <td class="col-user">
-                    <div class="user-cell-group">
-                      <img src="/images/avatar_row7_neha.png" alt="Neha Gupta" class="user-cell-avatar" />
-                      <span class="user-name-text">Neha Gupta</span>
-                    </div>
-                  </td>
-                  <td class="col-rank-tag"><span class="rank-tag-text">#36</span></td>
-                  <td class="col-xp">
-                    <div class="xp-cell-group">
-                      <svg class="cell-star-icon star-gold" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <span class="xp-val-text">7,650</span>
-                    </div>
-                  </td>
-                  <td class="col-streak">
-                    <div class="streak-cell-group">
-                      <span class="flame-icon">🔥</span>
-                      <span class="streak-val-text">2 days</span>
-                    </div>
-                  </td>
-                  <td class="col-level" style="text-align: right;">
-                    <span class="level-pill-badge pill-green">Lv. 3</span>
-                  </td>
-                </tr>
-
-                <!-- Rank 10 Row -->
-                <tr class="main-leaderboard-row" tabindex="0">
-                  <td class="col-pos"><span class="pos-standard-number">10</span></td>
-                  <td class="col-user">
-                    <div class="user-cell-group">
-                      <img src="/images/avatar_row9_siddharth.png" alt="Siddharth Rao" class="user-cell-avatar" />
-                      <span class="user-name-text">Siddharth Rao</span>
-                    </div>
-                  </td>
-                  <td class="col-rank-tag"><span class="rank-tag-text">#47</span></td>
-                  <td class="col-xp">
-                    <div class="xp-cell-group">
-                      <svg class="cell-star-icon star-gold" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <span class="xp-val-text">7,210</span>
-                    </div>
-                  </td>
-                  <td class="col-streak">
-                    <div class="streak-cell-group">
-                      <span class="flame-icon">🔥</span>
-                      <span class="streak-val-text">2 days</span>
-                    </div>
-                  </td>
-                  <td class="col-level" style="text-align: right;">
-                    <span class="level-pill-badge pill-indigo">Lv. 2</span>
-                  </td>
-                </tr>
+              <tbody id="main-leaderboard-tbody" class="main-leaderboard-tbody">
+                <!-- Dynamically populated from real students -->
               </tbody>
             </table>
+          </div>
+
+          <!-- Pagination / View All Bar for 300 students -->
+          <div class="leaderboard-pagination-wrap">
+            <div class="pagination-info-text" id="leaderboard-pagination-info">
+              Showing 1 - 50 of 300 Students
+            </div>
+            <div class="pagination-controls-group">
+              <button type="button" class="btn-page-nav" id="btn-page-prev" disabled>← Previous</button>
+              <span id="pagination-pages-badge" style="font-size: 12.5px; font-weight: 700; color: #475569; padding: 0 4px;">Page 1 / 6</span>
+              <button type="button" class="btn-page-nav" id="btn-page-next">Next →</button>
+              <button type="button" class="btn-view-all-toggle" id="btn-toggle-view-all">View All (300)</button>
+            </div>
           </div>
         </section>
       </div>

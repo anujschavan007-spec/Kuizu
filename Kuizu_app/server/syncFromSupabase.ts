@@ -28,7 +28,8 @@ export async function syncSupabaseToLocalDb(): Promise<{ success: boolean; synce
     "quiz_level_progress",
     "daily_quizzes",
     "app_settings",
-    "user_problem_submissions"
+    "user_problem_submissions",
+    "contest_violations"
   ];
 
   try {

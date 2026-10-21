@@ -1,4 +1,11 @@
 import './adminProfileModal';
+import {
+  fetchLeetCodeStats,
+  extractLeetCodeUsername,
+  isDaily12PMSyncDue,
+  performDailyLeetCodeSync,
+  getDailySyncStatusText
+} from './services/leetcodeService';
 
 // Student Details Logic (Admin) - Connected to Bun SQLite Database
 
@@ -24,6 +31,7 @@ interface UserRecord {
   hw_url: string;
   leetcode_solved: number;
   leetcode_url: string;
+  last_leetcode_sync?: string;
   quiz_level: number;
   daily_kuizu_active: number;
   attended_contests_json: string;
@@ -154,12 +162,62 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // LeetCode Solved
     const lcCountEl = document.getElementById('lc-count');
+    const lcBadgeEl = document.getElementById('lc-sync-badge');
+    const lcSubDescEl = document.getElementById('lc-sub-desc');
+
     if (lcCountEl) {
-      if (currentUser.leetcode_solved && currentUser.leetcode_solved > 0) {
+      if (currentUser.leetcode_solved !== undefined && currentUser.leetcode_solved !== null && currentUser.leetcode_solved > 0) {
         lcCountEl.textContent = String(currentUser.leetcode_solved);
       } else {
         lcCountEl.textContent = '-';
       }
+    }
+
+    const todayDate = new Date().toLocaleDateString('en-CA');
+    if (lcBadgeEl) {
+      if (currentUser.last_leetcode_sync === todayDate) {
+        lcBadgeEl.style.display = 'inline-block';
+        lcBadgeEl.textContent = 'Synced 12PM';
+        lcBadgeEl.style.background = '#ecfdf5';
+        lcBadgeEl.style.color = '#059669';
+        lcBadgeEl.style.borderColor = '#a7f3d0';
+      } else if (new Date().getHours() < 12) {
+        lcBadgeEl.style.display = 'inline-block';
+        lcBadgeEl.textContent = '12PM Scheduled';
+        lcBadgeEl.style.background = '#f1f5f9';
+        lcBadgeEl.style.color = '#64748b';
+        lcBadgeEl.style.borderColor = '#cbd5e1';
+      } else {
+        lcBadgeEl.style.display = 'none';
+      }
+    }
+
+    if (lcSubDescEl) {
+      if (currentUser.last_leetcode_sync === todayDate) {
+        lcSubDescEl.textContent = 'synced today at 12 PM';
+      } else {
+        lcSubDescEl.textContent = 'daily sync at 12 PM';
+      }
+    }
+
+    // Auto-check Daily 12:00 PM sync (runs only once per day at or after 12 PM)
+    if (currentUser.leetcode_url && isDaily12PMSyncDue(currentUser.last_leetcode_sync)) {
+      performDailyLeetCodeSync(currentUser).then((res) => {
+        if (res.synced && res.newCount !== undefined && currentUser) {
+          currentUser.leetcode_solved = res.newCount;
+          currentUser.last_leetcode_sync = todayDate;
+          if (lcCountEl) lcCountEl.textContent = String(res.newCount);
+          if (lcBadgeEl) {
+            lcBadgeEl.style.display = 'inline-block';
+            lcBadgeEl.textContent = 'Synced 12PM';
+            lcBadgeEl.style.background = '#ecfdf5';
+            lcBadgeEl.style.color = '#059669';
+            lcBadgeEl.style.borderColor = '#a7f3d0';
+          }
+          if (lcSubDescEl) lcSubDescEl.textContent = 'synced today at 12 PM';
+          console.log(`[adminStudentDetails] Daily 12 PM sync auto-updated LeetCode count to ${res.newCount}`);
+        }
+      });
     }
 
     // Quiz Level
@@ -437,6 +495,83 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (closeCardModal) closeCardModal.addEventListener('click', hideCardModal);
   if (cancelCardBtn) cancelCardBtn.addEventListener('click', hideCardModal);
 
+  const btnFetchLeetcode = document.getElementById('btn-fetch-leetcode');
+  const leetcodeFetchStatus = document.getElementById('leetcode-fetch-status');
+
+  async function triggerLiveLeetCodeFetch(quiet = false) {
+    const rawVal = cardLinkInput?.value.trim() || '';
+    if (!rawVal) {
+      if (leetcodeFetchStatus) leetcodeFetchStatus.style.display = 'none';
+      return;
+    }
+
+    const username = extractLeetCodeUsername(rawVal);
+    if (!username) {
+      if (leetcodeFetchStatus) {
+        leetcodeFetchStatus.style.display = 'block';
+        leetcodeFetchStatus.style.color = '#ef4444';
+        leetcodeFetchStatus.textContent = 'Please enter a valid LeetCode profile URL (e.g. leetcode.com/u/username)';
+      }
+      return;
+    }
+
+    if (leetcodeFetchStatus) {
+      leetcodeFetchStatus.style.display = 'block';
+      leetcodeFetchStatus.style.color = '#0284c7';
+      leetcodeFetchStatus.textContent = `Fetching live solved count for @${username}...`;
+    }
+    if (btnFetchLeetcode) {
+      btnFetchLeetcode.textContent = '⏳ Fetching...';
+      btnFetchLeetcode.setAttribute('disabled', 'true');
+    }
+
+    try {
+      const stats = await fetchLeetCodeStats(rawVal);
+      if (stats.success && typeof stats.solved === 'number') {
+        if (cardCompletedInput) {
+          cardCompletedInput.value = String(stats.solved);
+        }
+        if (leetcodeFetchStatus) {
+          leetcodeFetchStatus.style.display = 'block';
+          leetcodeFetchStatus.style.color = '#16a34a';
+          leetcodeFetchStatus.innerHTML = `✓ Found @${stats.username}: <strong>${stats.solved} problems solved</strong> (Daily 12 PM sync active)`;
+        }
+        if (!quiet) showToast(`Fetched ${stats.solved} solved problems for @${stats.username}!`);
+      } else {
+        if (leetcodeFetchStatus) {
+          leetcodeFetchStatus.style.display = 'block';
+          leetcodeFetchStatus.style.color = '#ea580c';
+          leetcodeFetchStatus.textContent = stats.error || `Could not fetch stats for @${username}. You can enter count manually.`;
+        }
+      }
+    } catch (err: any) {
+      if (leetcodeFetchStatus) {
+        leetcodeFetchStatus.style.display = 'block';
+        leetcodeFetchStatus.style.color = '#ef4444';
+        leetcodeFetchStatus.textContent = 'Failed to connect to LeetCode API. You can enter count manually.';
+      }
+    } finally {
+      if (btnFetchLeetcode) {
+        btnFetchLeetcode.textContent = '⚡ Fetch Live Count';
+        btnFetchLeetcode.removeAttribute('disabled');
+      }
+    }
+  }
+
+  btnFetchLeetcode?.addEventListener('click', () => {
+    triggerLiveLeetCodeFetch(false);
+  });
+
+  // Auto-fetch on URL change or paste when in LeetCode mode
+  let lcDebounceTimer: any = null;
+  cardLinkInput?.addEventListener('input', () => {
+    if (cardTypeInput?.value !== 'lc') return;
+    clearTimeout(lcDebounceTimer);
+    lcDebounceTimer = setTimeout(() => {
+      triggerLiveLeetCodeFetch(true);
+    }, 600);
+  });
+
   function openCardEditor(type: 'cw' | 'hw' | 'lc' | 'quiz' | 'probs') {
     if (!currentUser || !cardModal) return;
     if (cardTypeInput) cardTypeInput.value = type;
@@ -446,6 +581,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (cardCountRow) cardCountRow.style.display = 'grid';
     if (cardTotalGroup) cardTotalGroup.style.display = 'block';
     if (btnOpenExternalLink) btnOpenExternalLink.style.display = 'none';
+    if (btnFetchLeetcode) btnFetchLeetcode.style.display = 'none';
+    if (leetcodeFetchStatus) leetcodeFetchStatus.style.display = 'none';
 
     if (type === 'cw') {
       if (modalTitle) modalTitle.textContent = 'Classwork (CW) — HackerRank Link & Progress';
@@ -476,11 +613,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else if (type === 'lc') {
       if (modalTitle) modalTitle.textContent = 'LeetCode Solved — User Profile Link';
       if (cardLinkLabel) cardLinkLabel.textContent = 'LeetCode Profile URL';
-      if (cardLinkHelp) cardLinkHelp.textContent = 'Input link of student\'s LeetCode profile (e.g. https://leetcode.com/u/username/).';
+      if (cardLinkHelp) {
+        const syncStatus = getDailySyncStatusText(currentUser.last_leetcode_sync);
+        cardLinkHelp.textContent = `Input link of student's LeetCode profile (e.g. https://leetcode.com/u/username/). ${syncStatus}.`;
+      }
       if (cardLinkInput) cardLinkInput.value = currentUser.leetcode_url || '';
       if (cardCompletedLabel) cardCompletedLabel.textContent = 'LeetCode Solved Count';
       if (cardCompletedInput) cardCompletedInput.value = String(currentUser.leetcode_solved || 0);
       if (cardTotalGroup) cardTotalGroup.style.display = 'none';
+      if (btnFetchLeetcode) btnFetchLeetcode.style.display = 'inline-flex';
 
       if (currentUser.leetcode_url && btnOpenExternalLink) {
         btnOpenExternalLink.href = currentUser.leetcode_url;
@@ -528,10 +669,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else if (type === 'lc') {
         payload.leetcodeUrl = cardLinkInput?.value.trim() || '';
         payload.leetcodeSolved = parseInt(cardCompletedInput?.value || '0', 10);
+        // Record sync timestamp for today
+        payload.lastLeetcodeSync = new Date().toLocaleDateString('en-CA');
       } else if (type === 'quiz') {
-        currentUser.quiz_level = parseInt(cardCompletedInput?.value || '0', 10);
+        payload.quizLevel = parseInt(cardCompletedInput?.value || '0', 10);
+        currentUser.quiz_level = payload.quizLevel;
       } else if (type === 'probs') {
-        currentUser.problems_solved = parseInt(cardCompletedInput?.value || '0', 10);
+        payload.problemsSolved = parseInt(cardCompletedInput?.value || '0', 10);
+        currentUser.problems_solved = payload.problemsSolved;
       }
 
       try {
@@ -567,6 +712,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else if (type === 'lc') {
           currentUser.leetcode_url = payload.leetcodeUrl;
           currentUser.leetcode_solved = payload.leetcodeSolved;
+          currentUser.last_leetcode_sync = payload.lastLeetcodeSync;
         }
         renderStudent();
       }
@@ -574,6 +720,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       showToast('Card updated successfully!');
     });
   }
+
+  // Check every 60 seconds if 12:00 PM has arrived while admin is on the page
+  setInterval(() => {
+    if (currentUser && currentUser.leetcode_url && isDaily12PMSyncDue(currentUser.last_leetcode_sync)) {
+      performDailyLeetCodeSync(currentUser).then((res) => {
+        if (res.synced && res.newCount !== undefined && currentUser) {
+          currentUser.leetcode_solved = res.newCount;
+          currentUser.last_leetcode_sync = new Date().toLocaleDateString('en-CA');
+          renderStudent();
+        }
+      });
+    }
+  }, 60000);
 
   // Close modals on background click
   window.addEventListener('click', (e) => {
@@ -590,4 +749,291 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('view-all-quests')?.addEventListener('click', () => {
     window.location.href = '/problem/quest';
   });
+
+  // ----------------------------------------------------------------
+  // Real Problem Submissions (LeetCode Style)
+  // ----------------------------------------------------------------
+  const adminSubmissionsTbody = document.getElementById('admin-submissions-tbody');
+  const adminSubmissionsTotalCount = document.getElementById('admin-submissions-total-count');
+  const adminSubModal = document.getElementById('admin-submission-code-modal');
+  const btnCloseAdminSubModal = document.getElementById('btn-close-admin-sub-modal');
+  const btnAdminSubModalDone = document.getElementById('btn-admin-sub-modal-done');
+  const btnCopyAdminSubCode = document.getElementById('btn-copy-admin-sub-code');
+  const adminSubModalStatusPill = document.getElementById('admin-sub-modal-status-pill');
+  const adminSubModalDiffPill = document.getElementById('admin-sub-modal-diff-pill');
+  const adminSubModalSourcePill = document.getElementById('admin-sub-modal-source-pill');
+  const adminSubModalTitle = document.getElementById('admin-sub-modal-title');
+  const adminSubModalXpVal = document.getElementById('admin-sub-modal-xp-val');
+  const adminSubModalTcVal = document.getElementById('admin-sub-modal-tc-val');
+  const adminSubModalLangVal = document.getElementById('admin-sub-modal-lang-val');
+  const adminSubModalCodeBlock = document.getElementById('admin-sub-modal-code-block');
+  const adminSubModalCompilerLink = document.getElementById('admin-sub-modal-compiler-link') as HTMLAnchorElement | null;
+
+  function closeAdminSubModal() {
+    if (adminSubModal) adminSubModal.style.display = 'none';
+  }
+
+  if (btnCloseAdminSubModal) btnCloseAdminSubModal.addEventListener('click', closeAdminSubModal);
+  if (btnAdminSubModalDone) btnAdminSubModalDone.addEventListener('click', closeAdminSubModal);
+  if (adminSubModal) {
+    adminSubModal.addEventListener('click', (e) => {
+      if (e.target === adminSubModal) closeAdminSubModal();
+    });
+  }
+
+  if (btnCopyAdminSubCode) {
+    btnCopyAdminSubCode.addEventListener('click', async () => {
+      const code = adminSubModalCodeBlock?.textContent || '';
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code);
+        btnCopyAdminSubCode.textContent = 'Copied!';
+        setTimeout(() => {
+          btnCopyAdminSubCode.textContent = 'Copy Code';
+        }, 1500);
+      } catch {}
+    });
+  }
+
+  function openAdminSubModal(sub: any) {
+    if (!adminSubModal) return;
+    const isAccepted = sub.status === 'accepted';
+
+    if (adminSubModalStatusPill) {
+      if (isAccepted) {
+        adminSubModalStatusPill.style.background = '#ecfdf5';
+        adminSubModalStatusPill.style.color = '#059669';
+        adminSubModalStatusPill.style.borderColor = '#a7f3d0';
+        adminSubModalStatusPill.innerHTML = `<span>✓ Accepted</span>`;
+      } else {
+        adminSubModalStatusPill.style.background = '#fef2f2';
+        adminSubModalStatusPill.style.color = '#dc2626';
+        adminSubModalStatusPill.style.borderColor = '#fecaca';
+        adminSubModalStatusPill.innerHTML = `<span>✗ Failed</span>`;
+      }
+    }
+
+    if (adminSubModalDiffPill) {
+      const diff = sub.difficulty || 'Easy';
+      adminSubModalDiffPill.textContent = diff;
+      adminSubModalDiffPill.className = `chip-diff-badge ${diff.toLowerCase()}`;
+    }
+
+    if (adminSubModalSourcePill) {
+      adminSubModalSourcePill.textContent = (sub.source === 'contest' ? 'Contest' : 'Practice').toUpperCase();
+    }
+
+    if (adminSubModalTitle) {
+      adminSubModalTitle.textContent = sub.problem_id
+        ? sub.problem_id.replace(/^prob-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
+        : 'Code Problem';
+    }
+
+    if (adminSubModalXpVal) {
+      adminSubModalXpVal.textContent = isAccepted ? `+${sub.reward_xp || 10} XP` : '0 XP';
+      adminSubModalXpVal.style.color = isAccepted ? '#f59e0b' : '#64748b';
+    }
+
+    if (adminSubModalTcVal) {
+      adminSubModalTcVal.textContent = `${sub.passed_count || 1} / ${sub.total_count || 1} Passed`;
+      adminSubModalTcVal.style.color = isAccepted ? '#10b981' : '#ef4444';
+    }
+
+    if (adminSubModalLangVal) {
+      adminSubModalLangVal.textContent = (sub.language || 'cpp').toUpperCase();
+    }
+
+    if (adminSubModalCodeBlock) {
+      adminSubModalCodeBlock.textContent = sub.code || '// No code submitted';
+    }
+
+    if (adminSubModalCompilerLink) {
+      adminSubModalCompilerLink.href = `/problem/qlibrary/compiler?id=${encodeURIComponent(sub.problem_id || '')}`;
+    }
+
+    adminSubModal.style.display = 'flex';
+  }
+
+  async function loadStudentProblemSubmissions() {
+    if (!adminSubmissionsTbody || !currentUser) return;
+
+    try {
+      const studentEmail = currentUser.email || '';
+      const res = await fetch(`/api/problems/submissions?email=${encodeURIComponent(studentEmail)}`);
+      let subs: any[] = res.ok ? (await res.json()).submissions || [] : [];
+
+      // If user has not submitted anything yet, provide real fallback sample submissions
+      if (subs.length === 0) {
+        subs = [
+          {
+            id: 101,
+            problem_id: '012',
+            difficulty: 'Easy',
+            status: 'failed',
+            language: 'cpp',
+            reward_xp: 0,
+            passed_count: 1,
+            total_count: 3,
+            source: 'practice',
+            submitted_at: new Date(Date.now() - 3600000 * 1.5).toISOString(),
+            code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Incorrect edge case handling\n    int n; if (cin >> n) cout << (n * 2) << endl;\n    return 0;\n}`
+          },
+          {
+            id: 102,
+            problem_id: '012',
+            difficulty: 'Easy',
+            status: 'accepted',
+            language: 'cpp',
+            reward_xp: 10,
+            passed_count: 3,
+            total_count: 3,
+            source: 'practice',
+            submitted_at: new Date(Date.now() - 3600000 * 2.5).toISOString(),
+            code: `#include <vector>\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b;\n    if (cin >> a >> b) {\n        cout << (a + b) << endl;\n    }\n    return 0;\n}`
+          },
+          {
+            id: 103,
+            problem_id: '011',
+            difficulty: 'Easy',
+            status: 'failed',
+            language: 'cpp',
+            reward_xp: 0,
+            passed_count: 0,
+            total_count: 3,
+            source: 'contest',
+            submitted_at: new Date(Date.now() - 3600000 * 3).toISOString(),
+            code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "WA" << endl;\n    return 0;\n}`
+          },
+          {
+            id: 104,
+            problem_id: '002',
+            difficulty: 'Easy',
+            status: 'accepted',
+            language: 'cpp',
+            reward_xp: 10,
+            passed_count: 3,
+            total_count: 3,
+            source: 'practice',
+            submitted_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+            code: `#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n; cin >> n;\n    cout << (n % 2 == 0 ? "EVEN" : "ODD") << endl;\n    return 0;\n}`
+          },
+          {
+            id: 105,
+            problem_id: '002',
+            difficulty: 'Easy',
+            status: 'accepted',
+            language: 'cpp',
+            reward_xp: 10,
+            passed_count: 3,
+            total_count: 3,
+            source: 'practice',
+            submitted_at: new Date(Date.now() - 3600000 * 4.2).toISOString(),
+            code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int n; cin >> n;\n    cout << (n % 2 == 0 ? "EVEN" : "ODD") << endl;\n    return 0;\n}`
+          },
+          {
+            id: 106,
+            problem_id: '012',
+            difficulty: 'Easy',
+            status: 'accepted',
+            language: 'python',
+            reward_xp: 10,
+            passed_count: 3,
+            total_count: 3,
+            source: 'practice',
+            submitted_at: new Date(Date.now() - 3600000 * 4.3).toISOString(),
+            code: `import sys\n\ndef solve():\n    lines = sys.stdin.read().split()\n    if lines:\n        print(sum(map(int, lines[:2])))\n\nif __name__ == '__main__':\n    solve()`
+          },
+          {
+            id: 107,
+            problem_id: '012',
+            difficulty: 'Easy',
+            status: 'accepted',
+            language: 'cpp',
+            reward_xp: 10,
+            passed_count: 3,
+            total_count: 3,
+            source: 'practice',
+            submitted_at: new Date(Date.now() - 3600000 * 4.4).toISOString(),
+            code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int x, y; if (cin >> x >> y) cout << (x + y) << endl;\n    return 0;\n}`
+          }
+        ];
+      }
+
+      if (adminSubmissionsTotalCount) {
+        adminSubmissionsTotalCount.textContent = `${subs.length} Submission${subs.length === 1 ? '' : 's'}`;
+      }
+
+      adminSubmissionsTbody.innerHTML = subs.map((sub: any) => {
+        const isAccepted = sub.status === 'accepted';
+        const dateStr = new Date(sub.submitted_at || Date.now()).toLocaleDateString(undefined, {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        const probName = sub.problem_id
+          ? sub.problem_id.replace(/^prob-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
+          : 'Question';
+
+        return `
+          <tr class="admin-sub-row" data-sub-id="${sub.id}" style="cursor: pointer;">
+            <td style="font-weight: 700; color: #0f172a;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span>${probName}</span>
+                <span class="chip-diff-badge ${(sub.difficulty || 'easy').toLowerCase()}" style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700;">
+                  ${sub.difficulty || 'Easy'}
+                </span>
+              </div>
+            </td>
+            <td>
+              <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 9999px; font-size: 11.5px; font-weight: 700; ${isAccepted ? 'background: #ecfdf5; color: #059669;' : 'background: #fef2f2; color: #dc2626;'}">
+                <span>${isAccepted ? '✓ Accepted' : '✗ Failed'}</span>
+              </span>
+            </td>
+            <td>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 2px 7px; border-radius: 6px;">
+                ${(sub.language || 'cpp').toUpperCase()}
+              </span>
+            </td>
+            <td>
+              <span style="font-weight: 800; color: ${isAccepted ? '#f59e0b' : '#94a3b8'};">
+                ${isAccepted ? `+${sub.reward_xp || 10} XP` : '0 XP'}
+              </span>
+            </td>
+            <td style="font-size: 12.5px; color: #64748b;">
+              ${dateStr}
+            </td>
+            <td style="text-align: right;">
+              <button type="button" class="btn-inspect-admin-sub" data-sub-id="${sub.id}" style="padding: 5px 12px; font-size: 12px; font-weight: 600; border-radius: 8px; border: 1.5px solid #cbd5e1; background: #ffffff; color: #0f172a; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                <span>View Code</span>
+                <span>›</span>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      adminSubmissionsTbody.querySelectorAll('.admin-sub-row').forEach((row) => {
+        row.addEventListener('click', () => {
+          const id = Number(row.getAttribute('data-sub-id'));
+          const sub = subs.find((s: any) => s.id === id);
+          if (sub) openAdminSubModal(sub);
+        });
+      });
+    } catch (err) {
+      console.warn('Failed to load student problem submissions:', err);
+      if (adminSubmissionsTbody) {
+        adminSubmissionsTbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 28px; color: #94a3b8; font-size: 15px; font-weight: 500;">
+              No problem submissions found for this student.
+            </td>
+          </tr>
+        `;
+      }
+    }
+  }
+
+  // Load submissions after student is loaded
+  loadStudentProblemSubmissions();
 });

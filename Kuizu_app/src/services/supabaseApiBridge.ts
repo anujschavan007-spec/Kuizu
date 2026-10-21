@@ -116,7 +116,8 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
       .from('users')
       .select('*')
       .order('xp', { ascending: false })
-      .order('problems_solved', { ascending: false });
+      .order('problems_solved', { ascending: false })
+      .limit(1000);
 
     if (error) {
       return jsonResponse({ success: false, error: error.message }, 500);
@@ -132,28 +133,80 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
   }
 
   if (pathname === '/api/users/sync' && method === 'POST') {
-    const { id, name, email, avatar, role = 'Student' } = body;
+    const {
+      id,
+      name,
+      email,
+      avatar,
+      customAvatar,
+      googleAvatar,
+      isCustomAvatar,
+      isResetToGoogle,
+      role = 'Student'
+    } = body;
+
     if (!email) {
       return jsonResponse({ success: false, error: 'Email is required' }, 400);
+    }
+
+    const cleanEmail = String(email).trim();
+
+    function isAddedAvatarUrl(url: string | null | undefined): boolean {
+      if (!url) return false;
+      const t = url.trim();
+      if (!t || t === '/images/home_avatar.png' || t === '/images/admin_avatar.png') return false;
+      if (t.startsWith('/avatars/') || t.startsWith('data:image/') || t.startsWith('blob:')) return true;
+      if (t.includes('supabase.co') && t.includes('/avatars/')) return true;
+      const isOauth = t.includes('img.clerk.com') || t.includes('images.clerk.dev') || t.includes('googleusercontent.com') || t.includes('avatars.githubusercontent.com');
+      return !isOauth;
     }
 
     const { data: existing } = await supabase
       .from('users')
       .select('*')
-      .eq('email', email)
+      .ilike('email', cleanEmail)
       .maybeSingle();
 
     const nowStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
     if (existing) {
+      let activeAvatar: string;
+      let activeCustomAvatar: string | null = existing.custom_avatar;
+      let activeGoogleAvatar: string | null = googleAvatar || existing.google_avatar;
+
+      if (isResetToGoogle) {
+        activeCustomAvatar = null;
+        activeAvatar = activeGoogleAvatar || '/images/home_avatar.png';
+      } else if (isCustomAvatar) {
+        activeCustomAvatar = customAvatar || avatar || null;
+        activeAvatar = activeCustomAvatar || existing.avatar || '/images/home_avatar.png';
+      } else if (existing.custom_avatar) {
+        activeCustomAvatar = existing.custom_avatar;
+        activeAvatar = existing.custom_avatar;
+      } else if (isAddedAvatarUrl(existing.avatar)) {
+        activeCustomAvatar = existing.avatar;
+        activeAvatar = existing.avatar;
+      } else {
+        // If not changed / no custom avatar added: keep Google profile!
+        activeCustomAvatar = null;
+        activeAvatar = activeGoogleAvatar || existing.avatar || '/images/home_avatar.png';
+      }
+
+      const updatePayload: any = {
+        name: name || existing.name,
+        avatar: activeAvatar,
+        custom_avatar: activeCustomAvatar,
+        google_avatar: activeGoogleAvatar,
+        last_active: 'Today'
+      };
+      if (body.avatarMode) updatePayload.avatar_mode = body.avatarMode;
+      if (body.avatarGlbUrl !== undefined) updatePayload.avatar_glb_url = body.avatarGlbUrl;
+      if (body.avatarGlbMode) updatePayload.avatar_glb_mode = body.avatarGlbMode;
+
       const { data: updated, error } = await supabase
         .from('users')
-        .update({
-          name: name || existing.name,
-          avatar: avatar || existing.avatar,
-          last_active: 'Today'
-        })
-        .eq('email', email)
+        .update(updatePayload)
+        .ilike('email', cleanEmail)
         .select()
         .single();
 
@@ -161,13 +214,22 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
       return jsonResponse({ success: true, user: updated, isNew: false });
     } else {
       const userId = id || `usr_${Date.now()}`;
+      const activeCustom = isCustomAvatar ? (customAvatar || avatar) : null;
+      const activeGoogle = googleAvatar || null;
+      const activeAvatar = activeCustom || activeGoogle || avatar || '/images/home_avatar.png';
+
       const { data: created, error } = await supabase
         .from('users')
         .insert({
           id: userId,
           name: name || 'Kuizu Learner',
-          email,
-          avatar: avatar || '',
+          email: cleanEmail,
+          avatar: activeAvatar,
+          custom_avatar: activeCustom,
+          google_avatar: activeGoogle,
+          avatar_mode: body.avatarMode || '2d',
+          avatar_glb_url: body.avatarGlbUrl || null,
+          avatar_glb_mode: body.avatarGlbMode || null,
           role,
           status: 'active',
           xp: 0,
@@ -203,7 +265,7 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
     return jsonResponse({ success: true, user: users[0] });
   }
 
-  if (pathname.includes('/attendance') && method === 'POST') {
+  if (pathname.includes('/attendance') && (method === 'POST' || method === 'PUT')) {
     const userId = pathname.split('/')[3];
     const { presentClasses, totalClasses } = body;
     const { data: updated, error } = await supabase
@@ -212,7 +274,7 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
         present_classes: Number(presentClasses) || 0,
         total_classes: Number(totalClasses) || 50
       })
-      .eq('id', userId)
+      .or(`id.eq.${userId},email.ilike.${userId}`)
       .select()
       .single();
 
@@ -220,22 +282,26 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
     return jsonResponse({ success: true, user: updated });
   }
 
-  if (pathname.includes('/links') && method === 'POST') {
+  if (pathname.includes('/links') && (method === 'POST' || method === 'PUT')) {
     const userId = pathname.split('/')[3];
-    const { cwCompleted, cwTotal, cwUrl, hwCompleted, hwTotal, hwUrl, leetcodeSolved, leetcodeUrl } = body;
+    const { cwCompleted, cwTotal, cwUrl, hwCompleted, hwTotal, hwUrl, leetcodeSolved, leetcodeUrl, quizLevel, problemsSolved } = body;
+    const updatePayload: any = {};
+    if (cwCompleted !== undefined) updatePayload.cw_completed = Number(cwCompleted) || 0;
+    if (cwTotal !== undefined) updatePayload.cw_total = Number(cwTotal) || 20;
+    if (cwUrl !== undefined) updatePayload.cw_url = cwUrl || '';
+    if (hwCompleted !== undefined) updatePayload.hw_completed = Number(hwCompleted) || 0;
+    if (hwTotal !== undefined) updatePayload.hw_total = Number(hwTotal) || 20;
+    if (hwUrl !== undefined) updatePayload.hw_url = hwUrl || '';
+    if (leetcodeSolved !== undefined) updatePayload.leetcode_solved = Number(leetcodeSolved) || 0;
+    if (leetcodeUrl !== undefined) updatePayload.leetcode_url = leetcodeUrl || '';
+    if (body.lastLeetcodeSync !== undefined) updatePayload.last_leetcode_sync = body.lastLeetcodeSync;
+    if (quizLevel !== undefined) updatePayload.quiz_level = Number(quizLevel) || 1;
+    if (problemsSolved !== undefined) updatePayload.problems_solved = Number(problemsSolved) || 0;
+
     const { data: updated, error } = await supabase
       .from('users')
-      .update({
-        cw_completed: Number(cwCompleted) || 0,
-        cw_total: Number(cwTotal) || 20,
-        cw_url: cwUrl || '',
-        hw_completed: Number(hwCompleted) || 0,
-        hw_total: Number(hwTotal) || 20,
-        hw_url: hwUrl || '',
-        leetcode_solved: Number(leetcodeSolved) || 0,
-        leetcode_url: leetcodeUrl || ''
-      })
-      .eq('id', userId)
+      .update(updatePayload)
+      .or(`id.eq.${userId},email.ilike.${userId}`)
       .select()
       .single();
 
@@ -454,7 +520,11 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
   // QUIZZES & LEVELS
   // ----------------------------------------------------
   if (pathname === '/api/quizzes' && method === 'GET') {
-    const { data: quizzes, error } = await supabase.from('quizzes').select('*').order('id', { ascending: false });
+    const { data: quizzes, error } = await supabase
+      .from('quizzes')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .order('id', { ascending: false });
     if (error) return jsonResponse({ success: false, error: error.message }, 500);
 
     const formatted = (quizzes || []).map((q: any) => ({
@@ -497,7 +567,9 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
       optionB = '',
       optionC = '',
       optionD = '',
-      correctOption = 'A'
+      correctOption = 'A',
+      addToDaily = false,
+      dailyDate = ''
     } = body || {};
 
     if (!name) {
@@ -511,7 +583,11 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
       } catch {}
     }
 
-    const newQuiz = {
+    // Determine continuous next ID
+    const { data: maxRow } = await supabase.from('quizzes').select('id').order('id', { ascending: false }).limit(1).maybeSingle();
+    const nextId = (maxRow?.id && Number(maxRow.id) >= 1) ? Number(maxRow.id) + 1 : undefined;
+
+    const newQuiz: any = {
       name,
       description,
       level_number: Number(levelNumber) || 1,
@@ -531,9 +607,70 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
       correct_option: correctOption,
       created_at: new Date().toISOString()
     };
+    if (nextId) {
+      newQuiz.id = nextId;
+    }
 
     const { data, error } = await supabase.from('quizzes').insert([newQuiz]).select().single();
-    if (error) return jsonResponse({ success: false, error: error.message }, 500);
+    if (error) {
+      // If error was due to explicit ID conflict, try inserting without explicit ID
+      const retry = await supabase.from('quizzes').insert([{ ...newQuiz, id: undefined }]).select().single();
+      if (retry.error) return jsonResponse({ success: false, error: retry.error.message }, 500);
+      return jsonResponse({ success: true, id: retry.data?.id, quiz: retry.data }, 201);
+    }
+
+    // Auto-link to Daily Kuizu if requested
+    if (addToDaily && dailyDate && data) {
+      try {
+        const assignedDate = dailyDate;
+        const { data: existingDq } = await supabase.from('daily_quizzes').select('*').eq('assigned_date', assignedDate).maybeSingle();
+        const quizObj = {
+          id: data.id,
+          name: data.name,
+          source: 'Quiz',
+          sourceType: 'quiz',
+          sourceId: data.id,
+          questionContent: data.question_content,
+          optionA: data.option_a,
+          optionB: data.option_b,
+          optionC: data.option_c,
+          optionD: data.option_d,
+          correctOption: data.correct_option,
+          rewardXp: 15
+        };
+
+        if (existingDq) {
+          let questions: any[] = [];
+          try { questions = JSON.parse(existingDq.questions_json || '[]'); } catch {}
+          if (!Array.isArray(questions)) questions = [];
+          questions.push(quizObj);
+
+          let quizIds: any[] = [];
+          try { quizIds = JSON.parse(existingDq.quiz_ids_json || '[]'); } catch {}
+          if (!Array.isArray(quizIds)) quizIds = [];
+          quizIds.push(data.id);
+
+          await supabase.from('daily_quizzes').update({
+            questions_json: JSON.stringify(questions),
+            quiz_ids_json: JSON.stringify(quizIds)
+          }).eq('id', existingDq.id);
+        } else {
+          await supabase.from('daily_quizzes').insert([{
+            assigned_date: assignedDate,
+            title: data.name,
+            description: data.description || 'Daily Kuizu Challenge',
+            quiz_ids_json: JSON.stringify([data.id]),
+            questions_json: JSON.stringify([quizObj]),
+            expiry_time: '12:00 PM IST',
+            reward_xp: 15,
+            streak_bonus: 5,
+            created_at: new Date().toISOString()
+          }]);
+        }
+      } catch (dqErr) {
+        console.warn('Could not auto-add to daily quiz:', dqErr);
+      }
+    }
 
     return jsonResponse({ success: true, id: data?.id, quiz: data }, 201);
   }
@@ -1072,6 +1209,67 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
     return jsonResponse({ success: true, count: (list || []).length, dailyQuizzes: list || [] });
   }
 
+  if (pathname === '/api/daily-quiz' && method === 'POST') {
+    const {
+      assignedDate,
+      title = "Today's KUIZU",
+      description = '',
+      questions = [],
+      quizIds = [],
+      expiryTime = '12:00 PM IST',
+      rewardXp = 15,
+      streakBonus = 5
+    } = body || {};
+
+    if (!assignedDate) {
+      return jsonResponse({ success: false, error: 'Assigned date is required (YYYY-MM-DD)' }, 400);
+    }
+
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1'))) {
+      try {
+        await nativeFetch(pathname, init);
+      } catch {}
+    }
+
+    const { data: existing } = await supabase.from('daily_quizzes').select('*').eq('assigned_date', assignedDate).maybeSingle();
+    const payload = {
+      assigned_date: assignedDate,
+      title,
+      description,
+      quiz_ids_json: JSON.stringify(quizIds || []),
+      questions_json: JSON.stringify(questions || []),
+      expiry_time: expiryTime,
+      reward_xp: Number(rewardXp) || 15,
+      streak_bonus: Number(streakBonus) || 5
+    };
+
+    if (existing) {
+      const { error } = await supabase.from('daily_quizzes').update(payload).eq('id', existing.id);
+      if (error) return jsonResponse({ success: false, error: error.message }, 500);
+      return jsonResponse({ success: true, message: 'Daily quiz updated' });
+    } else {
+      const { data, error } = await supabase.from('daily_quizzes').insert([{ ...payload, created_at: new Date().toISOString() }]).select().single();
+      if (error) return jsonResponse({ success: false, error: error.message }, 500);
+      return jsonResponse({ success: true, message: 'Daily quiz created', id: data?.id });
+    }
+  }
+
+  if (pathname.startsWith('/api/daily-quiz/') && method === 'DELETE') {
+    const id = pathname.replace('/api/daily-quiz/', '');
+    const numId = Number(id);
+    const filterId = isNaN(numId) ? id : numId;
+
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1'))) {
+      try {
+        await nativeFetch(pathname, init);
+      } catch {}
+    }
+
+    const { error } = await supabase.from('daily_quizzes').delete().eq('id', filterId);
+    if (error) return jsonResponse({ success: false, error: error.message }, 500);
+    return jsonResponse({ success: true, message: 'Daily quiz deleted successfully' });
+  }
+
   if (pathname === '/api/daily-quiz/submit' && method === 'POST') {
     const { userEmail, userId, correctCount = 3, totalQuestions = 3, earnedXp = 15 } = body;
     if (userEmail || userId) {
@@ -1201,6 +1399,28 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
     return jsonResponse({ success: true, count: formatted.length, contests: formatted });
   }
 
+  // GET single contest /api/contests/:id
+  if (pathname.startsWith('/api/contests/') && method === 'GET' && !pathname.includes('/violations')) {
+    const contestId = pathname.replace('/api/contests/', '').split('/')[0];
+    const { data: c, error } = await supabase.from('contests').select('*').eq('id', contestId).maybeSingle();
+    if (error) return jsonResponse({ success: false, error: error.message }, 500);
+    if (!c) return jsonResponse({ success: false, error: 'Contest not found' }, 404);
+
+    const formatted = {
+      id: c.id,
+      title: c.title,
+      type: c.type,
+      startDate: c.start_date,
+      endDate: c.end_date,
+      duration: c.duration || '60',
+      status: c.status,
+      problems: c.problems_json ? JSON.parse(c.problems_json) : [],
+      registeredCount: c.registered_count || 0,
+      createdAt: c.created_at
+    };
+    return jsonResponse({ success: true, contest: formatted });
+  }
+
   if (pathname.includes('/register') && pathname.startsWith('/api/contests/')) {
     const contestId = pathname.replace('/api/contests/', '').replace('/register', '');
     const { userEmail, userId } = body;
@@ -1309,24 +1529,28 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
         .limit(200);
 
       if (dbLogs && Array.isArray(dbLogs)) {
-        const existingIds = new Set(logs.map(l => l.id));
+        const map = new Map<string, any>();
         for (const item of dbLogs) {
-          if (!existingIds.has(item.id)) {
-            logs.push({
-              id: item.id,
-              contestId: item.contest_id || item.contestId || 'active-contest',
-              contestTitle: item.contest_title || item.contestTitle || 'Live Contest',
-              username: item.username || 'Candidate',
-              userEmail: item.user_email || item.userEmail || '',
-              userAvatar: item.user_avatar || item.userAvatar || '',
-              violationType: item.violation_type || item.violationType || 'TAB_SWITCH',
-              details: item.details || '',
-              severity: item.severity || 'warning',
-              timestamp: item.timestamp || new Date().toISOString(),
-              status: item.status || 'flagged'
-            });
+          map.set(item.id, {
+            id: item.id,
+            contestId: item.contest_id || item.contestId || 'active-contest',
+            contestTitle: item.contest_title || item.contestTitle || 'Live Assessment',
+            username: item.username || 'Candidate',
+            userEmail: item.user_email || item.userEmail || '',
+            userAvatar: item.user_avatar || item.userAvatar || '',
+            violationType: item.violation_type || item.violationType || 'TAB_SWITCH',
+            details: item.details || '',
+            severity: item.severity || 'warning',
+            timestamp: item.timestamp || new Date().toISOString(),
+            status: item.status || 'flagged'
+          });
+        }
+        for (const localItem of logs) {
+          if (!map.has(localItem.id)) {
+            map.set(localItem.id, localItem);
           }
         }
+        logs = Array.from(map.values());
       }
     } catch {
       // Fallback to client-side localStorage logs
@@ -1510,6 +1734,38 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
     return jsonResponse({ success: true, id: questId, stepNumber }, 201);
   }
 
+  // QUEST SUBMISSION / COMPLETION
+  if ((pathname.includes('/submit') || pathname.includes('/complete')) && pathname.startsWith('/api/quests/')) {
+    const questId = pathname.replace('/api/quests/', '').replace('/submit', '').replace('/complete', '');
+    const { userEmail, email, userId, xp = 100 } = body;
+    const effectiveEmail = userEmail || email || '';
+
+    if (effectiveEmail || userId) {
+      const { data: user } = await supabase
+        .from('users')
+        .select('*')
+        .or(`id.eq.${userId},email.ilike.${effectiveEmail}`)
+        .maybeSingle();
+
+      if (user) {
+        let quests: string[] = [];
+        try { quests = JSON.parse(user.submitted_quests_json || '[]'); } catch {}
+        if (!quests.includes(questId)) quests.push(questId);
+
+        await supabase
+          .from('users')
+          .update({
+            submitted_quests_json: JSON.stringify(quests),
+            xp: (user.xp || 0) + (Number(xp) || 100),
+            last_active: 'Today'
+          })
+          .eq('id', user.id);
+      }
+    }
+
+    return jsonResponse({ success: true, questId, completed: true });
+  }
+
   // ----------------------------------------------------
   // APP SETTINGS
   // ----------------------------------------------------
@@ -1672,6 +1928,249 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
     }
   }
 
+  // ----------------------------------------------------
+  // QUESTION DISCUSSIONS (Discussion Board)
+  // ----------------------------------------------------
+  if (pathname === '/api/discussions' && method === 'GET') {
+    const problemId = searchParams.get('problem_id') || searchParams.get('problemId') || '';
+    let query = supabase
+      .from('question_discussions')
+      .select('*')
+      .order('likes_count', { ascending: false })
+      .order('created_at', { ascending: false });
+
+    if (problemId) {
+      query = query.eq('problem_id', problemId);
+    }
+
+    const { data: discussions, error } = await query;
+    if (error) {
+      return jsonResponse({ success: false, error: error.message }, 500);
+    }
+
+    return jsonResponse({ success: true, count: (discussions || []).length, discussions: discussions || [] });
+  }
+
+  if (pathname === '/api/discussions' && method === 'POST') {
+    const { problem_id, user_id, user_name, user_email, user_avatar, title, content } = body;
+    if (!problem_id) {
+      return jsonResponse({ success: false, error: 'Problem ID is required' }, 400);
+    }
+    if (!content || !content.trim()) {
+      return jsonResponse({ success: false, error: 'Discussion content cannot be empty' }, 400);
+    }
+    if (!user_email) {
+      return jsonResponse({ success: false, error: 'User must be authenticated to post discussions' }, 401);
+    }
+
+    // Detect code snippets, function definitions, programming syntax
+    function containsCode(text: string): boolean {
+      if (!text) return false;
+      const lower = text.toLowerCase();
+
+      // Explicit markdown code blocks or inline code
+      if (/```[\s\S]*?```/.test(text) || /`[^`]{3,}`/.test(text)) return true;
+
+      // HTML / XML tags or script tags
+      if (/<\s*(?:script|div|span|p|code|pre|table|button|input|form)\b[^>]*>/i.test(text)) return true;
+
+      // Common programming headers / function declarations
+      const codePatterns = [
+        /#\s*include\s*<.*?>/,
+        /using\s+namespace\s+std\s*;/,
+        /\b(?:public|private|protected)\s+(?:static\s+)?(?:void|int|float|double|char|string|boolean|class)\b/,
+        /\b(?:def|function|class)\s+[a-zA-Z_]\w*\s*\(/,
+        /\b(?:const|let|var)\s+[a-zA-Z_]\w*\s*=\s*(?:function|\(.*?\)|\{)/,
+        /\b(?:int|float|double|char|void|long|bool)\s+[a-zA-Z_]\w*\s*\([^)]*\)\s*\{/,
+        /\bfor\s*\([^;]*;[^;]*;[^)]*\)/,
+        /\bwhile\s*\(.*?\)\s*\{/,
+        /\bif\s*\(.*?\)\s*\{/,
+        /\bconsole\.(?:log|error|warn)\s*\(/,
+        /\bSystem\.out\.println\s*\(/,
+        /\bprintf\s*\(.*?\)\s*;/,
+        /\bcout\s*<<\s*/,
+        /\bcin\s*>>\s*/,
+        /\bprint\s*\([^)]*\)/,
+        /\breturn\s+[a-zA-Z0-9_\(\)]+;/,
+        /;\s*\n\s*[a-zA-Z_]\w*\s*=/
+      ];
+
+      for (const pattern of codePatterns) {
+        if (pattern.test(text)) return true;
+      }
+
+      // Check density of code-specific characters { } ; ->
+      const braceCount = (text.match(/[{}]/g) || []).length;
+      const semiCount = (text.match(/;/g) || []).length;
+      if (braceCount >= 2 && semiCount >= 2) return true;
+
+      return false;
+    }
+
+    if (containsCode(content) || containsCode(title || '')) {
+      return jsonResponse({
+        success: false,
+        error: 'Code detected. Code submissions are not allowed in the discussion board. Please describe your approach, edge cases, or ask questions in plain words.'
+      }, 400);
+    }
+
+    const newPost = {
+      problem_id: String(problem_id),
+      user_id: user_id || '',
+      user_name: user_name || 'Student',
+      user_email: user_email.toLowerCase(),
+      user_avatar: user_avatar || '',
+      title: title ? title.trim() : '',
+      content: content.trim(),
+      likes_count: 0,
+      dislikes_count: 0,
+      liked_by: [],
+      disliked_by: [],
+      xp_awarded: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase.from('question_discussions').insert([newPost]).select().single();
+    if (error) {
+      return jsonResponse({ success: false, error: error.message }, 500);
+    }
+
+    return jsonResponse({ success: true, discussion: data });
+  }
+
+  if (pathname.startsWith('/api/discussions/') && pathname.endsWith('/like') && method === 'POST') {
+    const discId = pathname.replace('/api/discussions/', '').replace('/like', '');
+    const { user_email, action = 'like' } = body;
+
+    if (!user_email) {
+      return jsonResponse({ success: false, error: 'Authentication required to like discussion' }, 401);
+    }
+
+    const { data: disc, error: fetchErr } = await supabase
+      .from('question_discussions')
+      .select('*')
+      .eq('id', discId)
+      .single();
+
+    if (fetchErr || !disc) {
+      return jsonResponse({ success: false, error: 'Discussion not found' }, 404);
+    }
+
+    let likedBy: string[] = Array.isArray(disc.liked_by) ? [...disc.liked_by] : [];
+    let dislikedBy: string[] = Array.isArray(disc.disliked_by) ? [...disc.disliked_by] : [];
+    const normalizedEmail = user_email.toLowerCase();
+
+    let userLiked = false;
+    let userDisliked = false;
+
+    if (action === 'like') {
+      if (likedBy.includes(normalizedEmail)) {
+        // Toggle off like
+        likedBy = likedBy.filter(e => e !== normalizedEmail);
+        userLiked = false;
+      } else {
+        likedBy.push(normalizedEmail);
+        dislikedBy = dislikedBy.filter(e => e !== normalizedEmail);
+        userLiked = true;
+      }
+    } else if (action === 'dislike' || action === 'unlike') {
+      if (dislikedBy.includes(normalizedEmail)) {
+        // Toggle off dislike
+        dislikedBy = dislikedBy.filter(e => e !== normalizedEmail);
+        userDisliked = false;
+      } else {
+        dislikedBy.push(normalizedEmail);
+        likedBy = likedBy.filter(e => e !== normalizedEmail);
+        userDisliked = true;
+      }
+    }
+
+    const newLikesCount = likedBy.length;
+    const newDislikesCount = dislikedBy.length;
+
+    // Check 15+ likes reward: if likes > 15 and not yet awarded, award 15 XP to the author
+    let xpRewarded = false;
+    let xpAwardedFlag = disc.xp_awarded;
+
+    if (newLikesCount > 15 && !disc.xp_awarded) {
+      const authorEmail = disc.user_email?.trim();
+      if (authorEmail) {
+        let query = supabase.from('users').select('id, xp').ilike('email', authorEmail);
+        let { data: author } = await query.maybeSingle();
+
+        if (!author && disc.user_id) {
+          const { data: authorById } = await supabase.from('users').select('id, xp').eq('id', disc.user_id).maybeSingle();
+          author = authorById;
+        }
+
+        if (author) {
+          const updatedXp = (Number(author.xp) || 0) + 15;
+          await supabase.from('users').update({ xp: updatedXp }).eq('id', author.id);
+          xpRewarded = true;
+          xpAwardedFlag = true;
+          console.log(`🎉 [Discussion Reward] Awarded 15 XP to ${authorEmail} for 15+ likes! Total XP: ${updatedXp}`);
+        } else {
+          // Still flag as awarded to prevent infinite retry loops
+          xpAwardedFlag = true;
+        }
+      }
+    }
+
+    const { data: updatedDisc, error: updateErr } = await supabase
+      .from('question_discussions')
+      .update({
+        likes_count: newLikesCount,
+        dislikes_count: newDislikesCount,
+        liked_by: likedBy,
+        disliked_by: dislikedBy,
+        xp_awarded: xpAwardedFlag,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', discId)
+      .select()
+      .single();
+
+    if (updateErr) {
+      return jsonResponse({ success: false, error: updateErr.message }, 500);
+    }
+
+    return jsonResponse({
+      success: true,
+      discussion: updatedDisc,
+      likes_count: newLikesCount,
+      dislikes_count: newDislikesCount,
+      user_liked: userLiked,
+      user_disliked: userDisliked,
+      xp_rewarded: xpRewarded,
+      author_email: disc.user_email
+    });
+  }
+
+  if (pathname.startsWith('/api/discussions/') && method === 'DELETE') {
+    const discId = pathname.replace('/api/discussions/', '');
+    const userEmail = searchParams.get('email') || body?.user_email || '';
+
+    const { data: disc } = await supabase.from('question_discussions').select('*').eq('id', discId).single();
+    if (!disc) {
+      return jsonResponse({ success: false, error: 'Discussion not found' }, 404);
+    }
+
+    const isAdmin = userEmail.toLowerCase() === 'anujschavan007@gmail.com';
+    const isAuthor = disc.user_email.toLowerCase() === userEmail.toLowerCase();
+
+    if (!isAdmin && !isAuthor) {
+      return jsonResponse({ success: false, error: 'Unauthorized to delete this discussion' }, 403);
+    }
+
+    const { error: delErr } = await supabase.from('question_discussions').delete().eq('id', discId);
+    if (delErr) {
+      return jsonResponse({ success: false, error: delErr.message }, 500);
+    }
+
+    return jsonResponse({ success: true, deleted_id: discId });
+  }
+
   // Fallback 404 for unhandled API routes
   return jsonResponse({ success: false, error: `Route ${pathname} not found in Supabase API bridge` }, 404);
 }
@@ -1699,6 +2198,11 @@ if (typeof window !== 'undefined') {
         const parsed = new URL(path);
         path = parsed.pathname;
       } catch {}
+    }
+
+    // Always route email dispatch and leetcode proxy to server endpoint (Vercel Edge or Bun server)
+    if (path === '/api/email/send' || path === '/api/leetcode') {
+      return nativeFetch(input, init);
     }
 
     const isLocal =

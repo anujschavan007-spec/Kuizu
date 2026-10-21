@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quiz Adventure • KUIZU</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
@@ -190,6 +195,18 @@
                 </div>
                 <span class="menu-item-chevron">›</span>
               </button>
+
+              <!-- 3. 3D Avatar Studio -->
+              <a href="/addavatar" class="popup-menu-item" id="btn-menu-avatar" style="text-decoration: none;">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>3D Avatar Studio</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
 
               <button type="button" class="popup-menu-item" id="btn-menu-settings">
                 <div class="menu-item-left">
@@ -601,6 +618,33 @@
 
         </div>
 
+        <!-- AI Explanation & Tutor Toggle Banner (Revealed when question option is clicked) -->
+        <div class="arena-ai-banner" id="arena-ai-banner" style="display: none;">
+          <div class="ai-banner-left">
+            <div class="ai-sparkle-avatar">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+              </svg>
+            </div>
+            <div class="ai-banner-body">
+              <div class="ai-banner-status-row">
+                <span class="ai-status-pill" id="ai-status-pill">Correct Answer!</span>
+                <span class="ai-brand-pill">Kuizu AI Tutor</span>
+              </div>
+              <p class="ai-banner-explanation" id="ai-banner-explanation">
+                Explanation text appears here.
+              </p>
+            </div>
+          </div>
+          <button type="button" class="btn-ask-ai-tutor" id="btn-ask-ai-tutor">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Ask AI Tutor</span>
+            <span class="ai-pulse-indicator"></span>
+          </button>
+        </div>
+
         <!-- Navigation Buttons: Previous & Next -->
         <div class="arena-bottom-nav">
           <button type="button" class="arena-nav-btn btn-prev" id="btn-quiz-prev" disabled>
@@ -690,6 +734,69 @@
             <span>Inspect 3D Pink Solver Badge</span>
           </button>
         </div>
+
+      </div>
+    </div>
+
+    <!-- Modal 4: Interactive AI Chat Popup for Quiz Question -->
+    <div class="quiz-ai-chat-backdrop" id="modal-ai-chat" aria-hidden="true">
+      <div class="quiz-ai-chat-card" role="dialog" aria-modal="true">
+        
+        <!-- Chat Header -->
+        <div class="ai-chat-header">
+          <div class="ai-chat-header-info">
+            <div class="ai-avatar-robot">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                <circle cx="12" cy="5" r="2"></circle>
+                <path d="M12 7v4"></path>
+                <line x1="8" y1="16" x2="8.01" y2="16"></line>
+                <line x1="16" y1="16" x2="16.01" y2="16"></line>
+              </svg>
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h3 class="ai-chat-title">Kuizu AI Tutor</h3>
+                <span class="ai-live-badge">Online</span>
+              </div>
+              <p class="ai-chat-subtitle">Personalized help for this specific quiz question</p>
+            </div>
+          </div>
+          <button type="button" class="ai-chat-close-btn" id="btn-close-ai-chat" aria-label="Close AI Chat">✕</button>
+        </div>
+
+        <!-- Question Context Banner inside Chat -->
+        <div class="ai-chat-context-card">
+          <div class="ai-context-q-label">Question Context</div>
+          <div class="ai-context-q-text" id="ai-context-question-text">Question text</div>
+          <div class="ai-context-options-summary" id="ai-context-options-summary">
+            <!-- Render options with correct and user selected states -->
+          </div>
+        </div>
+
+        <!-- Scrollable Messages Area -->
+        <div class="ai-chat-messages-container" id="ai-chat-messages">
+          <!-- Populated dynamically with conversational messages -->
+        </div>
+
+        <!-- Quick Prompt Suggestion Chips -->
+        <div class="ai-chat-chips-scroll" id="ai-chat-chips">
+          <button type="button" class="ai-prompt-chip" data-prompt="Why is this the correct answer?">💡 Why is this correct?</button>
+          <button type="button" class="ai-prompt-chip" data-prompt="Can you give me a simple code example?">💻 Code Example</button>
+          <button type="button" class="ai-prompt-chip" data-prompt="What are the common traps or mistakes here?">⚠️ Common Traps</button>
+          <button type="button" class="ai-prompt-chip" data-prompt="Explain this concept in plain English like I'm a beginner.">👶 Explain Simply</button>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form class="ai-chat-input-bar" id="ai-chat-form">
+          <input type="text" id="ai-chat-input" placeholder="Ask a question about this quiz topic..." autocomplete="off" />
+          <button type="submit" id="btn-send-ai-chat" aria-label="Send message">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </form>
 
       </div>
     </div>

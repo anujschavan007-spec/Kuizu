@@ -23,7 +23,7 @@ function showToast(message: string, duration = 3000) {
   }, duration);
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+async function initUploadQuiz() {
   const searchInput = document.getElementById('admin-level-search') as HTMLInputElement | null;
   const filterToggle = document.getElementById('admin-level-filter-toggle');
   const filterMenu = document.getElementById('admin-level-filter-menu');
@@ -39,11 +39,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       const res = await fetch('/api/quizzes');
       if (res.ok) {
         const data = await res.json();
-        if (data.success && Array.isArray(data.quizzes)) {
-          quizzesList = data.quizzes;
-          renderLevels();
-          return;
-        }
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data.quizzes)
+          ? data.quizzes
+          : Array.isArray(data.data)
+          ? data.data
+          : [];
+        quizzesList = list;
+        renderLevels();
+        return;
       }
     } catch (err) {
       console.warn('Could not load quizzes from /api/quizzes:', err);
@@ -270,4 +275,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     });
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initUploadQuiz);
+} else {
+  initUploadQuiz();
+}

@@ -1,3 +1,5 @@
+import './services/supabaseApiBridge';
+import { supabase } from './services/supabaseApiBridge';
 import './adminProfileModal';
 
 export interface ContestViolation {
@@ -126,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const btnRefresh = document.getElementById('btn-refresh-logs');
   const btnClear = document.getElementById('btn-clear-logs');
-  const btnSimulate = document.getElementById('btn-simulate-violation');
   const streamStatusText = document.getElementById('stream-status-text');
 
   // Modal elements
@@ -142,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let pendingActionViolation: ContestViolation | null = null;
   let pendingActionType: 'warn' | 'disqualify' | 'dismiss' = 'warn';
 
-  // Fetch real violations
+  // Fetch real violations from Supabase Cloud DB and local storage
   async function loadViolations(showLoader = false) {
     if (showLoader && logsTbody && violationsList.length === 0) {
       logsTbody.innerHTML = `
@@ -155,6 +156,59 @@ document.addEventListener('DOMContentLoaded', () => {
           </td>
         </tr>
       `;
+    }
+
+    try {
+      if (supabase) {
+        const { data: dbLogs, error } = await supabase
+          .from('contest_violations')
+          .select('*')
+          .order('timestamp', { ascending: false })
+          .limit(200);
+
+        if (!error && Array.isArray(dbLogs)) {
+          const map = new Map<string, ContestViolation>();
+          for (const item of dbLogs) {
+            map.set(item.id, {
+              id: item.id,
+              contestId: item.contest_id || item.contestId || 'active-contest',
+              contestTitle: item.contest_title || item.contestTitle || 'Live Assessment',
+              username: item.username || 'Candidate',
+              userEmail: item.user_email || item.userEmail || '',
+              userAvatar: item.user_avatar || item.userAvatar || '',
+              violationType: item.violation_type || item.violationType || 'TAB_SWITCH',
+              details: item.details || '',
+              severity: item.severity || 'warning',
+              timestamp: item.timestamp || new Date().toISOString(),
+              status: item.status || 'flagged'
+            });
+          }
+
+          // Merge local logs if not yet synced
+          try {
+            const raw = localStorage.getItem('kuizu_contest_violations');
+            if (raw) {
+              const localList: ContestViolation[] = JSON.parse(raw);
+              for (const loc of localList) {
+                if (!map.has(loc.id)) {
+                  map.set(loc.id, loc);
+                }
+              }
+            }
+          } catch {}
+
+          violationsList = Array.from(map.values()).sort(
+            (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+          );
+
+          updateContestDropdownOptions();
+          renderViolations();
+          updateKpis();
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('[CheatingLogs] Supabase query fallback:', err);
     }
 
     try {
@@ -407,6 +461,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const reason = actionReasonInput?.value.trim() || '';
 
       try {
+        if (supabase) {
+          await supabase.from('contest_violations').update({ status: newStatus }).eq('id', pendingActionViolation.id);
+        }
+      } catch {}
+
+      try {
         await fetch('/api/contests/violations/action', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -467,6 +527,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       try {
+        if (supabase) {
+          await supabase.from('contest_violations').delete().neq('id', '__empty__');
+        }
+      } catch {}
+      try {
         await fetch('/api/contests/violations/clear', { method: 'POST' });
       } catch {}
       violationsList = [];
@@ -477,55 +542,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Top action: Simulate violation for quick verification
-  if (btnSimulate) {
-    btnSimulate.addEventListener('click', async () => {
-      const mockCandidates = [
-        { name: 'Alex Rivera', email: 'alex.rivera@kuizu.io' },
-        { name: 'Samantha Chen', email: 'samantha.chen@kuizu.io' },
-        { name: 'Marcus Brody', email: 'm.brody@kuizu.io' },
-        { name: 'Priya Sharma', email: 'priya.sharma@kuizu.io' },
-        { name: 'Devon Vance', email: 'devon.vance@kuizu.io' }
-      ];
-      const mockViolations = [
-        { type: 'TAB_SWITCH', details: 'Navigated away from contest tab (Window blur detected)', severity: 'warning' },
-        { type: 'DEVTOOLS_INSPECT', details: 'Developer Tools Console opened via F12 shortcut', severity: 'critical' },
-        { type: 'CLIPBOARD_PASTE', details: 'Attempted to paste 82 lines of external code into editor', severity: 'high' },
-        { type: 'CONTEXT_MENU', details: 'Repeated right-click inspect attempt on hidden test cases', severity: 'warning' },
-        { type: 'TAB_SWITCH', details: 'Tab switch #4 detected. Exam proctoring alert raised', severity: 'critical' }
-      ];
-
-      const cand = mockCandidates[Math.floor(Math.random() * mockCandidates.length)];
-      const viol = mockViolations[Math.floor(Math.random() * mockViolations.length)];
-
-      const simulatedRecord: ContestViolation = {
-        id: `viol_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-        contestId: 'weekly-default',
-        contestTitle: 'Weekly Coding Contest #11',
-        username: cand.name,
-        userEmail: cand.email,
-        violationType: viol.type,
-        details: viol.details,
-        severity: viol.severity as any,
-        timestamp: new Date().toISOString(),
-        status: 'flagged'
-      };
-
-      try {
-        await fetch('/api/contests/violations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(simulatedRecord)
-        });
-      } catch {}
-
-      violationsList.unshift(simulatedRecord);
-      updateContestDropdownOptions();
-      renderViolations();
-      updateKpis();
-      showToast(`Simulated violation recorded for ${cand.name}`);
-    });
-  }
 
   // Real-time synchronization
   // 1. Cross-tab storage listener: fires instantly if candidate creates violation in arena tab
@@ -549,6 +565,18 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(() => {
     loadViolations(false);
   }, 2500);
+
+  // 4. Supabase cloud Realtime stream listener
+  try {
+    if (supabase) {
+      supabase
+        .channel('realtime_contest_violations')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'contest_violations' }, () => {
+          loadViolations(false);
+        })
+        .subscribe();
+    }
+  } catch {}
 
   // Initial load
   loadViolations(true);

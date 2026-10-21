@@ -19,7 +19,9 @@ async function handleCallback() {
       statusEl.textContent = 'Welcome back! Opening your KUIZU dashboard...';
     }
 
-    window.location.href = '/home';
+    setTimeout(() => {
+      window.location.href = '/home';
+    }, 450);
   } catch (err: any) {
     console.error('SSO callback error:', err);
 

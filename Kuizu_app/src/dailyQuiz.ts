@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti';
 import { soundManager } from './services/soundManager';
 import { showFirstDailyKuizuBadgeModal } from './services/firstDailyKuizuBadgeModal';
 import { unlockBadge, isBadgeUnlocked } from './services/badgeManager';
+import { initExamProctoring } from './services/proctoringService';
 
 interface QuizQuestion {
   id: number | string;
@@ -373,4 +374,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Load Quiz on startup
   await loadQuiz();
+
+  // Active anti-cheating proctoring during daily assessment
+  initExamProctoring({
+    getContestInfo: () => ({
+      contestId: dailyQuiz ? `daily-quiz-${dailyQuiz.assignedDate}` : 'daily-quiz',
+      contestTitle: dailyQuiz ? `Daily Kuizu (${dailyQuiz.assignedDate})` : 'Daily Kuizu',
+      isRunning: Boolean(dailyQuiz && secondsRemaining > 0 && resultsModal?.style.display !== 'flex')
+    }),
+    onWarning: (msg) => showToast(msg),
+    allowCopyPaste: false
+  });
 });

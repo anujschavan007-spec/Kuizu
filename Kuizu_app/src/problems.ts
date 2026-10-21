@@ -1,5 +1,6 @@
 import { fetchProblems } from './services/problemService';
 import type { Problem, Difficulty } from './types';
+import './services/userHeaderProfile';
 import './services/adminAuthGuard';
 import { showFirstProblemSolverBadgeModal } from './services/firstProblemBadgeModal';
 import { showQuickThinkerBadgeModal } from './services/quickThinkerBadgeModal';
@@ -376,45 +377,7 @@ function setupControls(): void {
     });
   });
 
-  // User Profile Dropdown Popup
-  if (userAvatarBtn && userDropdown) {
-    userAvatarBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isShown = userDropdown.classList.toggle('show');
-      userAvatarBtn.setAttribute('aria-expanded', String(isShown));
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!userDropdown.contains(e.target as Node) && !userAvatarBtn.contains(e.target as Node)) {
-        userDropdown.classList.remove('show');
-        userAvatarBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-
-  // Profile popup item listeners
-  const popupUserHeader = document.querySelector('.popup-user-header');
-  popupUserHeader?.addEventListener('click', () => {
-    window.location.href = '/profile';
-  });
-
-  const leaderboardBtn = document.getElementById('btn-menu-leaderboard');
-  const themeBtn = document.getElementById('btn-menu-theme');
-  const settingsBtn = document.getElementById('btn-menu-settings');
-
-  leaderboardBtn?.addEventListener('click', () => {
-    showToast('Leaderboard ranking: #42 in Global League');
-    userDropdown?.classList.remove('show');
-  });
-
-  themeBtn?.addEventListener('click', () => {
-    showToast('Theme switcher coming soon');
-    userDropdown?.classList.remove('show');
-  });
-
-  settingsBtn?.addEventListener('click', () => {
-    window.location.href = '/settings';
-  });
+  // User Profile Dropdown Popup is handled automatically by userHeaderProfile service
 
   // Sidebar item listeners
   const sideQuests = document.getElementById('side-tab-quests');

@@ -33,27 +33,43 @@ export interface BadgeEmailPayload {
 }
 
 /**
- * Dispatch an email through the /api/email/send endpoint
+ * Dispatch an email through the Supabase Edge Function or local /api/email/send endpoint
  */
 export async function sendEmail(options: EmailOptions): Promise<{ success: boolean; error?: string; simulated?: boolean }> {
+  // Primary: /api/email/send (has full Resend domain fallback & developer copy forwarding)
   try {
     const res = await fetch('/api/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(options),
+      keepalive: true
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data?.success) {
+      return { success: true, simulated: Boolean(data?.simulated) };
+    }
+  } catch (err: any) {
+    console.warn('[resendEmailService] /api/email/send fallback:', err);
+  }
+
+  // Fallback: Supabase Edge function
+  try {
+    const edgeRes = await fetch('https://pjahxopllhifjmnonfdp.supabase.co/functions/v1/send-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(options)
     });
 
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      console.warn('Resend email dispatch warning:', data);
-      return { success: false, error: data?.error || 'Email dispatch failed' };
+    if (edgeRes.ok) {
+      const edgeData = await edgeRes.json().catch(() => ({}));
+      return { success: true, simulated: Boolean(edgeData?.simulated) };
     }
-
-    return { success: true, simulated: Boolean(data?.simulated) };
-  } catch (err: any) {
-    console.warn('Error calling /api/email/send:', err);
-    return { success: false, error: err?.message || String(err) };
+  } catch (edgeErr) {
+    console.warn('[resendEmailService] Supabase edge function error:', edgeErr);
   }
+
+  return { success: false, error: 'Email dispatch failed' };
 }
 
 /**

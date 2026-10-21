@@ -17,7 +17,6 @@
 /sign-up
 /sso-callback
 /user
-*.ts
 *.lock
 *.log
 .DS_Store

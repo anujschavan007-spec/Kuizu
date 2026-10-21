@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Avatar Studio • KUIZU</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta name="description" content="Choose your Pixar-style 3D avatar or upload an interactive .GLB 3D character for your KUIZU coding profile." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+
+    <!-- Synchronous Global Theme & Accent Preloader -->
+    <script id="kuizu-theme-preloader">
+      (function() {
+        try {
+          var fast = localStorage.getItem('kuizu_accent_color');
+          var raw = localStorage.getItem('kuizu_user_settings_v1');
+          var parsed = raw ? JSON.parse(raw) : null;
+          var color = fast || (parsed && parsed.accentColor) || '#2563EB';
+          var theme = (parsed && parsed.theme) || 'light';
+          var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var root = document.documentElement;
+          if (isDark) {
+            root.classList.add('dark-mode');
+            if (document.body) document.body.classList.add('dark-mode');
+          } else {
+            root.classList.remove('dark-mode');
+            if (document.body) document.body.classList.remove('dark-mode');
+          }
+          function hexRgb(h, a) {
+            var c = h.replace('#', '').trim();
+            if (c.length === 3) c = c.split('').map(function(x){return x+x;}).join('');
+            var n = parseInt(c, 16);
+            if (isNaN(n) || c.length !== 6) return 'rgba(37, 99, 235, ' + a + ')';
+            return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+          }
+          function adjB(h, p) {
+            var c = h.replace('#', '').trim();
+            if (c.length === 3) c = c.split('').map(function(x){return x+x;}).join('');
+            var n = parseInt(c, 16);
+            if (isNaN(n) || c.length !== 6) return h;
+            var r = Math.min(255, Math.max(0, Math.round(((n >> 16) & 255) * (1 + p / 100))));
+            var g = Math.min(255, Math.max(0, Math.round(((n >> 8) & 255) * (1 + p / 100))));
+            var b = Math.min(255, Math.max(0, Math.round((n & 255) * (1 + p / 100))));
+            return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+          }
+          var darker = adjB(color, -16);
+          var lightBg = isDark ? hexRgb(color, 0.22) : hexRgb(color, 0.08);
+          root.style.setProperty('--primary-accent', color);
+          root.style.setProperty('--color-primary', color);
+          root.style.setProperty('--primary-accent-hover', darker);
+          root.style.setProperty('--color-primary-hover', darker);
+          root.style.setProperty('--primary-accent-light', lightBg);
+          root.style.setProperty('--color-primary-light', lightBg);
+          root.style.setProperty('--primary-accent-subtle', hexRgb(color, 0.14));
+          root.style.setProperty('--primary-accent-glow', hexRgb(color, 0.38));
+          root.style.setProperty('--primary-accent-border', hexRgb(color, 0.4));
+          root.style.setProperty('--color-primary-border', hexRgb(color, 0.4));
+        } catch (_) {}
+      })();
+    </script>
+
+    <style>
+      .avatar-page-wrapper {
+        min-height: calc(100vh - 72px);
+        background: #f8fafc;
+        padding: 32px 20px 80px 20px;
+        transition: background-color 0.3s ease;
+      }
+      .dark-mode .avatar-page-wrapper {
+        background: #090e17;
+      }
+      .avatar-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Hero Title */
+      .avatar-header-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .avatar-page-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 32px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+        letter-spacing: -0.5px;
+      }
+      .dark-mode .avatar-page-title {
+        color: #f8fafc;
+      }
+      .avatar-page-subtitle {
+        font-size: 15px;
+        color: #64748b;
+        margin: 0;
+      }
+      .dark-mode .avatar-page-subtitle {
+        color: #94a3b8;
+      }
+
+      /* Active Avatar Banner */
+      .active-avatar-banner {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 20px;
+        padding: 22px 26px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+        margin-bottom: 36px;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .dark-mode .active-avatar-banner {
+        background: rgba(15, 23, 42, 0.8);
+        border-color: rgba(51, 65, 85, 0.6);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      .active-banner-left {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .active-preview-circle {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid var(--primary-accent, #2563eb);
+        box-shadow: 0 4px 16px var(--primary-accent-glow, rgba(37, 99, 235, 0.3));
+        background: #1e293b;
+        flex-shrink: 0;
+      }
+      .active-preview-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .active-banner-meta h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 4px 0;
+      }
+      .dark-mode .active-banner-meta h2 {
+        color: #f8fafc;
+      }
+      .active-banner-tag {
+        font-size: 13.5px;
+        color: #64748b;
+        margin: 0;
+      }
+      .dark-mode .active-banner-tag {
+        color: #94a3b8;
+      }
+      .hero-type-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 14px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .pill-2d {
+        background: rgba(37, 99, 235, 0.12);
+        color: var(--primary-accent, #2563eb);
+        border: 1px solid rgba(37, 99, 235, 0.25);
+      }
+      .pill-3d {
+        background: rgba(16, 185, 129, 0.12);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.25);
+      }
+      .btn-keep-google-avatar:hover {
+        background: #f1f5f9 !important;
+        border-color: #94a3b8 !important;
+        color: #0f172a !important;
+      }
+      .dark-mode .btn-keep-google-avatar {
+        background: #1e293b !important;
+        border-color: #475569 !important;
+        color: #e2e8f0 !important;
+      }
+      .dark-mode .btn-keep-google-avatar:hover {
+        background: #334155 !important;
+        border-color: #64748b !important;
+      }
+      .dark-mode .custom-photo-card {
+        background: #0f172a !important;
+        border-color: rgba(51, 65, 85, 0.6) !important;
+      }
+      .dark-mode .photo-card-title {
+        color: #f8fafc !important;
+      }
+      .dark-mode #input-custom-photo-url {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+        color: #f8fafc !important;
+      }
+      .dark-mode #btn-apply-photo-url {
+        background: #3b82f6 !important;
+      }
+
+      /* Section Layout */
+      .studio-section {
+        margin-bottom: 48px;
+      }
+      .studio-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .section-heading-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .section-heading-icon {
+        font-size: 22px;
+      }
+      .section-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+      }
+      .dark-mode .section-title {
+        color: #f8fafc;
+      }
+      .section-desc {
+        font-size: 14px;
+        color: #64748b;
+        margin: 4px 0 0 0;
+      }
+      .dark-mode .section-desc {
+        color: #94a3b8;
+      }
+
+      /* Filter Pills */
+      .filter-pills-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(226, 232, 240, 0.6);
+        padding: 4px;
+        border-radius: 12px;
+      }
+      .dark-mode .filter-pills-row {
+        background: rgba(30, 41, 59, 0.6);
+      }
+      .avatar-filter-btn {
+        background: transparent;
+        border: none;
+        padding: 7px 16px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .dark-mode .avatar-filter-btn {
+        color: #94a3b8;
+      }
+      .avatar-filter-btn.active {
+        background: #ffffff;
+        color: var(--primary-accent, #2563eb);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .dark-mode .avatar-filter-btn.active {
+        background: var(--primary-accent, #2563eb);
+        color: #ffffff;
+      }
+
+      /* Pixar Grid Cards */
+      .avatars-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 20px;
+      }
+      .avatar-card {
+        background: #ffffff;
+        border: 2px solid rgba(226, 232, 240, 0.8);
+        border-radius: 18px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+        position: relative;
+      }
+      .dark-mode .avatar-card {
+        background: #0f172a;
+        border-color: rgba(51, 65, 85, 0.5);
+      }
+      .avatar-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--primary-accent, #2563eb);
+        box-shadow: 0 12px 30px var(--primary-accent-glow, rgba(37, 99, 235, 0.18));
+      }
+      .avatar-card.active {
+        border-color: var(--primary-accent, #2563eb);
+        background: var(--primary-accent-light, rgba(37, 99, 235, 0.04));
+        box-shadow: 0 8px 24px var(--primary-accent-glow, rgba(37, 99, 235, 0.22));
+      }
+      .avatar-card-image-wrap {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        position: relative;
+        overflow: hidden;
+        background: #0b1120;
+      }
+      .avatar-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+      .avatar-card:hover .avatar-card-img {
+        transform: scale(1.05);
+      }
+      .avatar-active-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #10b981;
+        color: #ffffff;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4);
+      }
+      .avatar-active-badge.visible {
+        display: flex;
+      }
+      .avatar-active-badge svg {
+        width: 16px;
+        height: 16px;
+      }
+      .avatar-card-body {
+        padding: 14px 14px 16px 14px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+      .avatar-card-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 2px 0;
+      }
+      .dark-mode .avatar-card-name {
+        color: #f8fafc;
+      }
+      .avatar-card-role {
+        font-size: 12px;
+        color: #64748b;
+        display: block;
+        margin-bottom: 8px;
+      }
+      .dark-mode .avatar-card-role {
+        color: #94a3b8;
+      }
+      .avatar-card-badge {
+        font-size: 11px;
+        background: rgba(226, 232, 240, 0.6);
+        color: #475569;
+        padding: 3px 8px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-bottom: 12px;
+        align-self: flex-start;
+      }
+      .dark-mode .avatar-card-badge {
+        background: rgba(30, 41, 59, 0.8);
+        color: #cbd5e1;
+      }
+      .btn-select-avatar {
+        margin-top: auto;
+        width: 100%;
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-size: 12.5px;
+        font-weight: 700;
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        background: #f8fafc;
+        color: #334155;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .dark-mode .btn-select-avatar {
+        background: #1e293b;
+        color: #e2e8f0;
+        border-color: rgba(51, 65, 85, 0.8);
+      }
+      .btn-select-avatar:hover {
+        background: var(--primary-accent, #2563eb);
+        color: #ffffff;
+        border-color: var(--primary-accent, #2563eb);
+      }
+      .btn-select-avatar.btn-selected {
+        background: #10b981;
+        color: #ffffff;
+        border-color: #10b981;
+      }
+
+      /* 3D GLB Studio Section */
+      .glb-studio-card {
+        background: #ffffff;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+      }
+      .dark-mode .glb-studio-card {
+        background: #0f172a;
+        border-color: rgba(51, 65, 85, 0.6);
+      }
+      .glb-studio-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 480px;
+      }
+      @media (max-width: 900px) {
+        .glb-studio-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Left Viewport */
+      .glb-viewport-wrapper {
+        position: relative;
+        background: #060911;
+        min-height: 420px;
+        display: flex;
+        flex-direction: column;
+      }
+      #three-viewport-container {
+        flex-grow: 1;
+        width: 100%;
+        height: 100%;
+        min-height: 400px;
+        position: relative;
+      }
+      #glb-three-canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .viewport-overlay-controls {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        pointer-events: none;
+      }
+      .mode-toggle-group {
+        display: flex;
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(8px);
+        padding: 4px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        pointer-events: auto;
+      }
+      .btn-mode-toggle {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+      }
+      .btn-mode-toggle.active {
+        background: var(--primary-accent, #2563eb);
+        color: #ffffff;
+      }
+      .viewport-zoom-group {
+        display: flex;
+        align-items: center;
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(8px);
+        padding: 3px 6px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        gap: 4px;
+        pointer-events: auto;
+      }
+      .btn-viewport-zoom {
+        background: transparent;
+        border: none;
+        color: #f8fafc;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+      .btn-viewport-zoom:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #38bdf8;
+      }
+      .viewport-hint-pill {
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(8px);
+        color: #94a3b8;
+        font-size: 11.5px;
+        padding: 5px 12px;
+        border-radius: 9999px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .viewport-bottom-bar {
+        position: absolute;
+        bottom: 14px;
+        left: 16px;
+        right: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        pointer-events: none;
+      }
+      .model-status-text {
+        font-size: 12px;
+        color: #cbd5e1;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(6px);
+        padding: 4px 10px;
+        border-radius: 8px;
+      }
+
+      /* Right Controls & Upload Panel */
+      .glb-controls-panel {
+        padding: 32px 28px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .drop-zone {
+        border: 2px dashed rgba(203, 213, 225, 0.9);
+        border-radius: 18px;
+        padding: 32px 20px;
+        text-align: center;
+        transition: all 0.2s ease;
+        background: #f8fafc;
+        margin-bottom: 24px;
+      }
+      .dark-mode .drop-zone {
+        background: rgba(30, 41, 59, 0.4);
+        border-color: rgba(71, 85, 105, 0.6);
+      }
+      .drop-zone.drag-over {
+        border-color: var(--primary-accent, #2563eb);
+        background: var(--primary-accent-light, rgba(37, 99, 235, 0.08));
+      }
+      .drop-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+      }
+      .drop-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+      }
+      .dark-mode .drop-title {
+        color: #f8fafc;
+      }
+      .drop-desc {
+        font-size: 13px;
+        color: #64748b;
+        margin: 0 0 16px 0;
+      }
+      .dark-mode .drop-desc {
+        color: #94a3b8;
+      }
+      .btn-browse {
+        background: var(--primary-accent, #2563eb);
+        color: #ffffff;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 14px var(--primary-accent-glow, rgba(37, 99, 235, 0.3));
+        transition: all 0.2s ease;
+      }
+      .btn-browse:hover {
+        filter: brightness(1.1);
+      }
+
+      /* File info box */
+      .glb-file-info {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(226, 232, 240, 0.5);
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+      }
+      .dark-mode .glb-file-info {
+        background: rgba(30, 41, 59, 0.6);
+      }
+      .file-meta-group {
+        display: flex;
+        flex-direction: column;
+      }
+      .file-meta-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0f172a;
+      }
+      .dark-mode .file-meta-name {
+        color: #f8fafc;
+      }
+      .file-meta-size {
+        font-size: 11.5px;
+        color: #64748b;
+      }
+      .dark-mode .file-meta-size {
+        color: #94a3b8;
+      }
+      .btn-reset-file {
+        background: transparent;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+        border-radius: 8px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      /* Sample models section */
+      .sample-models-wrap {
+        margin-bottom: 24px;
+      }
+      .sample-models-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        margin: 0 0 10px 0;
+      }
+      .dark-mode .sample-models-title {
+        color: #94a3b8;
+      }
+      .sample-models-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .btn-sample-model {
+        background: rgba(241, 245, 249, 0.9);
+        border: 1px solid rgba(203, 213, 225, 0.8);
+        border-radius: 10px;
+        padding: 7px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #334155;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+      }
+      .dark-mode .btn-sample-model {
+        background: rgba(30, 41, 59, 0.7);
+        border-color: rgba(51, 65, 85, 0.8);
+        color: #e2e8f0;
+      }
+      .btn-sample-model:hover {
+        border-color: var(--primary-accent, #2563eb);
+        color: var(--primary-accent, #2563eb);
+      }
+
+      /* Action Button */
+      .btn-save-glb-action {
+        width: 100%;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: #ffffff;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
+        transition: all 0.2s ease;
+      }
+      .btn-save-glb-action:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.45);
+      }
+      .btn-save-glb-action:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      /* Toast Notification */
+      #avatar-toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(40px);
+        background: #0f172a;
+        color: #f8fafc;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 12px 24px;
+        border-radius: 9999px;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 999;
+      }
+      #avatar-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* Responsive styles for mobile & tablet */
+      @media (max-width: 768px) {
+        .avatar-header-banner {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 16px;
+        }
+        .active-avatar-banner {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 16px;
+          padding: 16px;
+        }
+        .active-banner-left {
+          width: 100%;
+        }
+        .active-banner-right {
+          width: 100%;
+        }
+        .avatar-grid {
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+          gap: 12px !important;
+        }
+        .three-viewport-wrap {
+          height: 320px !important;
+        }
+        .studio-3d-layout {
+          grid-template-columns: 1fr !important;
+        }
+        .popup-mobile-nav {
+          display: flex !important;
+          flex-direction: column;
+          gap: 4px;
+        }
+      }
+      @media (min-width: 769px) {
+        .popup-mobile-nav {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="home-page-body">
+    <!-- Top Navigation Header -->
+    <header class="home-header">
+      <div class="container home-nav-container">
+        
+        <!-- Brand Logo -->
+        <a href="/home" class="brand-logo" aria-label="KUIZU Home">
+          <svg class="brand-icon" viewBox="0 0 40 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 4C5 4 2 8 2 15C2 22 6 26 11 26C15 26 18 22 20 18C22 22 25 26 29 26C34 26 38 22 38 15C38 8 35 4 30 4H10Z" fill="#5850EC"/>
+            <path d="M8 15H14M11 12V18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="26" cy="15" r="1.5" fill="white"/>
+            <circle cx="32" cy="15" r="1.5" fill="white"/>
+            <circle cx="29" cy="12" r="1.5" fill="white"/>
+            <circle cx="29" cy="18" r="1.5" fill="white"/>
+          </svg>
+          <span class="brand-text">KUIZU</span>
+        </a>
+
+        <!-- Middle Navigation Tabs -->
+        <nav class="home-nav-tabs">
+          <a href="/home" class="nav-tab nav-tab-inactive" id="tab-home">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10.5L12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 20v-9.5z"/>
+              <polyline points="9 21 9 12 15 12 15 21"/>
+            </svg>
+            <span>Home</span>
+          </a>
+
+          <a href="/problems" class="nav-tab nav-tab-inactive" id="tab-problems">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Problems</span>
+          </a>
+
+          <a href="/quiz" class="nav-tab nav-tab-inactive" id="tab-quiz">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="m9 14 2 2 4-4"></path>
+            </svg>
+            <span>Quiz</span>
+          </a>
+
+          <a href="/battle" class="nav-tab nav-tab-inactive" id="tab-battle">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="14.5" y1="9.5" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="9.5" y2="14.5"></line>
+              <line x1="16" y1="3" x2="21" y2="8"></line>
+              <line x1="3" y1="16" x2="8" y2="21"></line>
+              <line x1="9.5" y1="9.5" x2="3" y2="3"></line>
+              <line x1="21" y1="21" x2="14.5" y2="14.5"></line>
+            </svg>
+            <span>Battle</span>
+          </a>
+        </nav>
+
+        <!-- Right User Profile Pill & Popup Dropdown -->
+        <div class="user-profile-menu-wrap">
+          <button type="button" class="user-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false">
+            <img src="/images/home_avatar.png" alt="User Profile Avatar" class="user-nav-avatar" />
+            <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <!-- Exact Profile Pop-up Card matching user screenshot -->
+          <div class="user-dropdown-menu profile-popup-card" id="user-dropdown">
+            
+            <!-- User Info Row: Avatar + Name + XP Badge -->
+            <div class="popup-user-header">
+              <div class="popup-avatar-wrap">
+                <img src="/images/home_avatar.png" alt="User Profile" class="popup-avatar-img" />
+              </div>
+              <div class="popup-user-details">
+                <h3 class="popup-user-name" id="menu-user-name">Kuizu Learner</h3>
+                <div class="popup-xp-badge">
+                  <svg class="popup-star-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  <span id="menu-user-xp">0 XP</span>
+                </div>
+              </div>
+            </div>
+
+            <hr class="popup-divider" />
+
+            <!-- Mobile Quick Nav Links (Visible only on screens <= 768px where desktop tabs are hidden) -->
+            <div class="popup-mobile-nav" style="display: none;">
+              <a href="/home" class="popup-menu-item">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5L12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 20v-9.5z"/></svg>
+                  <span>Home</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+              <a href="/problems" class="popup-menu-item">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                  <span>Problems</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+              <a href="/quiz" class="popup-menu-item">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="m9 14 2 2 4-4"></path></svg>
+                  <span>Quiz</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+              <a href="/battle" class="popup-menu-item">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="14.5" y1="9.5" x2="21" y2="3"></line><line x1="3" y1="21" x2="9.5" y2="14.5"></line><line x1="16" y1="3" x2="21" y2="8"></line><line x1="3" y1="16" x2="8" y2="21"></line></svg>
+                  <span>Battle</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+              <hr class="popup-divider" style="margin: 8px 0;" />
+            </div>
+
+            <!-- Menu Items List -->
+            <div class="popup-menu-list">
+              
+              <!-- 1. Leaderboard -->
+              <button type="button" class="popup-menu-item" id="btn-menu-leaderboard">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                  </svg>
+                  <span>Leaderboard</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <!-- 2. Theme -->
+              <button type="button" class="popup-menu-item" id="btn-menu-theme">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+                  </svg>
+                  <span>Theme</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <!-- 3. 3D Avatar Studio (Active page) -->
+              <a href="/addavatar" class="popup-menu-item" id="btn-menu-avatar" style="text-decoration: none; background: rgba(37, 99, 235, 0.08); font-weight: 700;">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>3D Avatar Studio</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+
+              <!-- 4. Settings -->
+              <button type="button" class="popup-menu-item" id="btn-menu-settings">
+                <div class="menu-item-left">
+                  <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <span>Settings</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </button>
+
+              <!-- 5. Admin Panel (Strictly shown only if user email is anujschavan007@gmail.com) -->
+              <a href="/admin" class="popup-menu-item popup-menu-admin" id="btn-menu-admin" style="display: none;">
+                <div class="menu-item-left">
+                  <svg class="menu-icon admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <rect x="9" y="11" width="6" height="5" rx="1"></rect>
+                    <path d="M10 11V9a2 2 0 1 1 4 0v2"></path>
+                  </svg>
+                  <span>Admin Panel</span>
+                </div>
+                <span class="menu-item-chevron">›</span>
+              </a>
+
+            </div>
+
+            <hr class="popup-divider" />
+
+            <!-- Logout Button -->
+            <a href="/sign-in" class="popup-logout-btn" id="btn-logout">
+              <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Logout</span>
+            </a>
+
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Avatar Studio Page -->
+    <main class="avatar-page-wrapper">
+      <div class="avatar-container">
+        
+        <!-- Header Banner -->
+        <div class="avatar-header-banner">
+          <div>
+            <h1 class="avatar-page-title">Avatar Studio</h1>
+            <p class="avatar-page-subtitle">Choose your Pixar-style 3D avatar or upload an interactive .GLB character for your profile.</p>
+          </div>
+          <a href="/profile" class="btn-browse" style="text-decoration: none; padding: 10px 18px;">
+            <span>👤</span>
+            <span>View Profile</span>
+          </a>
+        </div>
+
+        <!-- Active Avatar Live Preview Banner -->
+        <section class="active-avatar-banner" aria-label="Currently Active Avatar">
+          <div class="active-banner-left">
+            <div class="active-preview-circle">
+              <img src="/images/home_avatar.png" alt="Current Avatar" id="active-avatar-preview-img" />
+            </div>
+            <div class="active-banner-meta">
+              <h2 id="active-avatar-name">Kuizu Learner</h2>
+              <p class="active-banner-tag" id="active-avatar-tag">Pixar 3D Profile Avatar</p>
+            </div>
+          </div>
+          <div class="active-banner-right" style="display:flex; align-items:center; gap:12px;">
+            <button type="button" class="btn-keep-google-avatar" id="btn-keep-google-avatar" style="display:none; align-items:center; gap:6px; padding:7px 14px; border-radius:10px; font-size:13px; font-weight:600; border:1px solid #cbd5e1; background:white; cursor:pointer; color:#475569; transition:all 0.2s ease;">
+              <span>🔄</span>
+              <span>Keep Google Profile</span>
+            </button>
+            <span class="hero-type-pill pill-2d" id="active-avatar-type-pill">2D Avatar Active</span>
+          </div>
+        </section>
+
+        <!-- SECTION 1: Pixar-Style 3D Avatars (5 Male & 5 Female) -->
+        <section class="studio-section" id="section-pixar-avatars">
+          <div class="studio-section-header">
+            <div>
+              <div class="section-heading-group">
+                <span class="section-heading-icon">🎨</span>
+                <h2 class="section-title">Pixar-Style 3D Avatars</h2>
+              </div>
+              <p class="section-desc">Click any character to instantly set as your profile avatar across all pages, leaderboards, and arena battles.</p>
+            </div>
+
+            <!-- Filter Pills -->
+            <div class="filter-pills-row">
+              <button type="button" class="avatar-filter-btn active" data-filter="all">All (10)</button>
+              <button type="button" class="avatar-filter-btn" data-filter="male">Male (5)</button>
+              <button type="button" class="avatar-filter-btn" data-filter="female">Female (5)</button>
+            </div>
+          </div>
+
+          <!-- Cards Grid -->
+          <div class="avatars-grid" id="avatars-grid">
+            <!-- Dynamically populated by addAvatar.ts -->
+          </div>
+        </section>
+
+        <!-- SECTION 2: Custom Photo Upload or Image URL -->
+        <section class="studio-section" id="section-custom-photo">
+          <div class="studio-section-header">
+            <div>
+              <div class="section-heading-group">
+                <span class="section-heading-icon">📸</span>
+                <h2 class="section-title">Upload Custom Photo or Image URL</h2>
+              </div>
+              <p class="section-desc">Upload your own photo or enter an image URL to save permanently as your avatar in Supabase.</p>
+            </div>
+          </div>
+
+          <div class="custom-photo-card" style="background:#ffffff; border:1px solid rgba(226,232,240,0.8); border-radius:18px; padding:24px; box-shadow:0 4px 16px rgba(0,0,0,0.03);">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; align-items:center;">
+              <!-- Upload File Option -->
+              <div style="border:2px dashed var(--primary-accent, #2563eb); border-radius:14px; padding:22px; text-align:center; background:rgba(37,99,235,0.03); display:flex; flex-direction:column; align-items:center; gap:10px;">
+                <input type="file" id="custom-image-file-input" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none;" />
+                <span style="font-size:32px;">🖼️</span>
+                <div style="font-weight:700; font-size:15px; color:#1e293b;" class="photo-card-title">Upload Photo File</div>
+                <div style="font-size:13px; color:#64748b;">PNG, JPG, or WebP up to 10MB</div>
+                <button type="button" id="btn-browse-photo" style="margin-top:4px; padding:9px 18px; border-radius:10px; border:none; background:var(--primary-accent, #2563eb); color:white; font-weight:700; font-size:13px; cursor:pointer;">
+                  Browse Photo
+                </button>
+              </div>
+
+              <!-- Paste URL Option -->
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <label for="input-custom-photo-url" style="font-weight:700; font-size:14px; color:#1e293b;" class="photo-card-title">Or Enter Custom Image URL</label>
+                <div style="display:flex; gap:8px;">
+                  <input type="url" id="input-custom-photo-url" placeholder="https://example.com/avatar.jpg" style="flex:1; padding:10px 14px; border:1px solid #cbd5e1; border-radius:10px; font-size:14px; outline:none;" />
+                  <button type="button" id="btn-apply-photo-url" style="padding:10px 18px; border-radius:10px; border:none; background:#0f172a; color:white; font-weight:700; font-size:13.5px; cursor:pointer; white-space:nowrap;">
+                    Apply URL
+                  </button>
+                </div>
+                <div style="font-size:12.5px; color:#64748b;">Stores directly into Supabase and updates across your profile and headers.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3: Custom .GLB 3D Character (Playable & Still) -->
+        <section class="studio-section" id="section-glb-upload">
+          <div class="studio-section-header">
+            <div>
+              <div class="section-heading-group">
+                <span class="section-heading-icon">🎮</span>
+                <h2 class="section-title">Upload .GLB 3D Avatar</h2>
+              </div>
+              <p class="section-desc">Import your own 3D model (.glb / .gltf) with Playable animations or Still pose, previewed live in 360°.</p>
+            </div>
+          </div>
+
+          <!-- 3D Studio Card -->
+          <div class="glb-studio-card">
+            <div class="glb-studio-grid">
+              
+              <!-- 3D Interactive Viewport -->
+              <div class="glb-viewport-wrapper">
+                <div class="viewport-overlay-controls">
+                  <!-- Mode Switcher -->
+                  <div class="mode-toggle-group">
+                    <button type="button" class="btn-mode-toggle active" id="btn-mode-playable">
+                      <span>🎮</span>
+                      <span>Playable</span>
+                    </button>
+                    <button type="button" class="btn-mode-toggle" id="btn-mode-still">
+                      <span>🧍</span>
+                      <span>Still</span>
+                    </button>
+                  </div>
+
+                  <!-- Zoom & View Controls -->
+                  <div class="viewport-zoom-group">
+                    <button type="button" class="btn-viewport-zoom" id="btn-zoom-in" title="Zoom In (+)">
+                      <span>+</span>
+                    </button>
+                    <button type="button" class="btn-viewport-zoom" id="btn-zoom-out" title="Zoom Out (-)">
+                      <span>−</span>
+                    </button>
+                    <button type="button" class="btn-viewport-zoom" id="btn-zoom-reset" title="Reset View">
+                      <span>⟲</span>
+                    </button>
+                  </div>
+
+                  <span class="viewport-hint-pill">🖱️ Drag to rotate • Scroll / buttons to zoom</span>
+                </div>
+
+                <div id="three-viewport-container">
+                  <canvas id="glb-three-canvas"></canvas>
+                </div>
+
+                <div class="viewport-bottom-bar">
+                  <span class="model-status-text" id="glb-model-status">Upload or pick a 3D model to inspect</span>
+                </div>
+              </div>
+
+              <!-- Upload & Configuration Controls -->
+              <div class="glb-controls-panel">
+                <div>
+                  <!-- Hidden File Input -->
+                  <input type="file" id="glb-file-input" accept=".glb,.gltf" style="display: none;" />
+
+                  <!-- Drop Zone -->
+                  <div class="drop-zone" id="glb-drop-zone">
+                    <div class="drop-icon">📦</div>
+                    <h3 class="drop-title">Drop your .GLB or .GLTF file here</h3>
+                    <p class="drop-desc">Supports rigged, animated, or static character models (up to 50MB).</p>
+                    <button type="button" class="btn-browse" id="btn-select-glb">
+                      <span>📂</span>
+                      <span>Browse 3D File</span>
+                    </button>
+                  </div>
+
+                  <!-- Loaded File Meta -->
+                  <div class="glb-file-info" id="glb-file-info">
+                    <div class="file-meta-group">
+                      <span class="file-meta-name" id="glb-filename-label">model.glb</span>
+                      <span class="file-meta-size" id="glb-filesize-label">2.4 MB</span>
+                    </div>
+                    <button type="button" class="btn-reset-file" id="btn-reset-glb">Reset</button>
+                  </div>
+
+                  <!-- Sample Models Quick Test -->
+                  <div class="sample-models-wrap">
+                    <div class="sample-models-title">Or Try A Pre-Built 3D Character Model:</div>
+                    <div class="sample-models-row">
+                      <button type="button" class="btn-sample-model" data-url="/badges/kuizu_first_problem_solver_badge_fixed.glb" data-name="Golden Shield Knight">
+                        <span>🛡️</span>
+                        <span>Shield Knight</span>
+                      </button>
+                      <button type="button" class="btn-sample-model" data-url="/badges/kuizu_first_battle_participant_red_badge_big_swords.glb" data-name="Dual Swords Blade">
+                        <span>⚔️</span>
+                        <span>Dual Swords</span>
+                      </button>
+                      <button type="button" class="btn-sample-model" data-url="/badges/kuizu_first_looser_devil_fixed.glb" data-name="Cyber Horns Hunter">
+                        <span>😈</span>
+                        <span>Horns Hunter</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Button -->
+                <button type="button" class="btn-save-glb-action" id="btn-save-glb-avatar" disabled>
+                  <span>✨</span>
+                  <span>Set as 3D Profile Character</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Global Toast Notification -->
+    <div id="avatar-toast">✨ Profile avatar updated!</div>
+
+    <script type="module" src="/src/addAvatar.ts"></script>
+  </body>
+</html>

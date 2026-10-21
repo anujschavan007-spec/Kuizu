@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import confetti from 'canvas-confetti';
+import { triggerBadgeAwardEmail, unlockBadge } from './badgeManager';
 
 let activeAnimationId: number | null = null;
 let activeRenderer: THREE.WebGLRenderer | null = null;
@@ -9,6 +10,12 @@ let previousMousePosition = { x: 0, y: 0 };
 let manualRotationVelocity = { x: 0, y: 0 };
 
 export function showFirstQuizLevelBadgeModal(onCloseCallback?: () => void): void {
+  // Ensure badge is unlocked and first-time email is sent to user
+  try {
+    unlockBadge('first-quiz-level-solver');
+    triggerBadgeAwardEmail('first-quiz-level-solver');
+  } catch (_) {}
+
   // Prevent duplicate modals
   if (document.getElementById('quiz-badge-3d-modal-overlay')) {
     return;

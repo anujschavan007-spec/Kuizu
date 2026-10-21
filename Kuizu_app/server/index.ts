@@ -12,6 +12,7 @@ import {
 } from "./xpManager";
 
 import { syncSupabaseToLocalDb } from "./syncFromSupabase";
+import nodemailer from "nodemailer";
 
 const PORT = 3001;
 
@@ -145,7 +146,7 @@ const server = Bun.serve({
       // Sync/Register user on Clerk login
       if (pathname === "/api/users/sync" && method === "POST") {
         const body = await req.json();
-        const { id, name, email, avatar, role = "Student" } = body;
+        const { id, name, email, avatar, googleAvatar, isCustomAvatar, role = "Student" } = body;
 
         if (!email) {
           return jsonResponse({ success: false, error: "Email is required" }, 400);
@@ -154,23 +155,42 @@ const server = Bun.serve({
         const existing = db.query("SELECT * FROM users WHERE email = ?").get(email) as any;
         const nowStr = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
+        function isAddedAvatarUrl(url: string | null | undefined): boolean {
+          if (!url) return false;
+          const t = url.trim();
+          if (!t || t === "/images/home_avatar.png" || t === "/images/admin_avatar.png") return false;
+          if (t.startsWith("/avatars/") || t.startsWith("data:image/") || t.startsWith("blob:")) return true;
+          const isOauth = t.includes("img.clerk.com") || t.includes("images.clerk.dev") || t.includes("googleusercontent.com") || t.includes("avatars.githubusercontent.com");
+          return !isOauth;
+        }
+
         if (existing) {
+          let avatarToSave: string;
+          if (isCustomAvatar && avatar) {
+            avatarToSave = avatar;
+          } else if (isAddedAvatarUrl(existing.avatar)) {
+            avatarToSave = existing.avatar;
+          } else {
+            avatarToSave = googleAvatar || avatar || existing.avatar || "/images/home_avatar.png";
+          }
+
           db.prepare(`
             UPDATE users 
             SET name = COALESCE(?, name),
-                avatar = COALESCE(?, avatar),
+                avatar = ?,
                 last_active = ?
-            WHERE email = ?
-          `).run(name || existing.name, avatar || existing.avatar, "Today", email);
+            WHERE LOWER(email) = LOWER(?)
+          `).run(name || existing.name, avatarToSave, "Today", email);
 
-          const updated = db.query("SELECT * FROM users WHERE email = ?").get(email);
+          const updated = db.query("SELECT * FROM users WHERE LOWER(email) = LOWER(?)").get(email);
           return jsonResponse({ success: true, user: updated, isNew: false });
         } else {
           const userId = id || `usr_${Date.now()}`;
+          const avatarToSave = avatar || googleAvatar || "/images/home_avatar.png";
           db.prepare(`
             INSERT INTO users (id, name, email, avatar, role, status, xp, problems_solved, streak, joined_date, last_active)
             VALUES (?, ?, ?, ?, ?, 'active', 0, 0, 1, ?, 'Today')
-          `).run(userId, name || "Kuizu Learner", email, avatar || "", role, nowStr);
+          `).run(userId, name || "Kuizu Learner", email, avatarToSave, role, nowStr);
 
           syncAllUsersXpAndRanks();
           const created = db.query("SELECT * FROM users WHERE id = ?").get(userId);
@@ -2170,23 +2190,62 @@ const server = Bun.serve({
       }
 
       // ----------------------------------------------------
-      // RESEND EMAIL DISPATCH
+      // EMAIL DISPATCH (GMAIL SMTP + RESEND FALLBACK)
       // ----------------------------------------------------
       if (pathname === "/api/email/send" && method === "POST") {
         const body = await req.json();
-        const { to, subject, html, text, from = "KUIZU <onboarding@resend.dev>", attachments } = body;
+        const gmailUser = process.env.GMAIL_USER || "xyz577616@gmail.com";
+        const gmailPass = (process.env.GMAIL_PASS || "ezxsvfmmuazjecvz").replace(/\s+/g, "");
+        const { to, subject, html, text, from = `"KUIZU" <${gmailUser}>`, attachments } = body;
         const resendApiKey = process.env.RESEND_API_KEY || process.env.VITE_RESEND_API_KEY || "";
 
         if (!to || !subject) {
           return jsonResponse({ success: false, error: 'Recipient "to" and "subject" are required' }, 400);
         }
 
+        // Primary: Gmail SMTP
+        if (gmailUser && gmailPass) {
+          try {
+            const transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                user: gmailUser,
+                pass: gmailPass
+              }
+            });
+
+            const mailOptions: any = {
+              from: from.includes("<") ? from : `"KUIZU" <${gmailUser}>`,
+              to: Array.isArray(to) ? to.join(", ") : to,
+              subject,
+              html,
+              text: text || (html ? html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() : "")
+            };
+
+            if (attachments && Array.isArray(attachments) && attachments.length > 0) {
+              mailOptions.attachments = attachments;
+            }
+
+            const info = await transporter.sendMail(mailOptions);
+            console.log("✅ [Email Bun Server] Sent via Gmail SMTP:", info.messageId, "to:", to);
+            return jsonResponse({
+              success: true,
+              service: "gmail",
+              messageId: info.messageId,
+              response: info.response,
+              to
+            });
+          } catch (gmailErr: any) {
+            console.warn("⚠️ [Email Bun Server] Gmail failed, trying Resend fallback:", gmailErr.message);
+          }
+        }
+
         if (!resendApiKey) {
-          console.log(`ℹ️ [Resend Bun Backend] Email queued for: ${to} - "${subject}" (Provide RESEND_API_KEY to send live)`);
+          console.log(`ℹ️ [Email Bun Backend] Email simulated for: ${to} - "${subject}"`);
           return jsonResponse({
             success: true,
             simulated: true,
-            message: "Email queued (simulated because RESEND_API_KEY is not yet set in .env)",
+            message: "Email simulated (no live credentials succeeded)",
             to,
             subject
           });
@@ -2194,7 +2253,7 @@ const server = Bun.serve({
 
         try {
           const payload: any = {
-            from,
+            from: "KUIZU <onboarding@resend.dev>",
             to: Array.isArray(to) ? to : [to],
             subject,
             html,
@@ -2219,8 +2278,8 @@ const server = Bun.serve({
             return jsonResponse({ success: false, error: resendData }, resendRes.status);
           }
 
-          console.log("✅ [Resend Backend] Email sent successfully with attachments:", resendData);
-          return jsonResponse({ success: true, data: resendData });
+          console.log("✅ [Resend Backend] Email sent successfully:", resendData);
+          return jsonResponse({ success: true, service: "resend", data: resendData });
         } catch (sendErr: any) {
           console.warn("⚠️ [Resend Backend] Network error:", sendErr);
           return jsonResponse({ success: false, error: sendErr.message }, 500);

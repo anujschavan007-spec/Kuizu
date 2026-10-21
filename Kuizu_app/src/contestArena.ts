@@ -4,6 +4,10 @@ import { highlightCode } from './services/codeHighlighter';
 import { getCompilerSettings, saveCompilerTheme, applyCompilerTheme } from './services/compilerThemeManager';
 import { unlockBadge, isBadgeUnlocked } from './services/badgeManager';
 import { showFirstProblemSolverBadgeModal } from './services/firstProblemBadgeModal';
+import { logRealViolation } from './services/proctoringService';
+import { initDiscussionBoard, type DiscussionBoard } from './components/discussionBoard';
+
+let arenaDiscussionBoard: DiscussionBoard | null = null;
 
 declare const confetti: any;
 
@@ -83,6 +87,90 @@ function showAntiGamingWarning(message: string, duration = 3200) {
   }, duration);
 }
 
+// ===========================================================
+// LEETCODE-STYLE CONTEST DURATION & COUNTDOWN TIMER CONTROLLER
+// ===========================================================
+let contestTimerInterval: any = null;
+let contestTotalDurationMinutes = 60; // Default 60 mins like LeetCode
+let contestDurationSecondsRemaining = 60 * 60;
+
+function formatCountdownTime(totalSec: number): string {
+  const hours = Math.floor(totalSec / 3600);
+  const mins = Math.floor((totalSec % 3600) / 60);
+  const secs = totalSec % 60;
+  if (hours > 0) {
+    return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function startContestCountdown(contestId: string, durationMinutes = 60) {
+  contestTotalDurationMinutes = durationMinutes;
+  const timerLabel = document.getElementById('arena-timer-label');
+  const timerPill = document.getElementById('arena-contest-timer-pill');
+  if (contestTimerInterval) clearInterval(contestTimerInterval);
+
+  // Check if user already started this contest; persist start time in localStorage
+  const startKey = `kuizu_contest_${contestId}_started_timestamp`;
+  let startedAt = Number(localStorage.getItem(startKey) || 0);
+  const now = Date.now();
+
+  if (!startedAt) {
+    startedAt = now;
+    localStorage.setItem(startKey, String(startedAt));
+  }
+
+  const durationMs = durationMinutes * 60 * 1000;
+  const elapsedMs = now - startedAt;
+  const remainingMs = Math.max(0, durationMs - elapsedMs);
+  contestDurationSecondsRemaining = Math.floor(remainingMs / 1000);
+
+  const updateTimerDisplay = () => {
+    if (!timerLabel) return;
+    timerLabel.textContent = formatCountdownTime(contestDurationSecondsRemaining);
+
+    // Warning styling when less than 5 minutes remain
+    if (timerPill) {
+      if (contestDurationSecondsRemaining <= 300) {
+        timerPill.style.color = '#dc2626';
+        timerPill.style.borderColor = '#fca5a5';
+        timerPill.style.backgroundColor = '#fef2f2';
+      } else {
+        timerPill.style.color = '#2563eb';
+        timerPill.style.borderColor = '#e2e8f0';
+        timerPill.style.backgroundColor = '#ffffff';
+      }
+    }
+  };
+
+  updateTimerDisplay();
+
+  // If already expired
+  if (contestDurationSecondsRemaining <= 0) {
+    if (timerLabel) timerLabel.textContent = '00:00:00 (Time Expired)';
+    updateAntiGamingStatus(false);
+    showToast('Contest duration has ended! Submitting your answers...', 4000);
+    setTimeout(() => {
+      openContestSummaryModal(true);
+    }, 1000);
+    return;
+  }
+
+  contestTimerInterval = setInterval(() => {
+    contestDurationSecondsRemaining--;
+    updateTimerDisplay();
+
+    if (contestDurationSecondsRemaining <= 0) {
+      clearInterval(contestTimerInterval);
+      contestTimerInterval = null;
+      if (timerLabel) timerLabel.textContent = '00:00:00';
+      showToast('Time is up! Contest is ending and your answers are submitted.', 5000);
+      updateAntiGamingStatus(false);
+      openContestSummaryModal(true);
+    }
+  }, 1000);
+}
+
 // Clean normal toast notification
 function showToast(message: string, duration = 3500) {
   let toast = document.getElementById('arena-toast');
@@ -118,54 +206,18 @@ export function recordContestViolation(
 ) {
   if (!isContestRunning) return;
 
-  const now = Date.now();
-  const lastTime = lastRecordedViolationTimes[violationType] || 0;
-  if (now - lastTime < 1200) return;
-  lastRecordedViolationTimes[violationType] = now;
-
   const contestId = getContestId();
   const contestTitle = 
     document.title?.replace(' - KUIZU', '')?.replace('KUIZU', '').trim() ||
     (contestId === 'weekly-default' ? 'Weekly Coding Contest #11' : `Contest ${contestId}`);
 
-  const username = localStorage.getItem('kuizu_user_name') || 'Guest Candidate';
-  const userEmail = localStorage.getItem('kuizu_user_email') || 'candidate@kuizu.io';
-  const userAvatar = localStorage.getItem('kuizu_user_avatar') || '';
-
-  const violationRecord = {
-    id: `viol_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+  logRealViolation({
     contestId,
     contestTitle,
-    username,
-    userEmail,
-    userAvatar,
     violationType,
     details,
-    severity,
-    timestamp: new Date().toISOString(),
-    status: 'flagged' as const
-  };
-
-  // 1. Instantly store to localStorage so live Admin Cheating Logs page receives it in real time
-  try {
-    let list: any[] = [];
-    const raw = localStorage.getItem('kuizu_contest_violations');
-    if (raw) list = JSON.parse(raw);
-    list.unshift(violationRecord);
-    if (list.length > 500) list = list.slice(0, 500);
-    localStorage.setItem('kuizu_contest_violations', JSON.stringify(list));
-    localStorage.setItem('kuizu_last_violation_signal', JSON.stringify({ id: violationRecord.id, t: Date.now() }));
-    window.dispatchEvent(new CustomEvent('kuizu_violation_recorded', { detail: violationRecord }));
-  } catch {}
-
-  // 2. Transmit to backend API
-  try {
-    fetch('/api/contests/violations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(violationRecord)
-    }).catch(() => {});
-  } catch {}
+    severity
+  });
 }
 
 // Initialize active anti-gaming lock for contest session
@@ -735,6 +787,12 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+// Window blur proctoring (split-screen, external window or secondary monitor focus switch)
+window.addEventListener('blur', () => {
+  if (!isContestRunning) return;
+  recordContestViolation('TAB_SWITCH', `Candidate navigated away / window focus lost (Window blur detected).`, tabSwitchViolations >= 2 ? 'critical' : 'warning');
+});
+
 // Disable text selection on Problem Description during contest
 const problemSpecCard = document.querySelector('.arena-problem-spec-card');
 if (problemSpecCard) {
@@ -828,6 +886,19 @@ function renderQuestion(index: number) {
 
   // Questions Sidebar
   renderQuestionsSidebar();
+
+  // Mount/Update Discussion Board
+  const discMount = document.getElementById('arena-discussion-board-mount');
+  if (discMount) {
+    if (!arenaDiscussionBoard) {
+      arenaDiscussionBoard = initDiscussionBoard({
+        problemId: q.id,
+        containerEl: discMount
+      });
+    } else {
+      arenaDiscussionBoard.setProblemId(q.id);
+    }
+  }
 }
 
 // Smooth question switching
@@ -1614,6 +1685,12 @@ async function loadContestData() {
           } else {
             updateAntiGamingStatus(true);
           }
+
+          // Start LeetCode-style live countdown timer for this contest duration
+          const durationMins = Number(contest.duration) || 60;
+          startContestCountdown(contest.id || contestId, durationMins);
+        } else {
+          startContestCountdown(contestId, 60);
         }
 
         if (contest && Array.isArray(contest.problems) && contest.problems.length > 0) {

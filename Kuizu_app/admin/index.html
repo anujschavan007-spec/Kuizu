@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard - KUIZU</title>
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -254,10 +258,10 @@
             </div>
             <div class="kpi-text-block">
               <span class="kpi-label">Total Students</span>
-              <div class="kpi-value" id="kpi-val-students">1,248</div>
+              <div class="kpi-value" id="kpi-val-students">10</div>
               <div class="kpi-trend">
-                <span class="kpi-trend-positive">↗ +12%</span>
-                <span class="kpi-trend-sub">vs. last week</span>
+                <span class="kpi-trend-positive" id="kpi-trend-students">Live</span>
+                <span class="kpi-trend-sub">registered users</span>
               </div>
             </div>
           </div>
@@ -272,10 +276,10 @@
             </div>
             <div class="kpi-text-block">
               <span class="kpi-label">Active Today</span>
-              <div class="kpi-value" id="kpi-val-active">836</div>
+              <div class="kpi-value" id="kpi-val-active">10</div>
               <div class="kpi-trend">
-                <span class="kpi-trend-positive">↗ +8%</span>
-                <span class="kpi-trend-sub">vs. yesterday</span>
+                <span class="kpi-trend-positive" id="kpi-trend-active">Live</span>
+                <span class="kpi-trend-sub">active now</span>
               </div>
             </div>
           </div>
@@ -293,10 +297,10 @@
             </div>
             <div class="kpi-text-block">
               <span class="kpi-label">Quizzes Completed</span>
-              <div class="kpi-value" id="kpi-val-quizzes">3,492</div>
+              <div class="kpi-value" id="kpi-val-quizzes">15</div>
               <div class="kpi-trend">
-                <span class="kpi-trend-positive">↗ +14%</span>
-                <span class="kpi-trend-sub">vs. last week</span>
+                <span class="kpi-trend-positive" id="kpi-trend-quizzes">Live</span>
+                <span class="kpi-trend-sub">quiz completions</span>
               </div>
             </div>
           </div>
@@ -311,10 +315,10 @@
             </div>
             <div class="kpi-text-block">
               <span class="kpi-label">Problems Solved</span>
-              <div class="kpi-value" id="kpi-val-problems">8,760</div>
+              <div class="kpi-value" id="kpi-val-problems">3</div>
               <div class="kpi-trend">
-                <span class="kpi-trend-positive">↗ +18%</span>
-                <span class="kpi-trend-sub">vs. last week</span>
+                <span class="kpi-trend-positive" id="kpi-trend-problems">Live</span>
+                <span class="kpi-trend-sub">submissions passed</span>
               </div>
             </div>
           </div>
@@ -343,240 +347,40 @@
                   <th>Student</th>
                   <th style="text-align: right;">XP</th>
                 </tr>
-              </thead>
-              <tbody id="ranking-tbody-xp">
-                <tr>
-                  <td class="ranking-num">1</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Anuj Chavan</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">12,450</div>
-                    <div class="val-sub">XP</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="ranking-num">2</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Pravin Ghodake</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">1,450</div>
-                    <div class="val-sub">XP</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="ranking-num">3</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Pranav</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">620</div>
-                    <div class="val-sub">XP</div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Column 2: Top Student by LeetCode -->
-          <div class="admin-ranking-card">
-            <div class="ranking-card-header">
-              <div class="ranking-header-title">
-                <svg class="ranking-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2">
-                  <polyline points="16 18 22 12 16 6"></polyline>
-                  <polyline points="8 6 2 12 8 18"></polyline>
-                </svg>
-                <h3>Top Student by LeetCode</h3>
+                       <tbody id="ranking-tbody-xp">
+                    <!-- Loaded dynamically from real database -->
+                  </tbody>
+                </table>
               </div>
-              <button type="button" class="ranking-view-all" data-target="leetcode">View all</button>
-            </div>
 
-            <table class="ranking-table">
-              <thead>
-                <tr>
-                  <th style="width: 24px;">#</th>
-                  <th>Student</th>
-                  <th style="text-align: right;">Solved</th>
-                </tr>
-              </thead>
-              <tbody id="ranking-tbody-leetcode">
-                <tr>
-                  <td class="ranking-num">1</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Anuj Chavan</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">342</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="ranking-num">2</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Pravin Ghodake</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">45</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="ranking-num">3</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Pranav</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">28</div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              <!-- Column 2: Top Student by LeetCode -->
+              <div class="admin-ranking-card">
+                <div class="ranking-card-header">
+                  <div class="ranking-header-title">
+                    <svg class="ranking-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    <h3>Top Student by LeetCode</h3>
+                  </div>
+                  <button type="button" class="ranking-view-all" data-target="leetcode">View all</button>
+                </div>
 
-          <!-- Column 3: Top Student by CW (Classwork) -->
-          <div class="admin-ranking-card">
-            <div class="ranking-card-header">
-              <div class="ranking-header-title">
-                <svg class="ranking-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                </svg>
-                <h3>Top Student by CW</h3>
+                <table class="ranking-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 24px;">#</th>
+                      <th>Student</th>
+                      <th style="text-align: right;">Solved</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ranking-tbody-leetcode">
+                    <!-- Loaded dynamically from real database -->
+                  </tbody>
+                </table>
               </div>
-              <button type="button" class="ranking-view-all" data-target="cw">View all</button>
-            </div>
 
-            <table class="ranking-table">
-              <thead>
-                <tr>
-                  <th style="width: 24px;">#</th>
-                  <th>Student</th>
-                  <th style="text-align: right;">Completed</th>
-                </tr>
-              </thead>
-              <tbody id="ranking-tbody-cw">
-                <tr>
-                  <td class="ranking-num">1</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Anuj Chavan</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">18</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="ranking-num">2</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Pravin Ghodake</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">12</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="ranking-num">3</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Pranav</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">8</div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Column 4: Top Student by HW (Homework) -->
-          <div class="admin-ranking-card">
-            <div class="ranking-card-header">
-              <div class="ranking-header-title">
-                <svg class="ranking-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2">
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-                <h3>Top Student by HW</h3>
-              </div>
-              <button type="button" class="ranking-view-all" data-target="hw">View all</button>
-            </div>
-
-            <table class="ranking-table">
-              <thead>
-                <tr>
-                  <th style="width: 24px;">#</th>
-                  <th>Student</th>
-                  <th style="text-align: right;">Completed</th>
-                </tr>
-              </thead>
-              <tbody id="ranking-tbody-hw">
-                <tr>
-                  <td class="ranking-num">1</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Anuj Chavan</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">16</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="ranking-num">2</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Pravin Ghodake</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">10</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="ranking-num">3</td>
-                  <td class="ranking-student">
-                    <div class="student-avatar-wrap">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <span class="student-name">Pranav</span>
-                  </td>
-                  <td class="ranking-val">
-                    <div class="val-bold">7</div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-        </section>
+            </section>
 
         <!-- Bottom Grid: Recent Activity & Student Engagement -->
         <section class="admin-bottom-grid">
@@ -601,88 +405,8 @@
             </div>
 
             <!-- Activity Rows List -->
-            <div class="activity-rows-list">
-              
-              <!-- Row 1: User Registration -->
-              <div class="activity-row" data-activity="Pravin Ghodake registered as a new student">
-                <div class="activity-time-cell">
-                  <span class="time-bullet">•</span>
-                  <span>Apr 27, 10:42 AM</span>
-                </div>
-                <div class="activity-type-cell">
-                  <span class="activity-pill pill-user">🔵 User</span>
-                </div>
-                <div class="activity-details-cell">
-                  <div class="activity-main-text">New student registered</div>
-                  <div class="activity-sub-text">Pravin Ghodake</div>
-                </div>
-                <div class="activity-arrow-cell">›</div>
-              </div>
-
-              <!-- Row 2: Quiz Completion -->
-              <div class="activity-row" data-activity="Anuj Chavan completed Quiz with 100%">
-                <div class="activity-time-cell">
-                  <span class="time-bullet">•</span>
-                  <span>Apr 27, 09:16 AM</span>
-                </div>
-                <div class="activity-type-cell">
-                  <span class="activity-pill pill-quiz">🟣 Quiz</span>
-                </div>
-                <div class="activity-details-cell">
-                  <div class="activity-main-text">Quiz completed</div>
-                  <div class="activity-sub-text">Anuj Chavan • 100%</div>
-                </div>
-                <div class="activity-arrow-cell">›</div>
-              </div>
-
-              <!-- Row 3: Problem Uploaded -->
-              <div class="activity-row" data-activity="Problem uploaded by Admin">
-                <div class="activity-time-cell">
-                  <span class="time-bullet">•</span>
-                  <span>Apr 27, 08:53 AM</span>
-                </div>
-                <div class="activity-type-cell">
-                  <span class="activity-pill pill-problem">🟢 Problem</span>
-                </div>
-                <div class="activity-details-cell">
-                  <div class="activity-main-text">Problem uploaded</div>
-                  <div class="activity-sub-text">Admin</div>
-                </div>
-                <div class="activity-arrow-cell">›</div>
-              </div>
-
-              <!-- Row 4: Battle Created -->
-              <div class="activity-row" data-activity="Team Alpha created a new Battle room">
-                <div class="activity-time-cell">
-                  <span class="time-bullet">•</span>
-                  <span>Apr 26, 07:21 PM</span>
-                </div>
-                <div class="activity-type-cell">
-                  <span class="activity-pill pill-battle">🔵 Battle</span>
-                </div>
-                <div class="activity-details-cell">
-                  <div class="activity-main-text">Battle created</div>
-                  <div class="activity-sub-text">Team Alpha</div>
-                </div>
-                <div class="activity-arrow-cell">›</div>
-              </div>
-
-              <!-- Row 5: Contest Started -->
-              <div class="activity-row" data-activity="Weekly Coding Challenge contest started">
-                <div class="activity-time-cell">
-                  <span class="time-bullet">•</span>
-                  <span>Apr 26, 04:12 PM</span>
-                </div>
-                <div class="activity-type-cell">
-                  <span class="activity-pill pill-contest">🟠 Contest</span>
-                </div>
-                <div class="activity-details-cell">
-                  <div class="activity-main-text">Contest started</div>
-                  <div class="activity-sub-text">Weekly Coding Challenge</div>
-                </div>
-                <div class="activity-arrow-cell">›</div>
-              </div>
-
+            <div class="activity-rows-list" id="admin-activity-rows-list">
+              <!-- Loaded dynamically from real database -->
             </div>
           </div>
 
@@ -727,11 +451,11 @@
                 <line x1="40" y1="165" x2="580" y2="165" stroke="#f1f5f9" stroke-width="1.2" />
                 <line x1="40" y1="210" x2="580" y2="210" stroke="#f1f5f9" stroke-width="1.2" />
 
-                <!-- Y-Axis Labels -->
-                <text x="32" y="34" class="chart-axis-label" text-anchor="end">1,000</text>
-                <text x="32" y="79" class="chart-axis-label" text-anchor="end">750</text>
-                <text x="32" y="124" class="chart-axis-label" text-anchor="end">500</text>
-                <text x="32" y="169" class="chart-axis-label" text-anchor="end">250</text>
+                <!-- Y-Axis Labels (Scaled to Real User Count) -->
+                <text x="32" y="34" class="chart-axis-label" text-anchor="end">12</text>
+                <text x="32" y="79" class="chart-axis-label" text-anchor="end">9</text>
+                <text x="32" y="124" class="chart-axis-label" text-anchor="end">6</text>
+                <text x="32" y="169" class="chart-axis-label" text-anchor="end">3</text>
                 <text x="32" y="214" class="chart-axis-label" text-anchor="end">0</text>
 
                 <!-- Connected Trend Polyline -->

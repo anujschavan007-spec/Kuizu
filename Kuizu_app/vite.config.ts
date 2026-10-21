@@ -115,6 +115,13 @@ function multiPageRewritePlugin(): Plugin {
         ) {
           req.url = `/badge/index.html${q}`;
         } else if (
+          pathname === '/addavatar' ||
+          pathname === '/addavatar/' ||
+          pathname === '/avatar/add' ||
+          pathname === '/avatar/add/'
+        ) {
+          req.url = `/addavatar/index.html${q}`;
+        } else if (
           pathname === '/avatar' ||
           pathname === '/avatar/' ||
           pathname === '/avatars' ||
@@ -332,7 +339,8 @@ export default defineConfig({
         settings: resolve(import.meta.dirname, 'settings/index.html'),
         profile: resolve(import.meta.dirname, 'profile/index.html'),
         badge: resolve(import.meta.dirname, 'badge/index.html'),
-        avatar: resolve(import.meta.dirname, 'avatar/index.html')
+        avatar: resolve(import.meta.dirname, 'avatar/index.html'),
+        addavatar: resolve(import.meta.dirname, 'addavatar/index.html')
       }
     }
   }

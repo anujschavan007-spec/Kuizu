@@ -3,10 +3,29 @@ import { AUTHORIZED_ADMIN_EMAIL } from './services/adminAuthGuard';
 
 // Reusable Admin Profile Modal Handler
 export function setupAdminProfileModal() {
+  const adminEmail = localStorage.getItem('kuizu_user_email') || AUTHORIZED_ADMIN_EMAIL;
+  const adminName = localStorage.getItem('kuizu_user_name') || 'Admin';
+  const adminAvatar = localStorage.getItem('kuizu_user_avatar') || '/images/admin_avatar.png';
+
+  // Function to sync admin avatar everywhere on admin pages
+  function syncAdminAvatarUI(avatarUrl: string, name?: string) {
+    document.querySelectorAll<HTMLImageElement>(
+      '.admin-avatar-circle img, .admin-profile-modal-avatar, #sidebar-admin-avatar-img, #admin-account-avatar-preview'
+    ).forEach(img => {
+      img.src = avatarUrl;
+    });
+    if (name) {
+      document.querySelectorAll<HTMLElement>(
+        '.admin-user-name, #admin-profile-modal-title'
+      ).forEach(el => {
+        el.textContent = name;
+      });
+    }
+  }
+
   // Ensure modal markup exists in document
   let modalBackdrop = document.getElementById('admin-profile-modal-backdrop');
   if (!modalBackdrop) {
-    const adminEmail = localStorage.getItem('kuizu_user_email') || AUTHORIZED_ADMIN_EMAIL;
     const modalHtml = `
       <div class="admin-profile-modal-backdrop" id="admin-profile-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="admin-profile-modal-title">
         <div class="admin-profile-modal-card" id="admin-profile-modal-card">
@@ -21,10 +40,10 @@ export function setupAdminProfileModal() {
           <!-- Top Header Row -->
           <div class="admin-profile-modal-header">
             <div class="admin-profile-modal-avatar-wrap">
-              <img src="/images/admin_avatar.png" alt="Admin Avatar" class="admin-profile-modal-avatar" />
+              <img src="${adminAvatar}" alt="Admin Avatar" class="admin-profile-modal-avatar" />
             </div>
             <div class="admin-profile-modal-identity">
-              <h2 class="admin-profile-modal-name" id="admin-profile-modal-title">Admin</h2>
+              <h2 class="admin-profile-modal-name" id="admin-profile-modal-title">${adminName}</h2>
               <div class="admin-profile-role-badge">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm-1 14.5l-3.5-3.5 1.41-1.41L11 13.67l5.59-5.59L18 9.5l-7 7z"/>
@@ -150,6 +169,24 @@ export function setupAdminProfileModal() {
     setTimeout(() => {
       window.location.href = '/sign-in';
     }, 600);
+  });
+
+  // Immediately apply synced avatar and name to DOM
+  syncAdminAvatarUI(adminAvatar, adminName);
+
+  // Real-time synchronization listeners
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'kuizu_user_avatar' || e.key === 'kuizu_user_name') {
+      const curAvatar = localStorage.getItem('kuizu_user_avatar') || '/images/admin_avatar.png';
+      const curName = localStorage.getItem('kuizu_user_name') || 'Admin';
+      syncAdminAvatarUI(curAvatar, curName);
+    }
+  });
+
+  window.addEventListener('kuizu:avatar_changed', (e: any) => {
+    const curAvatar = e.detail?.avatarUrl || localStorage.getItem('kuizu_user_avatar') || '/images/admin_avatar.png';
+    const curName = localStorage.getItem('kuizu_user_name') || 'Admin';
+    syncAdminAvatarUI(curAvatar, curName);
   });
 
   return { openModal, closeModal };

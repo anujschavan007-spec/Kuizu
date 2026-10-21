@@ -4,6 +4,7 @@
 import { signOutClerk } from './services/clerkService';
 import { highlightCode } from './services/codeHighlighter';
 import './services/adminAuthGuard';
+import './services/userHeaderProfile';
 
 interface UserSettings {
   theme: 'light' | 'dark' | 'system';
@@ -1023,11 +1024,35 @@ function setupLearningPreferencesPreview(): void {
   });
 }
 
+function syncSettingsUserDOM(): void {
+  const userAvatar = localStorage.getItem('kuizu_user_avatar') || '/images/home_avatar.png';
+  const userName = localStorage.getItem('kuizu_user_name') || 'Kuizu Learner';
+  const avatarImgs = document.querySelectorAll<HTMLImageElement>('.settings-avatar-img, #modal-preview-avatar');
+  avatarImgs.forEach((img) => {
+    if (img && userAvatar) img.src = userAvatar;
+  });
+  const nameEl = document.querySelector<HTMLElement>('.settings-profile-name');
+  if (nameEl && userName) nameEl.textContent = userName;
+  const inputName = document.getElementById('input-display-name') as HTMLInputElement | null;
+  if (inputName && userName) inputName.value = userName;
+}
+
 function init(): void {
   applySavedSettingsToUI();
   setupUserMenu();
   setupSettingsControls();
   setupLearningPreferencesPreview();
+  syncSettingsUserDOM();
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('kuizu:avatar_changed', (e: any) => {
+    const avatarUrl = e.detail?.avatarUrl || localStorage.getItem('kuizu_user_avatar');
+    const avatarImgs = document.querySelectorAll<HTMLImageElement>('.settings-avatar-img, #modal-preview-avatar');
+    avatarImgs.forEach((img) => {
+      if (img && avatarUrl) img.src = avatarUrl;
+    });
+  });
 }
 
 if (document.readyState === 'loading') {

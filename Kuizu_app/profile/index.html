@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Profile - KUIZU</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
     <meta name="description" content="Track your progress, achievements and keep growing on KUIZU." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -172,7 +177,7 @@
               <hr class="popup-divider" />
 
               <div class="popup-menu-list">
-                <a href="/problem/leaderboard" class="popup-menu-item" id="btn-menu-leaderboard">
+                <a href="/problem/mainleaderboard" class="popup-menu-item" id="btn-menu-leaderboard">
                   <div class="menu-item-left">
                     <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
@@ -250,21 +255,33 @@
             <h1 class="profile-page-title">My Profile</h1>
             <p class="profile-page-subtitle">Track your progress, achievements and keep growing!</p>
           </div>
-          <button type="button" class="btn-edit-profile-action" id="btn-edit-profile">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-            </svg>
-            <span>Edit Profile</span>
-          </button>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <a href="/addavatar" class="btn-change-avatar-action" id="btn-change-avatar" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:12px; background:var(--primary-accent-light, rgba(37,99,235,0.08)); border:1px solid var(--primary-accent-border, rgba(37,99,235,0.25)); color:var(--primary-accent, #2563eb); font-weight:700; font-size:14px; transition:all 0.2s ease;">
+              <span style="font-size: 16px;">🎨</span>
+              <span>Avatar Studio</span>
+            </a>
+            <button type="button" class="btn-edit-profile-action" id="btn-edit-profile">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+              </svg>
+              <span>Edit Profile</span>
+            </button>
+          </div>
         </div>
 
         <!-- 1. Hero Identity & High-Level Stats Card -->
         <section class="profile-hero-card" aria-label="User Information">
           <!-- Col 1: Identity -->
           <div class="profile-hero-identity">
-            <div class="profile-hero-avatar-wrap">
-              <img src="/images/home_avatar.png" alt="Anuj Sandeep Chavan" class="profile-hero-avatar" />
-            </div>
+            <a href="/addavatar" class="profile-hero-avatar-wrap" title="Change Avatar or 3D Character">
+              <img src="/images/home_avatar.png" alt="User Avatar" class="profile-hero-avatar" />
+              <div class="profile-avatar-edit-overlay">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+              </div>
+            </a>
             <div class="profile-hero-meta">
               <h2 class="profile-hero-name" id="profile-user-name">Anuj Sandeep Chavan</h2>
               <div class="profile-hero-contact-row">
@@ -387,7 +404,7 @@
                   </div>
                   <div>
                     <span class="stat-box-title">Classwork (CW)</span>
-                    <div class="stat-box-val">18 / 20</div>
+                    <div class="stat-box-val" id="profile-cw-val">18 / 20</div>
                     <span class="stat-box-sub">completed</span>
                   </div>
                 </div>
@@ -405,7 +422,7 @@
                   </div>
                   <div>
                     <span class="stat-box-title">Homework (HW)</span>
-                    <div class="stat-box-val">16 / 20</div>
+                    <div class="stat-box-val" id="profile-hw-val">16 / 20</div>
                     <span class="stat-box-sub">completed</span>
                   </div>
                 </div>
@@ -423,7 +440,7 @@
                   </div>
                   <div>
                     <span class="stat-box-title">LeetCode Solved</span>
-                    <div class="stat-box-val">342</div>
+                    <div class="stat-box-val" id="profile-lc-val">342</div>
                     <span class="stat-box-sub">problems</span>
                   </div>
                 </div>
@@ -442,7 +459,7 @@
                   </div>
                   <div>
                     <span class="stat-box-title">Quiz Level</span>
-                    <div class="stat-box-val">4</div>
+                    <div class="stat-box-val" id="profile-quiz-val">4</div>
                     <span class="stat-box-sub">current level</span>
                   </div>
                 </div>
@@ -460,7 +477,7 @@
                   </div>
                   <div>
                     <span class="stat-box-title">Problems Solved</span>
-                    <div class="stat-box-val">86</div>
+                    <div class="stat-box-val" id="profile-probs-val">86</div>
                     <span class="stat-box-sub">total</span>
                   </div>
                 </div>
@@ -485,7 +502,7 @@
                   </div>
                   <div>
                     <span class="stat-box-title">Daily KUIZU</span>
-                    <div class="badge-active-tag">Active</div>
+                    <div class="badge-active-tag" id="profile-daily-val">Active</div>
                   </div>
                 </div>
                 <span class="stat-box-chevron">›</span>
@@ -525,29 +542,8 @@
                     <th style="width: 22%; text-align: right;">Score</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr class="contest-item-row" tabindex="0">
-                    <td class="col-num">1</td>
-                    <td class="contest-name-cell">Weekly Coding Contest</td>
-                    <td class="date-cell">Apr 21, 2025</td>
-                    <td style="text-align: right;">
-                      <div class="score-cell-wrap">
-                        <span class="contest-score-cell">85 / 100</span>
-                        <span class="table-row-chevron">›</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr class="contest-item-row" tabindex="0">
-                    <td class="col-num">2</td>
-                    <td class="contest-name-cell">Monthly Algo Challenge</td>
-                    <td class="date-cell">Mar 15, 2025</td>
-                    <td style="text-align: right;">
-                      <div class="score-cell-wrap">
-                        <span class="contest-score-cell">78 / 100</span>
-                        <span class="table-row-chevron">›</span>
-                      </div>
-                    </td>
-                  </tr>
+                <tbody id="profile-contests-tbody">
+                  <!-- Dynamically rendered real attended contests -->
                 </tbody>
               </table>
             </div>
@@ -580,54 +576,135 @@
                     <th style="width: 26%; text-align: right;">Submitted Date</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr class="quest-item-row" tabindex="0">
-                    <td class="col-num">1</td>
-                    <td class="quest-name-cell">
-                      <span class="quest-name-title">Daily Coding Streak</span>
-                      <span class="quest-name-sub">Solve 5 problems in a day</span>
-                    </td>
-                    <td>
-                      <span class="badge-status-completed">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        <span>Completed</span>
-                      </span>
-                    </td>
-                    <td style="text-align: right;">
-                      <div class="date-cell-wrap">
-                        <span class="date-cell">Apr 12, 2025</span>
-                        <span class="table-row-chevron">›</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr class="quest-item-row" tabindex="0">
-                    <td class="col-num">2</td>
-                    <td class="quest-name-cell">
-                      <span class="quest-name-title">LeetCode Sprint</span>
-                      <span class="quest-name-sub">Solve 15 LeetCode problems</span>
-                    </td>
-                    <td>
-                      <span class="badge-status-completed">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        <span>Completed</span>
-                      </span>
-                    </td>
-                    <td style="text-align: right;">
-                      <div class="date-cell-wrap">
-                        <span class="date-cell">Apr 5, 2025</span>
-                        <span class="table-row-chevron">›</span>
-                      </div>
-                    </td>
-                  </tr>
+                <tbody id="profile-quests-tbody">
+                  <!-- Dynamically rendered real submitted quests -->
                 </tbody>
               </table>
             </div>
           </div>
         </section>
+
+        <!-- 4. View Problem Submissions Card (LeetCode Style) -->
+        <section class="profile-submissions-section" aria-label="Problem Submissions" style="margin-bottom: 32px;">
+          <div class="profile-activity-card" style="width: 100%;">
+            <div class="activity-card-header" style="flex-wrap: wrap; gap: 12px;">
+              <div class="activity-title-group">
+                <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(37, 99, 235, 0.1); display: flex; align-items: center; justify-content: center; color: #2563EB;">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="activity-heading" style="font-size: 18px;">View Problem Submissions</h3>
+                  <p style="margin: 3px 0 0 0; font-size: 13px; color: #64748B;">All your problem submissions, testcase status, and submitted codes like LeetCode</p>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="badge-submissions-count" id="submissions-total-count" style="padding: 4px 12px; border-radius: 9999px; background: #EEF2FF; color: #4F46E5; font-size: 12.5px; font-weight: 700;">
+                  0 Submissions
+                </span>
+                <a href="/problem/qlibrary/compiler/submission" class="activity-view-all-link">
+                  <span>Full View</span>
+                  <span class="view-all-arrow">→</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="activity-table-wrapper" style="max-height: 440px; overflow-y: auto;">
+              <table class="activity-table">
+                <thead style="position: sticky; top: 0; z-index: 2; background: #F8FAFC;">
+                  <tr>
+                    <th style="width: 28%;">Question</th>
+                    <th style="width: 14%;">Status</th>
+                    <th style="width: 12%;">Language</th>
+                    <th style="width: 14%;">XP Earned</th>
+                    <th style="width: 18%;">Submitted Time</th>
+                    <th style="width: 14%; text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="profile-submissions-tbody">
+                  <!-- Dynamically rendered problem submissions -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Code Review & Earned XP Detail Modal (LeetCode Style) -->
+        <div class="settings-modal-overlay" id="submission-code-modal" aria-hidden="true" style="z-index: 99999;">
+          <div class="settings-modal-box" style="max-width: 680px; width: 95%;">
+            <div class="settings-modal-header" style="align-items: flex-start;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span id="sub-modal-status-pill" class="badge-status-completed" style="font-size: 12px; padding: 3px 10px;">Accepted</span>
+                  <span id="sub-modal-diff-pill" class="chip-diff-badge easy" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Easy</span>
+                  <span id="sub-modal-source-pill" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: #f1f5f9; color: #475569; font-weight: 600;">Practice</span>
+                </div>
+                <h3 id="sub-modal-title" style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">Problem Title</h3>
+              </div>
+              <button type="button" class="btn-close-modal" id="btn-close-sub-code-modal" aria-label="Close Modal">&times;</button>
+            </div>
+            
+            <div class="modal-form-body" style="padding-top: 14px;">
+              <!-- Meta Stats Row -->
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px;">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+                  <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Earned XP</div>
+                  <div id="sub-modal-xp-val" style="font-size: 16px; font-weight: 800; color: #f59e0b; margin-top: 2px;">+10 XP</div>
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+                  <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Test Cases</div>
+                  <div id="sub-modal-tc-val" style="font-size: 16px; font-weight: 800; color: #10b981; margin-top: 2px;">3 / 3 Passed</div>
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+                  <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Language</div>
+                  <div id="sub-modal-lang-val" style="font-size: 16px; font-weight: 800; color: #2563eb; margin-top: 2px;">C++</div>
+                </div>
+              </div>
+
+              <!-- Code Preview Area -->
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                <span style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase;">Submitted Code</span>
+                <button type="button" id="btn-copy-sub-modal-code" style="padding: 4px 10px; font-size: 12px; font-weight: 600; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; color: #334155;">
+                  Copy Code
+                </button>
+              </div>
+              <pre id="sub-modal-code-block" style="margin: 0; background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5; max-height: 280px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"></pre>
+            </div>
+
+            <div class="modal-actions-row" style="margin-top: 18px;">
+              <a href="#" id="sub-modal-solve-link" class="btn-modal-submit" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <span>Solve Again in Compiler</span>
+                <span>➔</span>
+              </a>
+              <button type="button" class="btn-modal-cancel" id="btn-sub-modal-done">Done</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contest / Quest XP Detail Modal -->
+        <div class="settings-modal-overlay" id="xp-detail-modal" aria-hidden="true" style="z-index: 99999;">
+          <div class="settings-modal-box" style="max-width: 480px; width: 92%; text-align: center;">
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: #fffbeb; border: 2px solid #fef3c7; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; color: #f59e0b; margin-bottom: 12px;">
+              ★
+            </div>
+            <h3 id="xp-modal-title" style="margin: 0 0 6px 0; font-size: 20px; font-weight: 800; color: #0f172a;">Contest Details</h3>
+            <p id="xp-modal-subtitle" style="margin: 0 0 16px 0; font-size: 13.5px; color: #64748b;">Earned XP and performance breakdown</p>
+
+            <div style="background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%); border: 1.5px solid #dbeafe; border-radius: 16px; padding: 20px; margin-bottom: 20px;">
+              <div style="font-size: 12px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 0.5px;">Earned XP</div>
+              <div id="xp-modal-value" style="font-size: 38px; font-weight: 900; color: #1e3a8a; margin: 4px 0;">+100 XP</div>
+              <div id="xp-modal-date" style="font-size: 12.5px; font-weight: 600; color: #64748b;">Completed on Apr 21, 2025</div>
+            </div>
+
+            <div id="xp-modal-details-list" style="text-align: left; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 20px; font-size: 13px; color: #334155; display: flex; flex-direction: column; gap: 8px;">
+              <!-- Breakdown items -->
+            </div>
+
+            <button type="button" class="btn-modal-submit" id="btn-close-xp-modal" style="width: 100%;">Got It</button>
+          </div>
+        </div>
 
         <!-- 4. Profile Footer Note Matching Design -->
         <footer class="profile-page-footer">

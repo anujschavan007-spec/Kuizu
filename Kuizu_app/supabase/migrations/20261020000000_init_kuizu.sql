@@ -316,3 +316,23 @@ int main() {
     return 0;
 }', 'cpp', 0, 3, 'contest', 'contest-1792478905280') ON CONFLICT DO NOTHING;
 
+-- 11. Contest Violations Table (Proctoring & Anti-Cheat)
+CREATE TABLE IF NOT EXISTS public.contest_violations (
+  id TEXT PRIMARY KEY,
+  contest_id TEXT,
+  contest_title TEXT,
+  username TEXT,
+  user_email TEXT,
+  user_avatar TEXT,
+  violation_type TEXT,
+  details TEXT,
+  severity TEXT DEFAULT 'warning',
+  timestamp TEXT NOT NULL,
+  status TEXT DEFAULT 'flagged'
+);
+
+ALTER TABLE public.contest_violations ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow all access to contest_violations" ON public.contest_violations;
+CREATE POLICY "Allow all access to contest_violations" ON public.contest_violations FOR ALL USING (true) WITH CHECK (true);
+CREATE INDEX IF NOT EXISTS idx_contest_violations_timestamp ON public.contest_violations (timestamp DESC);
+

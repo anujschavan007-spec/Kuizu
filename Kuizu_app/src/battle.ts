@@ -7,12 +7,14 @@ import {
   MOCK_BATTLE_QUESTION
 } from './services/battleService';
 import { signOutClerk, initClerkUserSync } from './services/clerkService';
+import './services/userHeaderProfile';
 import './services/adminAuthGuard';
 import type { BattleRoom, BattleQuestion } from './types';
 import { soundManager } from './services/soundManager';
 import { showFirstBattleParticipantBadgeModal } from './services/firstBattleBadgeModal';
 import { showFirstLooserBadgeModal } from './services/firstLooserBadgeModal';
 import { unlockBadge, isBadgeUnlocked } from './services/badgeManager';
+import { initExamProctoring } from './services/proctoringService';
 
 // State management
 interface LiveBattlePlayer {
@@ -216,6 +218,36 @@ async function init() {
       console.warn('Auto join failed:', e);
     }
   }
+
+function showBattleToast(message: string, duration = 3200) {
+  let toast = document.getElementById('battle-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'battle-toast';
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#f8fafc;padding:10px 18px;border-radius:10px;font-size:13.5px;font-weight:500;box-shadow:0 10px 25px rgba(0,0,0,0.3);z-index:999999;transition:opacity 0.2s;border:1px solid rgba(244,63,94,0.4);display:flex;align-items:center;gap:8px;';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.style.display = 'flex';
+  toast.style.opacity = '1';
+  setTimeout(() => {
+    if (toast) {
+      toast.style.opacity = '0';
+      setTimeout(() => { if (toast) toast.style.display = 'none'; }, 200);
+    }
+  }, duration);
+}
+
+  // Active anti-cheating proctoring during live battle arena duel
+  initExamProctoring({
+    getContestInfo: () => ({
+      contestId: currentRoom ? `battle-${currentRoom.id}` : 'battle-arena',
+      contestTitle: currentRoom ? `${currentRoom.title || '1v1 Battle'} (Battle Arena)` : '1v1 Battle Arena',
+      isRunning: Boolean(modalBattleArena?.classList.contains('open') && !modalBattleResult?.classList.contains('open'))
+    }),
+    onWarning: (msg) => showBattleToast(msg),
+    allowCopyPaste: false
+  });
 }
 
 /**
@@ -241,50 +273,7 @@ function setupLiveLeaderboardToggle() {
  * Header & Profile dropdown interactions
  */
 function setupNavigationAndProfile() {
-  if (btnUserAvatar && userDropdown) {
-    btnUserAvatar.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = userDropdown.classList.contains('show');
-      userDropdown.classList.toggle('show', !isOpen);
-      btnUserAvatar.classList.toggle('open', !isOpen);
-      btnUserAvatar.setAttribute('aria-expanded', String(!isOpen));
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!userDropdown.contains(e.target as Node) && !btnUserAvatar.contains(e.target as Node)) {
-        userDropdown.classList.remove('show');
-        btnUserAvatar.classList.remove('open');
-        btnUserAvatar.setAttribute('aria-expanded', 'false');
-      }
-    });
-
-    if (window.location.hash === '#open-popup') {
-      userDropdown.classList.add('show');
-      btnUserAvatar.classList.add('open');
-      btnUserAvatar.setAttribute('aria-expanded', 'true');
-    }
-
-    document.querySelector('.popup-user-header')?.addEventListener('click', () => {
-      window.location.href = '/profile';
-    });
-
-    document.getElementById('btn-menu-settings')?.addEventListener('click', () => {
-      window.location.href = '/settings';
-    });
-
-    document.getElementById('btn-logout')?.addEventListener('click', async (e) => {
-      e.preventDefault();
-      await signOutClerk();
-    });
-  }
-
-  initClerkUserSync();
-
-  if (btnThemeToggle) {
-    btnThemeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-theme');
-    });
-  }
+  // Header and user profile dropdown are handled automatically by userHeaderProfile service
 }
 
 /**

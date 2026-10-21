@@ -60,6 +60,135 @@ export function getActiveTheme(): 'light' | 'dark' | 'system' {
   return 'light';
 }
 
+export interface FontThemeDefinition {
+  id: string;
+  name: string;
+  lightHeading: string;
+  lightBody: string;
+  darkHeading: string;
+  darkBody: string;
+  accent: string;
+}
+
+export const FONT_THEMES: Record<string, FontThemeDefinition> = {
+  slate: {
+    id: 'slate',
+    name: 'Classic Slate',
+    lightHeading: '#0f172a',
+    lightBody: '#334155',
+    darkHeading: '#f8fafc',
+    darkBody: '#cbd5e1',
+    accent: '#2563eb',
+  },
+  sapphire: {
+    id: 'sapphire',
+    name: 'Midnight Sapphire',
+    lightHeading: '#1e3a8a',
+    lightBody: '#1e293b',
+    darkHeading: '#93c5fd',
+    darkBody: '#bfdbfe',
+    accent: '#3b82f6',
+  },
+  emerald: {
+    id: 'emerald',
+    name: 'Emerald Forest',
+    lightHeading: '#065f46',
+    lightBody: '#134e4a',
+    darkHeading: '#6ee7b7',
+    darkBody: '#a7f3d0',
+    accent: '#10b981',
+  },
+  amethyst: {
+    id: 'amethyst',
+    name: 'Royal Amethyst',
+    lightHeading: '#581c87',
+    lightBody: '#3b0764',
+    darkHeading: '#d8b4fe',
+    darkBody: '#e9d5ff',
+    accent: '#8b5cf6',
+  },
+  sunset: {
+    id: 'sunset',
+    name: 'Sunset Amber',
+    lightHeading: '#9a3412',
+    lightBody: '#7c2d12',
+    darkHeading: '#fdba74',
+    darkBody: '#fed7aa',
+    accent: '#f97316',
+  },
+  ruby: {
+    id: 'ruby',
+    name: 'Crimson Ruby',
+    lightHeading: '#9f1239',
+    lightBody: '#881337',
+    darkHeading: '#fda4af',
+    darkBody: '#fecdd3',
+    accent: '#f43f5e',
+  },
+  cyber: {
+    id: 'cyber',
+    name: 'Cyber Neon',
+    lightHeading: '#0e7490',
+    lightBody: '#164e63',
+    darkHeading: '#67e8f9',
+    darkBody: '#a5f3fc',
+    accent: '#06b6d4',
+  },
+};
+
+export interface FontSettings {
+  themeId: string;
+  customColor?: string;
+  fontFamily: string;
+  fontSize: 'Compact' | 'Standard' | 'Spacious';
+}
+
+export function getActiveFontSettings(): FontSettings {
+  const defaults: FontSettings = {
+    themeId: 'slate',
+    fontFamily: 'Outfit',
+    fontSize: 'Standard',
+  };
+  try {
+    const raw = localStorage.getItem('kuizu_font_settings');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { ...defaults, ...parsed };
+    }
+  } catch (_) {}
+  return defaults;
+}
+
+export function setFontTheme(themeId: string, customColor?: string): void {
+  try {
+    const current = getActiveFontSettings();
+    current.themeId = themeId;
+    if (customColor) {
+      current.customColor = customColor;
+    }
+    localStorage.setItem('kuizu_font_settings', JSON.stringify(current));
+  } catch (_) {}
+  applyGlobalThemeAndAccent();
+}
+
+export function setFontFamily(fontFamily: string): void {
+  try {
+    const current = getActiveFontSettings();
+    current.fontFamily = fontFamily;
+    localStorage.setItem('kuizu_font_settings', JSON.stringify(current));
+  } catch (_) {}
+  applyGlobalThemeAndAccent();
+}
+
+export function setFontSize(size: 'Compact' | 'Standard' | 'Spacious'): void {
+  try {
+    const current = getActiveFontSettings();
+    current.fontSize = size;
+    localStorage.setItem('kuizu_font_settings', JSON.stringify(current));
+  } catch (_) {}
+  applyGlobalThemeAndAccent();
+}
+
 export function applyGlobalThemeAndAccent(): void {
   if (typeof document === 'undefined') return;
 
@@ -95,6 +224,29 @@ export function applyGlobalThemeAndAccent(): void {
   root.style.setProperty('--primary-accent-glow', glow);
   root.style.setProperty('--primary-accent-border', border);
   root.style.setProperty('--color-primary-border', border);
+
+  // Apply Font Theme and Colors
+  const fontSettings = getActiveFontSettings();
+  root.setAttribute('data-font-theme', fontSettings.themeId || 'slate');
+  
+  const selectedThemeDef = FONT_THEMES[fontSettings.themeId] || FONT_THEMES.slate;
+  let headingColor = isDark ? selectedThemeDef.darkHeading : selectedThemeDef.lightHeading;
+  let bodyColor = isDark ? selectedThemeDef.darkBody : selectedThemeDef.lightBody;
+  
+  if (fontSettings.customColor) {
+    headingColor = fontSettings.customColor;
+  }
+  
+  root.style.setProperty('--font-heading-color', headingColor);
+  root.style.setProperty('--font-body-color', bodyColor);
+  root.style.setProperty('--admin-font-family', `'${fontSettings.fontFamily || 'Outfit'}', 'Plus Jakarta Sans', sans-serif`);
+  
+  const scaleMap: Record<string, string> = {
+    Compact: '14px',
+    Standard: '16px',
+    Spacious: '18px',
+  };
+  root.style.setProperty('--admin-font-scale', scaleMap[fontSettings.fontSize] || '16px');
 
   updateBackgroundImages(isDark);
 }
@@ -202,7 +354,7 @@ function setupGlobalThemeListeners(): void {
 // Cross-tab and live storage synchronization
 if (typeof window !== 'undefined') {
   window.addEventListener('storage', (e) => {
-    if (e.key === 'kuizu_accent_color' || e.key === 'kuizu_user_settings_v1') {
+    if (e.key === 'kuizu_accent_color' || e.key === 'kuizu_user_settings_v1' || e.key === 'kuizu_font_settings') {
       applyGlobalThemeAndAccent();
     }
   });

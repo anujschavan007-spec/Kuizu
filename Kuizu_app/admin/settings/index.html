@@ -4,13 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Settings - Admin KUIZU</title>
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/src/style.css" />
       
-      <!-- Global Theme & Accent Synchronous Preloader -->
+    <!-- Global Theme, Accent & Typography Synchronous Preloader -->
     <script id="kuizu-theme-preloader">
       (function() {
         try {
@@ -57,6 +61,26 @@
           root.style.setProperty('--primary-accent-glow', hexRgb(color, 0.38));
           root.style.setProperty('--primary-accent-border', hexRgb(color, 0.4));
           root.style.setProperty('--color-primary-border', hexRgb(color, 0.4));
+
+          // Font Theme Preload
+          var fontRaw = localStorage.getItem('kuizu_font_settings');
+          var fontParsed = fontRaw ? JSON.parse(fontRaw) : null;
+          var fontTheme = (fontParsed && fontParsed.themeId) || 'slate';
+          root.setAttribute('data-font-theme', fontTheme);
+          var fontMap = {
+            slate: { l: '#0f172a', d: '#f8fafc' },
+            sapphire: { l: '#1e3a8a', d: '#93c5fd' },
+            emerald: { l: '#065f46', d: '#6ee7b7' },
+            amethyst: { l: '#581c87', d: '#d8b4fe' },
+            sunset: { l: '#9a3412', d: '#fdba74' },
+            ruby: { l: '#9f1239', d: '#fda4af' },
+            cyber: { l: '#0e7490', d: '#67e8f9' }
+          };
+          var fh = (fontParsed && fontParsed.customColor) || (fontMap[fontTheme] ? (isDark ? fontMap[fontTheme].d : fontMap[fontTheme].l) : (isDark ? '#f8fafc' : '#0f172a'));
+          root.style.setProperty('--font-heading-color', fh);
+          if (fontParsed && fontParsed.fontFamily) {
+            root.style.setProperty('--admin-font-family', "'" + fontParsed.fontFamily + "', 'Plus Jakarta Sans', sans-serif");
+          }
 
           // Immediate background image dark sync
           if (document.readyState === 'loading') {
@@ -187,9 +211,9 @@
         <div class="admin-sidebar-footer">
           <div class="admin-user-info" id="admin-user-profile-btn" title="Admin Profile">
             <div class="admin-avatar-circle">
-              <img src="/images/admin_avatar.png" alt="Admin" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" />
+              <img id="sidebar-admin-avatar-img" src="/images/admin_avatar.png" alt="Admin" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" />
             </div>
-            <span class="admin-user-name">Admin</span>
+            <span class="admin-user-name" id="sidebar-admin-name-text">Admin</span>
           </div>
           <a href="/admin/settings" class="admin-gear-btn active" title="Settings">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -214,8 +238,28 @@
             </div>
             <div>
               <h1 class="admin-dashboard-title">Settings</h1>
-              <p class="admin-dashboard-subtitle">Manage your account preferences and application settings.</p>
+              <p class="admin-dashboard-subtitle">Manage your account preferences, themes, font colors, and application controls.</p>
             </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:12px;">
+            <button type="button" class="admin-settings-date-pill" id="admin-date-pill" title="Current System Date & Time">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span id="label-admin-date">Today</span>
+            </button>
+            <button type="button" class="admin-quick-save-btn" id="btn-quick-save" title="Quick Save All Settings">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              <span>Save</span>
+            </button>
           </div>
         </header>
 
@@ -288,7 +332,7 @@
             </div>
 
             <!-- Reset to Default Button at bottom of left column -->
-            <button type="button" class="admin-reset-default-btn" id="btn-reset-settings">
+            <button type="button" class="admin-reset-default-btn" id="btn-reset-settings" title="Reset all preferences to system defaults">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
                 <path d="M3 3v5h5"></path>
@@ -300,7 +344,185 @@
           <!-- Right Content Column: Settings Panels -->
           <div class="admin-settings-content-col">
             
-            <!-- Card 1: Appearance -->
+            <!-- Card 1: General Settings -->
+            <div class="admin-card admin-setting-card" id="section-general">
+              <div class="admin-setting-card-header">
+                <div class="admin-setting-header-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="admin-setting-card-title">General Settings</h2>
+                  <p class="admin-setting-card-desc">Configure platform identities, maintenance states, and baseline regional defaults.</p>
+                </div>
+              </div>
+
+              <!-- General Inputs Grid -->
+              <div class="admin-input-row" style="margin-bottom: 18px;">
+                <div class="admin-input-group">
+                  <label class="admin-setting-label" for="setting-platform-name">Platform Portal Name</label>
+                  <input type="text" id="setting-platform-name" class="admin-text-input" value="KUIZU Learning Arena" placeholder="Enter portal title" />
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-setting-label" for="setting-platform-tagline">Arena Tagline</label>
+                  <input type="text" id="setting-platform-tagline" class="admin-text-input" value="Gamified Interactive Quiz & Battle Engine" placeholder="Enter portal tagline" />
+                </div>
+              </div>
+
+              <!-- Maintenance Mode Toggle -->
+              <div class="admin-setting-toggle-row" style="padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-bottom: 20px;">
+                <div class="admin-toggle-info-left">
+                  <div class="admin-toggle-icon" style="background: #fffbeb; color: #d97706; border-color: #fde68a;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                  </div>
+                  <div class="admin-toggle-texts">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span class="admin-toggle-title">System Maintenance Mode</span>
+                      <span class="admin-badge-status inactive" id="badge-maintenance-status">Disabled</span>
+                    </div>
+                    <span class="admin-toggle-desc">When active, restricts user battles and arena quizzes to display maintenance alert.</span>
+                  </div>
+                </div>
+                <label class="admin-switch">
+                  <input type="checkbox" id="toggle-maintenance-mode" />
+                  <span class="admin-switch-slider"></span>
+                </label>
+              </div>
+
+              <!-- General Toggles & Selects Grid -->
+              <div class="admin-additional-grid">
+                <!-- Left: Language & Timezone -->
+                <div class="admin-additional-left-col">
+                  <div class="admin-additional-select-row">
+                    <div class="admin-toggle-info-left">
+                      <div class="admin-toggle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="2" y1="12" x2="22" y2="12"></line>
+                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                      </div>
+                      <div class="admin-toggle-texts">
+                        <span class="admin-toggle-title">Language</span>
+                        <span class="admin-toggle-desc">Select platform default language.</span>
+                      </div>
+                    </div>
+                    <div class="admin-setting-select-wrap">
+                      <select id="setting-language" class="admin-mini-select">
+                        <option value="en" selected>English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                        <option value="hi">Hindi (हिन्दी)</option>
+                        <option value="ja">日本語</option>
+                      </select>
+                      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div class="admin-additional-select-row">
+                    <div class="admin-toggle-info-left">
+                      <div class="admin-toggle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                      </div>
+                      <div class="admin-toggle-texts">
+                        <span class="admin-toggle-title">Timezone</span>
+                        <span class="admin-toggle-desc">Set contest server timezone.</span>
+                      </div>
+                    </div>
+                    <div class="admin-setting-select-wrap">
+                      <select id="setting-timezone" class="admin-mini-select">
+                        <option value="Asia/Kolkata" selected>Asia/Kolkata (IST)</option>
+                        <option value="America/New_York">America/New_York (EST)</option>
+                        <option value="Europe/London">Europe/London (GMT)</option>
+                        <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                        <option value="UTC">UTC (Universal Time)</option>
+                      </select>
+                      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right: Auto Save, Show Leaderboard, Sound Effects -->
+                <div class="admin-additional-right-col">
+                  <div class="admin-setting-toggle-row compact">
+                    <div class="admin-toggle-info-left">
+                      <div class="admin-toggle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                          <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                      </div>
+                      <div class="admin-toggle-texts">
+                        <span class="admin-toggle-title">Auto Save</span>
+                        <span class="admin-toggle-desc">Auto save quiz drafts and compiler answers.</span>
+                      </div>
+                    </div>
+                    <label class="admin-switch">
+                      <input type="checkbox" id="toggle-autosave" checked />
+                      <span class="admin-switch-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="admin-setting-toggle-row compact">
+                    <div class="admin-toggle-info-left">
+                      <div class="admin-toggle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                          <path d="M4 22h16"></path>
+                          <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                          <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                        </svg>
+                      </div>
+                      <div class="admin-toggle-texts">
+                        <span class="admin-toggle-title">Public Leaderboard</span>
+                        <span class="admin-toggle-desc">Publish real-time ranks across all users.</span>
+                      </div>
+                    </div>
+                    <label class="admin-switch">
+                      <input type="checkbox" id="toggle-show-leaderboard" checked />
+                      <span class="admin-switch-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="admin-setting-toggle-row compact">
+                    <div class="admin-toggle-info-left">
+                      <div class="admin-toggle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                      </div>
+                      <div class="admin-toggle-texts">
+                        <span class="admin-toggle-title">Sound Effects</span>
+                        <span class="admin-toggle-desc">Enable interactive click and win audio cues.</span>
+                      </div>
+                    </div>
+                    <label class="admin-switch">
+                      <input type="checkbox" id="toggle-sound-effects" checked />
+                      <span class="admin-switch-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Appearance & Typography Colors -->
             <div class="admin-card admin-setting-card" id="section-appearance">
               <div class="admin-setting-card-header">
                 <div class="admin-setting-header-icon-wrap">
@@ -313,15 +535,16 @@
                   </svg>
                 </div>
                 <div>
-                  <h2 class="admin-setting-card-title">Appearance</h2>
-                  <p class="admin-setting-card-desc">Customize how KUIZU looks and feels.</p>
+                  <h2 class="admin-setting-card-title">Appearance & Colors</h2>
+                  <p class="admin-setting-card-desc">Switch themes, customize primary accent colors, and style font colors across headings and texts.</p>
                 </div>
               </div>
 
+              <!-- Theme and Accent Row -->
               <div class="admin-appearance-body-grid">
                 <!-- Theme Section -->
                 <div class="admin-theme-select-block">
-                  <label class="admin-setting-label">Theme</label>
+                  <label class="admin-setting-label">Theme Mode</label>
                   <div class="admin-theme-segmented-group">
                     <button type="button" class="admin-theme-segment-btn active" data-theme="light">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -361,7 +584,10 @@
 
                 <!-- Accent Color Section -->
                 <div class="admin-accent-select-block">
-                  <label class="admin-setting-label">Accent Color</label>
+                  <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <label class="admin-setting-label">Accent Color</label>
+                    <span id="label-active-accent-hex" style="font-size:12px; font-weight:600; color:var(--primary-accent);">#2563EB</span>
+                  </div>
                   <div class="admin-accent-colors-row">
                     <button type="button" class="admin-accent-color-btn active" data-color="#2563EB" style="--accent-val: #2563EB;" title="Blue"></button>
                     <button type="button" class="admin-accent-color-btn" data-color="#8B5CF6" style="--accent-val: #8B5CF6;" title="Purple"></button>
@@ -369,12 +595,125 @@
                     <button type="button" class="admin-accent-color-btn" data-color="#F97316" style="--accent-val: #F97316;" title="Orange"></button>
                     <button type="button" class="admin-accent-color-btn" data-color="#F43F5E" style="--accent-val: #F43F5E;" title="Rose"></button>
                     <button type="button" class="admin-accent-color-btn" data-color="#06B6D4" style="--accent-val: #06B6D4;" title="Cyan"></button>
+                    
+                    <!-- Custom Color Picker Swatch -->
+                    <label class="admin-color-picker-input-wrap" title="Pick custom accent color">
+                      <input type="color" id="input-custom-accent" value="#2563EB" />
+                      <span>Custom</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Font Colors Section ("add colors to fonts") -->
+              <div class="admin-font-colors-block">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                  <div>
+                    <label class="admin-setting-label" style="margin-bottom: 2px;">Font Colors & Typography Palette</label>
+                    <p style="font-size: 12.5px; color: #64748b; margin: 0;">Select curated heading and typography color themes or pick a custom font color.</p>
+                  </div>
+                  <span id="label-active-font-theme" style="font-size: 12px; font-weight: 700; color: var(--font-heading-color);">Classic Slate</span>
+                </div>
+
+                <!-- Font Theme Chips -->
+                <div class="admin-font-themes-grid">
+                  <button type="button" class="admin-font-theme-chip active" data-font-theme="slate" title="Classic Slate">
+                    <span class="admin-font-color-dot" style="background: #0f172a;"></span>
+                    <span>Slate Classic</span>
+                  </button>
+
+                  <button type="button" class="admin-font-theme-chip" data-font-theme="sapphire" title="Midnight Sapphire">
+                    <span class="admin-font-color-dot" style="background: #1e3a8a;"></span>
+                    <span>Midnight Sapphire</span>
+                  </button>
+
+                  <button type="button" class="admin-font-theme-chip" data-font-theme="emerald" title="Emerald Forest">
+                    <span class="admin-font-color-dot" style="background: #065f46;"></span>
+                    <span>Emerald Forest</span>
+                  </button>
+
+                  <button type="button" class="admin-font-theme-chip" data-font-theme="amethyst" title="Royal Amethyst">
+                    <span class="admin-font-color-dot" style="background: #581c87;"></span>
+                    <span>Royal Amethyst</span>
+                  </button>
+
+                  <button type="button" class="admin-font-theme-chip" data-font-theme="sunset" title="Sunset Amber">
+                    <span class="admin-font-color-dot" style="background: #9a3412;"></span>
+                    <span>Sunset Amber</span>
+                  </button>
+
+                  <button type="button" class="admin-font-theme-chip" data-font-theme="ruby" title="Crimson Ruby">
+                    <span class="admin-font-color-dot" style="background: #9f1239;"></span>
+                    <span>Crimson Ruby</span>
+                  </button>
+
+                  <button type="button" class="admin-font-theme-chip" data-font-theme="cyber" title="Cyber Neon">
+                    <span class="admin-font-color-dot" style="background: #0e7490;"></span>
+                    <span>Cyber Neon</span>
+                  </button>
+
+                  <!-- Custom Font Color Picker -->
+                  <label class="admin-color-picker-input-wrap" title="Pick custom font color">
+                    <input type="color" id="input-custom-font-color" value="#0f172a" />
+                    <span>Custom Font Color</span>
+                  </label>
+                </div>
+
+                <!-- Typography Family & Scaling -->
+                <div class="admin-input-row" style="margin-top: 14px;">
+                  <div class="admin-input-group">
+                    <label class="admin-setting-label" for="setting-font-family">Font Family</label>
+                    <div class="admin-setting-select-wrap">
+                      <select id="setting-font-family" class="admin-mini-select" style="width: 100%;">
+                        <option value="Outfit" selected>Outfit (Modern & Sleek)</option>
+                        <option value="Plus Jakarta Sans">Plus Jakarta Sans (Crisp Geometric)</option>
+                        <option value="Inter">Inter (Digital Standard)</option>
+                        <option value="Poppins">Poppins (Friendly Rounded)</option>
+                        <option value="Space Grotesk">Space Grotesk (Tech Editorial)</option>
+                        <option value="JetBrains Mono">JetBrains Mono (Developer Code)</option>
+                      </select>
+                      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div class="admin-input-group">
+                    <label class="admin-setting-label">Font Scale</label>
+                    <div class="admin-theme-segmented-group" style="width: 100%;">
+                      <button type="button" class="admin-theme-segment-btn" data-font-scale="Compact" style="flex:1;">Compact</button>
+                      <button type="button" class="admin-theme-segment-btn active" data-font-scale="Standard" style="flex:1;">Standard</button>
+                      <button type="button" class="admin-theme-segment-btn" data-font-scale="Spacious" style="flex:1;">Spacious</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Live Interactive Typography & Color Preview Showcase -->
+                <div class="admin-font-preview-card" id="admin-font-preview-box">
+                  <div class="admin-preview-top-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Live Typography Preview
+                  </div>
+                  <h3 class="admin-font-preview-heading" id="preview-heading-text">KUIZU Dynamic Typography & Font Colors</h3>
+                  <p class="admin-font-preview-desc" id="preview-desc-text">
+                    This live preview dynamically adapts as you click font colors, change themes, or pick custom palettes. All headings, dashboard titles, and interface cards adopt your chosen typography and contrast rules.
+                  </p>
+                  <div class="admin-font-preview-actions">
+                    <button type="button" class="admin-btn-primary" id="btn-preview-sample-action">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                      </svg>
+                      Sample Action Button
+                    </button>
+                    <span style="font-size: 12px; font-weight: 600; color: #64748b;" id="preview-active-meta">Outfit • Classic Slate • #2563EB</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Card 2: Notifications -->
+            <!-- Card 3: Notifications -->
             <div class="admin-card admin-setting-card" id="section-notifications">
               <div class="admin-setting-card-header">
                 <div class="admin-setting-header-icon-wrap">
@@ -384,13 +723,13 @@
                   </svg>
                 </div>
                 <div>
-                  <h2 class="admin-setting-card-title">Notifications</h2>
-                  <p class="admin-setting-card-desc">Choose what you want to be notified about.</p>
+                  <h2 class="admin-setting-card-title">Notifications & Alerts</h2>
+                  <p class="admin-setting-card-desc">Choose what events dispatch emails, platform toasts, and cheating surveillance alerts.</p>
                 </div>
               </div>
 
               <div class="admin-notifications-list">
-                <!-- Item 1: Email Notifications (ON) -->
+                <!-- Email Notifications -->
                 <div class="admin-setting-toggle-row">
                   <div class="admin-toggle-info-left">
                     <div class="admin-toggle-icon">
@@ -401,7 +740,7 @@
                     </div>
                     <div class="admin-toggle-texts">
                       <span class="admin-toggle-title">Email Notifications</span>
-                      <span class="admin-toggle-desc">Receive important updates via email.</span>
+                      <span class="admin-toggle-desc">Receive critical system digests and admin alerts via email.</span>
                     </div>
                   </div>
                   <label class="admin-switch">
@@ -410,7 +749,7 @@
                   </label>
                 </div>
 
-                <!-- Item 2: Platform Notifications (ON) -->
+                <!-- Platform Notifications -->
                 <div class="admin-setting-toggle-row">
                   <div class="admin-toggle-info-left">
                     <div class="admin-toggle-icon">
@@ -421,7 +760,7 @@
                     </div>
                     <div class="admin-toggle-texts">
                       <span class="admin-toggle-title">Platform Notifications</span>
-                      <span class="admin-toggle-desc">Get notified about new contests, battles and events.</span>
+                      <span class="admin-toggle-desc">Live toasts for new users, contest submissions, and battle matchmaking.</span>
                     </div>
                   </div>
                   <label class="admin-switch">
@@ -430,7 +769,28 @@
                   </label>
                 </div>
 
-                <!-- Item 3: Quiz Reminders (OFF) -->
+                <!-- Anti-Cheating Incident Alerts -->
+                <div class="admin-setting-toggle-row">
+                  <div class="admin-toggle-info-left">
+                    <div class="admin-toggle-icon" style="background:#fef2f2; color:#ef4444; border-color:#fee2e2;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                      </svg>
+                    </div>
+                    <div class="admin-toggle-texts">
+                      <span class="admin-toggle-title">Anti-Cheating Real-Time Alerts</span>
+                      <span class="admin-toggle-desc">Immediate alerts when a user switches tabs, copies code, or loses focus during contests.</span>
+                    </div>
+                  </div>
+                  <label class="admin-switch">
+                    <input type="checkbox" id="toggle-cheat-alerts" checked />
+                    <span class="admin-switch-slider"></span>
+                  </label>
+                </div>
+
+                <!-- Quiz & Contest Reminders -->
                 <div class="admin-setting-toggle-row">
                   <div class="admin-toggle-info-left">
                     <div class="admin-toggle-icon">
@@ -440,28 +800,27 @@
                       </svg>
                     </div>
                     <div class="admin-toggle-texts">
-                      <span class="admin-toggle-title">Quiz Reminders</span>
-                      <span class="admin-toggle-desc">Reminders for upcoming quizzes and deadlines.</span>
+                      <span class="admin-toggle-title">Contest Schedule Reminders</span>
+                      <span class="admin-toggle-desc">Dispatch automatic notifications 15 minutes before scheduled live contests start.</span>
                     </div>
                   </div>
                   <label class="admin-switch">
-                    <input type="checkbox" id="toggle-quiz-reminders" />
+                    <input type="checkbox" id="toggle-quiz-reminders" checked />
                     <span class="admin-switch-slider"></span>
                   </label>
                 </div>
 
-                <!-- Item 4: Marketing Updates (OFF) -->
+                <!-- Marketing & Announcements -->
                 <div class="admin-setting-toggle-row">
                   <div class="admin-toggle-info-left">
                     <div class="admin-toggle-icon">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        <polyline points="9 12 11 14 15 10"></polyline>
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
                       </svg>
                     </div>
                     <div class="admin-toggle-texts">
-                      <span class="admin-toggle-title">Marketing Updates</span>
-                      <span class="admin-toggle-desc">Get news about new features and updates.</span>
+                      <span class="admin-toggle-title">System Changelog & Updates</span>
+                      <span class="admin-toggle-desc">Receive announcements when new KUIZU engine features are deployed.</span>
                     </div>
                   </div>
                   <label class="admin-switch">
@@ -470,161 +829,369 @@
                   </label>
                 </div>
               </div>
+
+              <!-- Test Notification Button -->
+              <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                <button type="button" class="admin-btn-secondary" id="btn-test-notification">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                  </svg>
+                  <span>Send Test Notification</span>
+                </button>
+              </div>
             </div>
 
-            <!-- Card 3: Additional Settings -->
-            <div class="admin-card admin-setting-card" id="section-additional">
+            <!-- Card 4: Account & Security -->
+            <div class="admin-card admin-setting-card" id="section-account">
               <div class="admin-setting-card-header">
                 <div class="admin-setting-header-icon-wrap">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="4" y1="21" x2="4" y2="14"></line>
-                    <line x1="4" y1="10" x2="4" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12" y2="3"></line>
-                    <line x1="20" y1="21" x2="20" y2="16"></line>
-                    <line x1="20" y1="12" x2="20" y2="3"></line>
-                    <line x1="1" y1="14" x2="7" y2="14"></line>
-                    <line x1="9" y1="8" x2="15" y2="8"></line>
-                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
                   </svg>
                 </div>
                 <div>
-                  <h2 class="admin-setting-card-title">Additional Settings</h2>
-                  <p class="admin-setting-card-desc">Other important preferences.</p>
+                  <h2 class="admin-setting-card-title">Admin Account & Credentials</h2>
+                  <p class="admin-setting-card-desc">Manage administrator credentials, profile avatar, and account access permissions.</p>
                 </div>
               </div>
 
-              <div class="admin-additional-grid">
-                <!-- Left Column: Language & Timezone -->
-                <div class="admin-additional-left-col">
-                  <!-- Language -->
-                  <div class="admin-additional-select-row">
-                    <div class="admin-toggle-info-left">
-                      <div class="admin-toggle-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <line x1="2" y1="12" x2="22" y2="12"></line>
-                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                        </svg>
-                      </div>
-                      <div class="admin-toggle-texts">
-                        <span class="admin-toggle-title">Language</span>
-                        <span class="admin-toggle-desc">Select your preferred language.</span>
-                      </div>
-                    </div>
-                    <div class="admin-setting-select-wrap">
-                      <select id="setting-language" class="admin-mini-select">
-                        <option value="en" selected>English</option>
-                        <option value="es">Español</option>
-                        <option value="fr">Français</option>
-                        <option value="de">Deutsch</option>
-                        <option value="hi">Hindi</option>
-                      </select>
-                      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
-                    </div>
+              <!-- Profile Box -->
+              <div class="admin-account-profile-box">
+                <img id="admin-account-avatar-preview" src="/images/admin_avatar.png" alt="Admin Avatar" class="admin-account-avatar-large" />
+                <div class="admin-account-meta-right">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <h3 id="admin-account-display-title" style="margin:0; font-size:18px; font-weight:700; color:var(--font-heading-color);">Admin</h3>
+                    <span class="admin-badge-status active">Super Administrator</span>
                   </div>
-
-                  <!-- Timezone -->
-                  <div class="admin-additional-select-row">
-                    <div class="admin-toggle-info-left">
-                      <div class="admin-toggle-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                      </div>
-                      <div class="admin-toggle-texts">
-                        <span class="admin-toggle-title">Timezone</span>
-                        <span class="admin-toggle-desc">Set your local timezone.</span>
-                      </div>
-                    </div>
-                    <div class="admin-setting-select-wrap">
-                      <select id="setting-timezone" class="admin-mini-select">
-                        <option value="Asia/Kolkata" selected>Asia/Kolkata (IST)</option>
-                        <option value="America/New_York">America/New_York (EST)</option>
-                        <option value="Europe/London">Europe/London (GMT)</option>
-                        <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
-                        <option value="UTC">UTC (Universal Time)</option>
-                      </select>
-                      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="6 9 12 15 18 9"></polyline>
+                  <span id="admin-account-display-email" style="font-size:13px; color:#64748b;">admin@kuizu.io</span>
+                  <div style="margin-top:6px;">
+                    <button type="button" class="admin-btn-secondary" id="btn-change-avatar" style="padding: 5px 12px; font-size: 12px;">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
                       </svg>
-                    </div>
+                      <span>Change Avatar</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Name & Email Inputs -->
+              <div class="admin-input-row" style="margin-bottom: 20px;">
+                <div class="admin-input-group">
+                  <label class="admin-setting-label" for="admin-account-name">Administrator Name</label>
+                  <input type="text" id="admin-account-name" class="admin-text-input" value="Admin" placeholder="Display Name" />
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-setting-label" for="admin-account-email">Admin Email Address</label>
+                  <input type="email" id="admin-account-email" class="admin-text-input" value="admin@kuizu.io" placeholder="admin@domain.com" />
+                </div>
+              </div>
+
+              <div class="admin-setting-section-divider"></div>
+
+              <!-- Change Password Section -->
+              <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--font-heading-color);">Change Administrator Password</h4>
+              <div class="admin-input-row" style="margin-bottom: 14px;">
+                <div class="admin-input-group">
+                  <label class="admin-setting-label" for="input-current-pass">Current Password</label>
+                  <div class="admin-input-with-action">
+                    <input type="password" id="input-current-pass" class="admin-text-input" placeholder="••••••••••••" />
+                    <button type="button" class="admin-pass-eye-btn" data-target="input-current-pass" title="Show password">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
                   </div>
                 </div>
 
-                <!-- Right Column: Auto Save, Show Leaderboard, Sound Effects -->
-                <div class="admin-additional-right-col">
-                  <!-- Auto Save (ON) -->
-                  <div class="admin-setting-toggle-row compact">
-                    <div class="admin-toggle-info-left">
-                      <div class="admin-toggle-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                          <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                          <polyline points="7 3 7 8 15 8"></polyline>
-                        </svg>
-                      </div>
-                      <div class="admin-toggle-texts">
-                        <span class="admin-toggle-title">Auto Save</span>
-                        <span class="admin-toggle-desc">Automatically save your progress.</span>
-                      </div>
-                    </div>
-                    <label class="admin-switch">
-                      <input type="checkbox" id="toggle-autosave" checked />
-                      <span class="admin-switch-slider"></span>
-                    </label>
+                <div class="admin-input-group">
+                  <label class="admin-setting-label" for="input-new-pass">New Password</label>
+                  <div class="admin-input-with-action">
+                    <input type="password" id="input-new-pass" class="admin-text-input" placeholder="New secure password" />
+                    <button type="button" class="admin-pass-eye-btn" data-target="input-new-pass" title="Show password">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
                   </div>
+                  <!-- Password Strength Bar -->
+                  <div class="admin-password-meter">
+                    <div class="admin-password-meter-bar">
+                      <div class="admin-password-meter-fill" id="pass-strength-fill"></div>
+                    </div>
+                    <span class="admin-password-meter-label" id="pass-strength-label">Security</span>
+                  </div>
+                </div>
+              </div>
 
-                  <!-- Show Leaderboard (ON) -->
-                  <div class="admin-setting-toggle-row compact">
-                    <div class="admin-toggle-info-left">
-                      <div class="admin-toggle-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-                          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-                          <path d="M4 22h16"></path>
-                          <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
-                          <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
-                        </svg>
-                      </div>
-                      <div class="admin-toggle-texts">
-                        <span class="admin-toggle-title">Show Leaderboard</span>
-                        <span class="admin-toggle-desc">Display your rank on the leaderboard.</span>
-                      </div>
-                    </div>
-                    <label class="admin-switch">
-                      <input type="checkbox" id="toggle-show-leaderboard" checked />
-                      <span class="admin-switch-slider"></span>
-                    </label>
-                  </div>
+              <div class="admin-input-group" style="margin-bottom: 16px;">
+                <label class="admin-setting-label" for="input-confirm-pass">Confirm New Password</label>
+                <div class="admin-input-with-action">
+                  <input type="password" id="input-confirm-pass" class="admin-text-input" placeholder="Repeat new password" />
+                  <button type="button" class="admin-pass-eye-btn" data-target="input-confirm-pass" title="Show password">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
+              </div>
 
-                  <!-- Sound Effects (ON) -->
-                  <div class="admin-setting-toggle-row compact">
-                    <div class="admin-toggle-info-left">
-                      <div class="admin-toggle-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                        </svg>
-                      </div>
-                      <div class="admin-toggle-texts">
-                        <span class="admin-toggle-title">Sound Effects</span>
-                        <span class="admin-toggle-desc">Play sounds for interactions.</span>
-                      </div>
-                    </div>
-                    <label class="admin-switch">
-                      <input type="checkbox" id="toggle-sound-effects" checked />
-                      <span class="admin-switch-slider"></span>
-                    </label>
+              <!-- Two-Factor Authentication Toggle -->
+              <div class="admin-setting-toggle-row compact" style="padding: 12px 14px; background: #f8fafc; border-radius: 12px; margin-bottom: 20px;">
+                <div class="admin-toggle-info-left">
+                  <div class="admin-toggle-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
                   </div>
+                  <div class="admin-toggle-texts">
+                    <span class="admin-toggle-title">Two-Factor Authentication (2FA)</span>
+                    <span class="admin-toggle-desc">Require one-time passcode confirmation for administrator logins.</span>
+                  </div>
+                </div>
+                <label class="admin-switch">
+                  <input type="checkbox" id="toggle-2fa" />
+                  <span class="admin-switch-slider"></span>
+                </label>
+              </div>
+
+              <div style="display:flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="admin-btn-secondary" id="btn-update-password">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <span>Update Password</span>
+                </button>
+                <button type="button" class="admin-btn-primary" id="btn-save-account">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Save Account Details</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 5: Privacy & Security -->
+            <div class="admin-card admin-setting-card" id="section-privacy">
+              <div class="admin-setting-card-header">
+                <div class="admin-setting-header-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="admin-setting-card-title">Privacy & Anti-Cheating Surveillance</h2>
+                  <p class="admin-setting-card-desc">Audit policies, surveillance sensitivity, auto-flagging thresholds, and session timeouts.</p>
+                </div>
+              </div>
+
+              <div class="admin-input-row" style="margin-bottom: 18px;">
+                <div class="admin-input-group">
+                  <label class="admin-setting-label" for="setting-session-timeout">Admin Session Inactivity Timeout</label>
+                  <div class="admin-setting-select-wrap">
+                    <select id="setting-session-timeout" class="admin-mini-select" style="width: 100%;">
+                      <option value="15">15 Minutes</option>
+                      <option value="30" selected>30 Minutes</option>
+                      <option value="60">1 Hour</option>
+                      <option value="240">4 Hours</option>
+                      <option value="never">Never (Stay Logged In)</option>
+                    </select>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="admin-input-group">
+                  <label class="admin-setting-label" for="setting-cheat-strictness">Anti-Cheating Surveillance Mode</label>
+                  <div class="admin-setting-select-wrap">
+                    <select id="setting-cheat-strictness" class="admin-mini-select" style="width: 100%;">
+                      <option value="standard">Standard Guard (Logs tab switches)</option>
+                      <option value="strict" selected>High Sensitivity (Strict window & blur trap)</option>
+                      <option value="paranoid">Maximum Paranoia (Immediate disqualification)</option>
+                    </select>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <div class="admin-notifications-list">
+                <div class="admin-setting-toggle-row compact">
+                  <div class="admin-toggle-info-left">
+                    <div class="admin-toggle-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                      </svg>
+                    </div>
+                    <div class="admin-toggle-texts">
+                      <span class="admin-toggle-title">Auto-Flag Tab / Window Switch Violations</span>
+                      <span class="admin-toggle-desc">Records every visibility change and out-of-focus incident to Cheating Logs.</span>
+                    </div>
+                  </div>
+                  <label class="admin-switch">
+                    <input type="checkbox" id="toggle-flag-tab-switch" checked />
+                    <span class="admin-switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="admin-setting-toggle-row compact">
+                  <div class="admin-toggle-info-left">
+                    <div class="admin-toggle-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                      </svg>
+                    </div>
+                    <div class="admin-toggle-texts">
+                      <span class="admin-toggle-title">Block & Flag External Clipboard Paste</span>
+                      <span class="admin-toggle-desc">Disallows pasting pre-written code directly into contest coding arenas.</span>
+                    </div>
+                  </div>
+                  <label class="admin-switch">
+                    <input type="checkbox" id="toggle-flag-copy-paste" checked />
+                    <span class="admin-switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="admin-setting-toggle-row compact">
+                  <div class="admin-toggle-info-left">
+                    <div class="admin-toggle-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                      </svg>
+                    </div>
+                    <div class="admin-toggle-texts">
+                      <span class="admin-toggle-title">Enforce Fullscreen in Arena Contests</span>
+                      <span class="admin-toggle-desc">Exiting fullscreen triggers an immediate warning countdown.</span>
+                    </div>
+                  </div>
+                  <label class="admin-switch">
+                    <input type="checkbox" id="toggle-strict-fullscreen" checked />
+                    <span class="admin-switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Security Action Buttons -->
+              <div style="margin-top: 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                <button type="button" class="admin-btn-danger" id="btn-clear-cache">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                  <span>Clear System Cache & Local Data</span>
+                </button>
+
+                <button type="button" class="admin-btn-secondary" id="btn-export-security-logs">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>Export Security Logs (JSON)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 6: Help, Diagnostics & Support -->
+            <div class="admin-card admin-setting-card" id="section-support">
+              <div class="admin-setting-card-header">
+                <div class="admin-setting-header-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="admin-setting-card-title">Help, Diagnostics & Support</h2>
+                  <p class="admin-setting-card-desc">Real-time status of backend services, database connectors, and administrator documentation.</p>
+                </div>
+              </div>
+
+              <!-- Real-time Diagnostics Grid -->
+              <div class="admin-diag-grid">
+                <div class="admin-diag-item">
+                  <div class="admin-diag-info">
+                    <span class="admin-diag-dot" id="diag-dot-db"></span>
+                    <span class="admin-diag-label">Supabase Database</span>
+                  </div>
+                  <span class="admin-diag-status-text" id="diag-status-db">Connected</span>
+                </div>
+
+                <div class="admin-diag-item">
+                  <div class="admin-diag-info">
+                    <span class="admin-diag-dot" id="diag-dot-audio"></span>
+                    <span class="admin-diag-label">Audio & BGM Engine</span>
+                  </div>
+                  <span class="admin-diag-status-text" id="diag-status-audio">Operational</span>
+                </div>
+
+                <div class="admin-diag-item">
+                  <div class="admin-diag-info">
+                    <span class="admin-diag-dot" id="diag-dot-cheat"></span>
+                    <span class="admin-diag-label">Cheating Monitor</span>
+                  </div>
+                  <span class="admin-diag-status-text" id="diag-status-cheat">Active</span>
+                </div>
+
+                <div class="admin-diag-item">
+                  <div class="admin-diag-info">
+                    <span class="admin-diag-dot" id="diag-dot-auth"></span>
+                    <span class="admin-diag-label">Admin Auth Guard</span>
+                  </div>
+                  <span class="admin-diag-status-text" id="diag-status-auth">Verified</span>
+                </div>
+              </div>
+
+              <!-- Diagnostic Actions -->
+              <div style="margin-top: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <span style="font-size: 12.5px; color: #64748b;">
+                  KUIZU Engine v2.4.0 • Enterprise Core • Latency: <strong style="color:#059669;">24ms</strong>
+                </span>
+
+                <div style="display: flex; gap: 10px;">
+                  <button type="button" class="admin-btn-secondary" id="btn-admin-docs">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <span>Admin Guide</span>
+                  </button>
+
+                  <button type="button" class="admin-btn-secondary" id="btn-run-diagnostics">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="23 4 23 10 17 10"></polyline>
+                      <polyline points="1 20 1 14 7 14"></polyline>
+                      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    <span>Run Diagnostics</span>
+                  </button>
+
+                  <button type="button" class="admin-btn-secondary" id="btn-contact-support">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                    </svg>
+                    <span>Contact Support</span>
+                  </button>
                 </div>
               </div>
             </div>
 
-            <!-- Card: Game Audio & BGM -->
+            <!-- Card 7: Game Audio & BGM -->
             <div class="admin-card admin-setting-card" id="section-audio">
               <div class="admin-setting-card-header">
                 <div class="admin-setting-header-icon-wrap" style="background:#eef2ff; color:#4f46e5; border-color:#e0e7ff;">
@@ -750,7 +1317,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
-                <span>Save Changes</span>
+                <span>Save All Changes</span>
               </button>
             </div>
 
@@ -760,6 +1327,80 @@
 
       </main>
 
+    </div>
+
+    <!-- Avatar Chooser Modal -->
+    <div class="admin-profile-modal-backdrop" id="admin-avatar-modal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
+      <div class="admin-profile-modal-card" style="max-width: 440px;">
+        <button type="button" class="admin-profile-modal-close" id="btn-close-avatar-modal" aria-label="Close modal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 6px; color: var(--font-heading-color);">Choose Administrator Avatar</h3>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">Select an avatar preset or enter a custom image URL.</p>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px;">
+          <div class="admin-avatar-preset-btn active" data-avatar="/images/admin_avatar.png" style="border-radius:50%; padding:3px; border:2px solid var(--primary-accent); cursor:pointer;">
+            <img src="/images/admin_avatar.png" alt="Preset 1" style="width:100%; border-radius:50%; display:block;" />
+          </div>
+          <div class="admin-avatar-preset-btn" data-avatar="/images/home_hero_avatar.png" style="border-radius:50%; padding:3px; border:2px solid transparent; cursor:pointer;">
+            <img src="/images/home_hero_avatar.png" alt="Preset 2" style="width:100%; border-radius:50%; display:block;" onerror="this.src='/images/admin_avatar.png'" />
+          </div>
+          <div class="admin-avatar-preset-btn" data-avatar="/images/flowwire_avatar_1.png" style="border-radius:50%; padding:3px; border:2px solid transparent; cursor:pointer;">
+            <img src="/images/flowwire_avatar_1.png" alt="Preset 3" style="width:100%; border-radius:50%; display:block;" onerror="this.src='/images/admin_avatar.png'" />
+          </div>
+          <div class="admin-avatar-preset-btn" data-avatar="/images/flowwire_avatar_2.png" style="border-radius:50%; padding:3px; border:2px solid transparent; cursor:pointer;">
+            <img src="/images/flowwire_avatar_2.png" alt="Preset 4" style="width:100%; border-radius:50%; display:block;" onerror="this.src='/images/admin_avatar.png'" />
+          </div>
+        </div>
+
+        <div class="admin-input-group" style="margin-bottom: 16px;">
+          <label class="admin-setting-label" for="input-custom-avatar-url">Or Custom Avatar URL</label>
+          <input type="url" id="input-custom-avatar-url" class="admin-text-input" placeholder="https://example.com/avatar.png" />
+        </div>
+
+        <div style="display:flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="admin-btn-secondary" id="btn-cancel-avatar">Cancel</button>
+          <button type="button" class="admin-btn-primary" id="btn-apply-avatar">Apply Avatar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Documentation Guide Modal -->
+    <div class="admin-profile-modal-backdrop" id="admin-docs-modal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
+      <div class="admin-profile-modal-card" style="max-width: 540px;">
+        <button type="button" class="admin-profile-modal-close" id="btn-close-docs-modal" aria-label="Close modal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+          <div class="admin-setting-header-icon-wrap" style="width:36px; height:36px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 style="font-size: 18px; font-weight: 700; margin:0; color: var(--font-heading-color);">KUIZU Admin Quick Reference</h3>
+            <span style="font-size: 12px; color: #64748b;">Architecture & Security Protocols</span>
+          </div>
+        </div>
+
+        <div style="font-size: 13.5px; line-height: 1.6; color: #334155; display:flex; flex-direction:column; gap:12px; max-height:360px; overflow-y:auto; padding-right:8px;">
+          <p><strong>Anti-Cheating Guard:</strong> In-depth surveillance intercepts tab switching, copy/paste shortcuts, and browser window blur. All violations are logged in <a href="/admin/cheatinglogs" style="color:var(--primary-accent); font-weight:600;">Cheating Logs</a>.</p>
+          <p><strong>Sound Engine:</strong> WebAudio orchestrates continuous background music playback in arenas and daily challenges with preset master volume attenuation.</p>
+          <p><strong>Typography Engine:</strong> Custom font colors and type scales cascade globally through CSS variables across cards and dashboard widgets.</p>
+          <p><strong>Database Synchronization:</strong> Supabase stores questions, contests, battles, and user scores with client-side optimistic caching.</p>
+        </div>
+
+        <div style="margin-top: 18px; display:flex; justify-content: flex-end;">
+          <button type="button" class="admin-btn-primary" id="btn-dismiss-docs">Got It</button>
+        </div>
+      </div>
     </div>
 
     <!-- Toast Notification -->

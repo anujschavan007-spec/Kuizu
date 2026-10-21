@@ -1,10 +1,12 @@
 import confetti from 'canvas-confetti';
 import { fetchQuizLevels, fetchLevelQuestions, submitQuizLevelAnswers } from './services/quizService';
 import type { QuizLevel, QuizQuestion, QuizResult } from './types';
+import './services/userHeaderProfile';
 import './services/adminAuthGuard';
 import { soundManager } from './services/soundManager';
 import { showFirstQuizLevelBadgeModal } from './services/firstQuizLevelBadgeModal';
 import { unlockBadge, isBadgeUnlocked } from './services/badgeManager';
+import { initExamProctoring } from './services/proctoringService';
 
 // State
 let levels: QuizLevel[] = [];
@@ -46,6 +48,24 @@ const arenaQuestionText = document.getElementById('arena-question-text') as HTML
 const arenaOptionsGrid = document.getElementById('arena-options-grid') as HTMLDivElement | null;
 const btnQuizPrev = document.getElementById('btn-quiz-prev') as HTMLButtonElement | null;
 const btnQuizNext = document.getElementById('btn-quiz-next') as HTMLButtonElement | null;
+
+// DOM Elements: AI Explanation & Chat
+const arenaAiBanner = document.getElementById('arena-ai-banner') as HTMLDivElement | null;
+const aiStatusPill = document.getElementById('ai-status-pill') as HTMLSpanElement | null;
+const aiBannerExplanation = document.getElementById('ai-banner-explanation') as HTMLParagraphElement | null;
+const btnAskAiTutor = document.getElementById('btn-ask-ai-tutor') as HTMLButtonElement | null;
+
+const modalAiChat = document.getElementById('modal-ai-chat') as HTMLDivElement | null;
+const btnCloseAiChat = document.getElementById('btn-close-ai-chat') as HTMLButtonElement | null;
+const aiContextQuestionText = document.getElementById('ai-context-question-text') as HTMLDivElement | null;
+const aiContextOptionsSummary = document.getElementById('ai-context-options-summary') as HTMLDivElement | null;
+const aiChatMessages = document.getElementById('ai-chat-messages') as HTMLDivElement | null;
+const aiChatChips = document.getElementById('ai-chat-chips') as HTMLDivElement | null;
+const aiChatForm = document.getElementById('ai-chat-form') as HTMLFormElement | null;
+const aiChatInput = document.getElementById('ai-chat-input') as HTMLInputElement | null;
+
+// Chat History Per Question ID
+const questionChatHistory: Record<number, Array<{ role: 'ai' | 'user'; content: string }>> = {};
 
 // DOM Elements: Results Modal
 const modalQuizResults = document.getElementById('modal-quiz-results') as HTMLDivElement | null;
@@ -441,36 +461,426 @@ function renderQuestion(): void {
          </svg>`;
   }
 
-  // Render 4 Options
+  // Render 4 Options with locking & instant feedback
   if (!arenaOptionsGrid) return;
   const selectedAnswer = userAnswers[q.id];
+  const isAlreadyAnswered = Boolean(selectedAnswer);
 
   arenaOptionsGrid.innerHTML = q.options.map(opt => {
-    const isSelected = selectedAnswer === opt.id;
-    return `
-      <button type="button" class="arena-option-card ${isSelected ? 'selected' : ''}" data-option="${opt.id}">
-        <div class="option-letter-badge">${opt.id}</div>
-        <span class="option-text">${opt.text}</span>
-        <span class="option-check-icon">
+    let extraClasses = '';
+    let iconSvg = `
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    `;
+
+    if (isAlreadyAnswered) {
+      extraClasses += ' locked';
+      if (opt.id === q.correctOption) {
+        extraClasses += ' correct';
+      } else if (opt.id === selectedAnswer) {
+        extraClasses += ' wrong';
+        iconSvg = `
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
+        `;
+      } else {
+        extraClasses += ' dimmed';
+      }
+    }
+
+    return `
+      <button type="button" class="arena-option-card ${extraClasses}" data-option="${opt.id}" ${isAlreadyAnswered ? 'disabled' : ''}>
+        <div class="option-letter-badge">${opt.id}</div>
+        <span class="option-text">${escapeHtml(opt.text)}</span>
+        <span class="option-check-icon">
+          ${iconSvg}
         </span>
       </button>
     `;
   }).join('');
 
+  // Update AI Explanation Banner state
+  updateAiBannerState(q, selectedAnswer);
+
   // Attach option click listeners
   const optButtons = arenaOptionsGrid.querySelectorAll<HTMLButtonElement>('.arena-option-card');
   optButtons.forEach(btn => {
     btn.addEventListener('click', () => {
+      // Locked: If already answered, do not allow changing
+      if (userAnswers[q.id]) return;
+
       const optId = btn.getAttribute('data-option') as 'A' | 'B' | 'C' | 'D';
       userAnswers[q.id] = optId;
 
-      optButtons.forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
+      const isCorrect = optId === q.correctOption;
+
+      // Lock all options immediately
+      optButtons.forEach(b => {
+        b.classList.add('locked');
+        b.disabled = true;
+      });
+
+      // Show correct/wrong colors & trigger sound effects immediately
+      if (isCorrect) {
+        btn.classList.add('correct');
+        // Trigger correct sound effect immediately
+        soundManager.playCorrectAnswerSound();
+        launchSmallSparkle();
+      } else {
+        btn.classList.add('wrong');
+        const iconWrap = btn.querySelector('.option-check-icon');
+        if (iconWrap) {
+          iconWrap.innerHTML = `
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          `;
+        }
+        // Trigger wrong sound effect immediately
+        soundManager.playWrongAnswerSound();
+
+        // Reveal the correct option in vivid green
+        const correctBtn = arenaOptionsGrid.querySelector<HTMLButtonElement>(`[data-option="${q.correctOption}"]`);
+        if (correctBtn) {
+          correctBtn.classList.add('correct');
+        }
+      }
+
+      // Dim non-selected, non-correct options
+      optButtons.forEach(b => {
+        if (!b.classList.contains('correct') && !b.classList.contains('wrong')) {
+          b.classList.add('dimmed');
+        }
+      });
+
+      // Immediately reveal the AI explanation banner below
+      updateAiBannerState(q, optId);
     });
   });
+}
+
+/**
+ * Small confetti sparkle on correct answer
+ */
+function launchSmallSparkle(): void {
+  try {
+    confetti({
+      particleCount: 35,
+      spread: 60,
+      origin: { y: 0.7 },
+      colors: ['#10b981', '#34d399', '#6ee7b7', '#fde68a']
+    });
+  } catch {}
+}
+
+/**
+ * Update the AI explanation banner below the question options
+ */
+function updateAiBannerState(q: QuizQuestion, selectedAnswer?: 'A' | 'B' | 'C' | 'D'): void {
+  if (!arenaAiBanner) return;
+
+  if (!selectedAnswer) {
+    arenaAiBanner.style.display = 'none';
+    return;
+  }
+
+  const isCorrect = selectedAnswer === q.correctOption;
+  if (aiStatusPill) {
+    aiStatusPill.className = `ai-status-pill ${isCorrect ? 'status-correct' : 'status-wrong'}`;
+    aiStatusPill.textContent = isCorrect ? 'Correct Answer! ⭐' : 'Incorrect Choice';
+  }
+
+  if (aiBannerExplanation) {
+    const correctOpt = q.options.find(o => o.id === q.correctOption);
+    const explanationText = q.explanation || `Option ${q.correctOption} (${correctOpt?.text || ''}) is the verified correct answer.`;
+    aiBannerExplanation.textContent = explanationText;
+  }
+
+  arenaAiBanner.style.display = 'flex';
+}
+
+/**
+ * Open Interactive AI Chat Modal for the current quiz question
+ */
+function openAiChatModal(): void {
+  const q = currentQuestions[currentQuestionIndex];
+  if (!q || !modalAiChat) return;
+
+  const userChoice = userAnswers[q.id];
+  const correctOpt = q.options.find(o => o.id === q.correctOption);
+
+  // Set question context
+  if (aiContextQuestionText) {
+    aiContextQuestionText.textContent = q.question;
+  }
+
+  if (aiContextOptionsSummary) {
+    aiContextOptionsSummary.innerHTML = q.options.map(opt => {
+      const isCorrect = opt.id === q.correctOption;
+      const isUserWrong = userChoice === opt.id && !isCorrect;
+      let badge = '';
+      let cls = 'ai-context-option-pill';
+      if (isCorrect) {
+        cls += ' is-correct';
+        badge = ' ✓ Correct';
+      } else if (isUserWrong) {
+        cls += ' is-user-wrong';
+        badge = ' ✗ Your choice';
+      }
+      return `<span class="${cls}">${opt.id}: ${escapeHtml(opt.text)}${badge}</span>`;
+    }).join('');
+  }
+
+  // Initialize chat history for this question if empty
+  if (!questionChatHistory[q.id] || questionChatHistory[q.id].length === 0) {
+    const isCorrect = userChoice === q.correctOption;
+    const initialGreeting = isCorrect
+      ? `🎉 **Great job!** You nailed this question with **Option ${q.correctOption} (${correctOpt?.text || ''})**.\n\n` +
+        `**Explanation:** ${q.explanation || 'This is the verified correct answer based on programming specifications.'}\n\n` +
+        `💡 Would you like to explore a code example, common traps, or test edge cases? Ask me anything below!`
+      : `👋 Let's review this question together!\n\n` +
+        `The correct answer is **Option ${q.correctOption}: ${correctOpt?.text || ''}**.\n\n` +
+        `**Explanation:** ${q.explanation || 'Review the core concept for this question.'}\n\n` +
+        `⚠️ ${userChoice ? `You selected Option ${userChoice}. ` : ''}Feel free to ask me any question about why this is correct or how to remember this concept!`;
+
+    questionChatHistory[q.id] = [
+      { role: 'ai', content: initialGreeting }
+    ];
+  }
+
+  renderAiChatMessages(q.id);
+
+  modalAiChat.classList.add('show');
+  modalAiChat.setAttribute('aria-hidden', 'false');
+  if (aiChatInput) {
+    aiChatInput.value = '';
+    setTimeout(() => aiChatInput?.focus(), 150);
+  }
+}
+
+/**
+ * Close AI Chat Modal
+ */
+function closeAiChatModal(): void {
+  modalAiChat?.classList.remove('show');
+  modalAiChat?.setAttribute('aria-hidden', 'true');
+}
+
+/**
+ * Render Chat Messages
+ */
+function renderAiChatMessages(qId: number): void {
+  if (!aiChatMessages) return;
+  const history = questionChatHistory[qId] || [];
+
+  aiChatMessages.innerHTML = history.map(msg => {
+    return `<div class="ai-msg-bubble ${msg.role}">${renderMarkdown(msg.content)}</div>`;
+  }).join('');
+
+  aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+}
+
+/**
+ * Send User Chat Message
+ */
+function sendUserChatMessage(text: string): void {
+  const q = currentQuestions[currentQuestionIndex];
+  if (!q || !text.trim() || !aiChatMessages) return;
+
+  const qId = q.id;
+  if (!questionChatHistory[qId]) questionChatHistory[qId] = [];
+
+  // 1. Add user message
+  questionChatHistory[qId].push({ role: 'user', content: text.trim() });
+  renderAiChatMessages(qId);
+  if (aiChatInput) aiChatInput.value = '';
+
+  // 2. Add temporary typing bubble
+  const typingEl = document.createElement('div');
+  typingEl.className = 'ai-msg-bubble ai';
+  typingEl.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 6px; font-style: italic; color: #64748b;">
+    <span class="ai-pulse-indicator"></span> Kuizu AI Tutor is thinking...
+  </span>`;
+  aiChatMessages.appendChild(typingEl);
+  aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+
+  // 3. Generate response after brief realistic delay
+  setTimeout(() => {
+    typingEl.remove();
+    const reply = generateAiTutorResponse(q, text.trim(), userAnswers[q.id]);
+    questionChatHistory[qId].push({ role: 'ai', content: reply });
+    renderAiChatMessages(qId);
+  }, 450);
+}
+
+/**
+ * Intelligent Pedagogical AI Tutor Response Engine
+ */
+function generateAiTutorResponse(q: QuizQuestion, query: string, userChoice?: 'A' | 'B' | 'C' | 'D'): string {
+  const qText = q.question.toLowerCase();
+  const queryLower = query.toLowerCase();
+  const correctOpt = q.options.find(o => o.id === q.correctOption);
+  const correctText = correctOpt?.text || '';
+
+  // 1. Code example requested
+  if (queryLower.includes('code') || queryLower.includes('example') || queryLower.includes('syntax')) {
+    if (qText.includes('block-scoped') || qText.includes('let') || qText.includes('const') || qText.includes('var')) {
+      return `Here is a clear code example contrasting \`let\`/\`const\` with \`var\`:\n\n` +
+        `\`\`\`javascript\n` +
+        `// 1. Block Scope (let & const)\n` +
+        `if (true) {\n` +
+        `  let blockScoped = "Available ONLY inside this block";\n` +
+        `  const constantVal = 3.14159;\n` +
+        `  var functionScoped = "Leaks outside this block!";\n` +
+        `}\n\n` +
+        `console.log(functionScoped); // Prints: "Leaks outside this block!"\n` +
+        `// console.log(blockScoped); // ReferenceError: blockScoped is not defined\n` +
+        `\`\`\`\n\n` +
+        `* **Rule of Thumb:** Always use \`const\` by default. Use \`let\` when you intend to reassign. Avoid \`var\` in modern software.`;
+    }
+    if (qText.includes('strict equality') || qText.includes('===') || qText.includes('coercion')) {
+      return `Here is how \`===\` (strict) differs from \`==\` (loose coercion):\n\n` +
+        `\`\`\`javascript\n` +
+        `// Loose Equality (==) performs type conversion automatically\n` +
+        `console.log(42 == '42');         // true (string converted to number)\n` +
+        `console.log(0 == false);        // true (false coerced to 0)\n` +
+        `console.log(null == undefined); // true\n\n` +
+        `// Strict Equality (===) validates BOTH value and data type\n` +
+        `console.log(42 === '42');        // false (Number !== String)\n` +
+        `console.log(0 === false);       // false (Number !== Boolean)\n` +
+        `console.log(null === undefined);// false (Null !== Undefined)\n` +
+        `\`\`\`\n\n` +
+        `* **Best Practice:** Always use \`===\` to prevent unexpected type coercion bugs.`;
+    }
+    if (qText.includes('primitive') || qText.includes('array') || qText.includes('object')) {
+      return `Primitives vs Reference Types in JavaScript:\n\n` +
+        `\`\`\`javascript\n` +
+        `// Primitives (Stored by value directly on call stack):\n` +
+        `// string, number, boolean, null, undefined, symbol, bigint\n` +
+        `let score = 100;\n` +
+        `let copy = score;\n` +
+        `copy = 200;\n` +
+        `console.log(score); // 100 (original untouched)\n\n` +
+        `// Objects & Arrays (Stored by reference in heap memory):\n` +
+        `let items = [1, 2, 3];\n` +
+        `let ref = items;\n` +
+        `ref.push(99);\n` +
+        `console.log(items); // [1, 2, 3, 99] (both point to same memory!)\n` +
+        `\`\`\`\n\n` +
+        `* That's why \`Array\` is an Object reference type, not a primitive!`;
+    }
+    if (qText.includes('typeof null')) {
+      return `The historical \`typeof null\` quirk:\n\n` +
+        `\`\`\`javascript\n` +
+        `console.log(typeof null);      // "object" (heritage quirk from 1995!)\n` +
+        `console.log(typeof undefined); // "undefined"\n` +
+        `console.log(null === null);    // true\n` +
+        `\`\`\`\n\n` +
+        `* In the initial 1995 JavaScript engine, values were tagged with 32-bit type indicators. The object tag was \`000\`, and \`null\` was represented as the NULL pointer (\`0x00\`), mistakenly returning \`"object"\`!`;
+    }
+    if (qText.includes('hash map') || qText.includes('o(1)') || qText.includes('complexity')) {
+      return `Hash Map O(1) Constant Time Retrieval:\n\n` +
+        `\`\`\`javascript\n` +
+        `const studentGrades = new Map();\n` +
+        `studentGrades.set("Alice", "A+");\n` +
+        `studentGrades.set("Bob", "B");\n\n` +
+        `// O(1) immediate lookup via hashing function\n` +
+        `console.log(studentGrades.get("Alice")); // "A+" in O(1) time\n` +
+        `\`\`\`\n\n` +
+        `* Instead of iterating through elements one-by-one like an array (O(n)), a hash map computes the memory bucket directly from the key.`;
+    }
+    if (qText.includes('fifo') || qText.includes('queue') || qText.includes('stack')) {
+      return `Queue FIFO (First-In, First-Out):\n\n` +
+        `\`\`\`javascript\n` +
+        `class Queue {\n` +
+        `  constructor() { this.data = []; }\n` +
+        `  enqueue(item) { this.data.push(item); }\n` +
+        `  dequeue() { return this.data.shift(); } // removes oldest element\n` +
+        `}\n\n` +
+        `const q = new Queue();\n` +
+        `q.enqueue("Customer 1");\n` +
+        `q.enqueue("Customer 2");\n` +
+        `console.log(q.dequeue()); // "Customer 1" (First in, first served!)\n` +
+        `\`\`\`\n\n` +
+        `* Contrast with Stack (LIFO: Last-In, First-Out).`;
+    }
+    return `Here is a code example illustrating this concept:\n\n` +
+      `\`\`\`javascript\n` +
+      `// Target concept: ${correctText}\n` +
+      `const answer = "${correctText}";\n` +
+      `console.log("Verified answer:", answer);\n` +
+      `\`\`\`\n\n` +
+      `* This directly implements the solution for: "${q.question}"`;
+  }
+
+  // 2. Why is this correct?
+  if (queryLower.includes('why') || queryLower.includes('correct') || queryLower.includes('reason')) {
+    return `**Why Option ${q.correctOption} ("${correctText}") is the correct answer:**\n\n` +
+      `${q.explanation ? q.explanation + '\n\n' : ''}` +
+      `* **Core Specification:** In computer science, **${correctText}** meets the exact criteria defined in: *"${q.question}"*.\n\n` +
+      `* **Other Choices Breakdown:**\n` +
+      q.options.filter(o => o.id !== q.correctOption).map(o => `  - **Option ${o.id} (${o.text}):** Incorrect because it violates or does not satisfy this definition.`).join('\n') +
+      `\n\n💡 Would you like a code snippet demonstrating this?`;
+  }
+
+  // 3. Common traps / mistakes
+  if (queryLower.includes('trap') || queryLower.includes('mistake') || queryLower.includes('common') || queryLower.includes('error')) {
+    return `⚠️ **Common Traps & Mistakes Students Make on This Topic:**\n\n` +
+      `1. **Confusing similar naming conventions:** Believing options like ${q.options.map(o => `"${o.text}"`).join(', ')} behave identically.\n` +
+      `2. **Assumptions about implicit behavior:** Overlooking type coercion or scoping rules.\n` +
+      `3. **Interview Gotchas:** Questions like this are staples in technical screenings to test depth of knowledge beyond just writing basic syntax.\n\n` +
+      `* **Pro Tip:** Keep in mind that **${correctText}** is the standard solution here!`;
+  }
+
+  // 4. Explain simply / beginner
+  if (queryLower.includes('simply') || queryLower.includes('beginner') || queryLower.includes('simple') || queryLower.includes('easy')) {
+    return `👶 **Simple Beginner Explanation:**\n\n` +
+      `Imagine you need the right tool for a specific task:\n\n` +
+      `* For *"${q.question}"*, the tool built explicitly for this is **${correctText}**.\n` +
+      `* The other choices either do something different or belong to older or other languages.\n\n` +
+      `Remember this rule of thumb: whenever you encounter this question, look for **${correctText}**!`;
+  }
+
+  // 5. General / Custom queries
+  return `Great question! Here is how it applies to *"${q.question}"*:\n\n` +
+    `* The correct answer is **Option ${q.correctOption}: ${correctText}**.\n` +
+    `* Regarding your query *"${query}"*: ${q.explanation || 'this is a fundamental concept in software engineering'}.\n\n` +
+    `Feel free to ask any other follow-up question, or click one of the suggestion chips!`;
+}
+
+/**
+ * Lightweight Markdown renderer for AI chat messages
+ */
+function renderMarkdown(text: string): string {
+  if (!text) return '';
+  let html = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Code blocks ```language ... ```
+  html = html.replace(/```([a-z0-9]*)\n([\s\S]*?)```/g, (_m, lang, code) => {
+    return `<pre><code class="language-${lang}">${code.trim()}</code></pre>`;
+  });
+
+  // Inline code `...`
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  // Bold **...**
+  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+  // Bullet points
+  html = html.replace(/^\* (.*$)/gim, '• $1<br>');
+  html = html.replace(/^- (.*$)/gim, '• $1<br>');
+
+  // Line breaks
+  html = html.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+
+  return html;
 }
 
 /**
@@ -605,6 +1015,30 @@ function setupListeners(): void {
   });
   btnQuizNext?.addEventListener('click', handleNextOrSubmit);
 
+  // AI Explanation & Chat Controls
+  btnAskAiTutor?.addEventListener('click', openAiChatModal);
+  btnCloseAiChat?.addEventListener('click', closeAiChatModal);
+  modalAiChat?.addEventListener('click', (e) => {
+    if (e.target === modalAiChat) closeAiChatModal();
+  });
+
+  // AI Prompt Chips
+  aiChatChips?.querySelectorAll<HTMLButtonElement>('.ai-prompt-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const prompt = chip.getAttribute('data-prompt');
+      if (prompt) sendUserChatMessage(prompt);
+    });
+  });
+
+  // AI Chat Form Submit
+  aiChatForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = aiChatInput?.value?.trim();
+    if (text) {
+      sendUserChatMessage(text);
+    }
+  });
+
   // Results Modal Continue
   btnResultsContinue?.addEventListener('click', () => {
     modalQuizResults?.classList.remove('show');
@@ -619,38 +1053,7 @@ function setupListeners(): void {
     });
   });
 
-  // User Profile Dropdown
-  if (userAvatarBtn && userDropdown) {
-    userAvatarBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isShown = userDropdown.classList.toggle('show');
-      userAvatarBtn.setAttribute('aria-expanded', String(isShown));
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!userDropdown.contains(e.target as Node) && !userAvatarBtn.contains(e.target as Node)) {
-        userDropdown.classList.remove('show');
-        userAvatarBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-
-  // Profile Menu actions
-  document.querySelector('.popup-user-header')?.addEventListener('click', () => {
-    window.location.href = '/profile';
-  });
-
-  document.getElementById('btn-menu-leaderboard')?.addEventListener('click', () => {
-    showToast('Quiz Leaderboard: Rank #18 with 2,450 XP');
-    userDropdown?.classList.remove('show');
-  });
-  document.getElementById('btn-menu-theme')?.addEventListener('click', () => {
-    showToast('Theme switcher coming soon');
-    userDropdown?.classList.remove('show');
-  });
-  document.getElementById('btn-menu-settings')?.addEventListener('click', () => {
-    window.location.href = '/settings';
-  });
+  // User Profile Dropdown is handled automatically by userHeaderProfile service
 }
 
 /**
@@ -665,6 +1068,17 @@ async function init(): Promise<void> {
   } catch (err) {
     console.error('Failed to load quiz levels:', err);
   }
+
+  // Active anti-cheating proctoring during timed quiz
+  initExamProctoring({
+    getContestInfo: () => ({
+      contestId: activeLevel ? `quiz-level-${activeLevel.id}` : 'quiz-general',
+      contestTitle: activeLevel ? `${activeLevel.name || 'Level ' + activeLevel.id} (Quiz)` : 'Kuizu Quiz Exam',
+      isRunning: Boolean(arenaOverlay?.classList.contains('show'))
+    }),
+    onWarning: (msg) => showToast(msg),
+    allowCopyPaste: false
+  });
 }
 
 // Expose helper on window for debugging or manual preview

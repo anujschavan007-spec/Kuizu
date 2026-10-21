@@ -1,9 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "",
+  "buildCommand": "bun run build",
   "outputDirectory": "dist",
-  "installCommand": "",
-  "framework": null,
+  "framework": "vite",
   "rewrites": [
     { "source": "/sign-in", "destination": "/sign-in/index.html" },
     { "source": "/sign-up", "destination": "/sign-up/index.html" },
@@ -16,6 +15,7 @@
     { "source": "/battle", "destination": "/battle/index.html" },
     { "source": "/badge", "destination": "/badge/index.html" },
     { "source": "/badges", "destination": "/badge/index.html" },
+    { "source": "/addavatar", "destination": "/addavatar/index.html" },
     { "source": "/avatar", "destination": "/avatar/index.html" },
     { "source": "/avatars", "destination": "/avatar/index.html" },
     { "source": "/profile", "destination": "/profile/index.html" },

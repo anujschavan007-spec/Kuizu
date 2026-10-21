@@ -261,6 +261,28 @@ class SoundManager {
   public getIsPlaying(): boolean {
     return this.isPlaying;
   }
+
+  /**
+   * Play immediate sound effect for correct quiz answer
+   */
+  public playCorrectAnswerSound(): void {
+    try {
+      const snd = new Audio('/audio/correct_answer.mp3');
+      snd.volume = Math.min(1, Math.max(0.4, this.volume * 1.4));
+      snd.play().catch(() => {});
+    } catch {}
+  }
+
+  /**
+   * Play immediate sound effect for wrong quiz answer
+   */
+  public playWrongAnswerSound(): void {
+    try {
+      const snd = new Audio('/audio/wrong_answer.mp3');
+      snd.volume = Math.min(1, Math.max(0.4, this.volume * 1.4));
+      snd.play().catch(() => {});
+    } catch {}
+  }
 }
 
 export const soundManager = new SoundManager();
