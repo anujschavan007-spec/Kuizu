@@ -85,7 +85,7 @@
   </head>
   <body class="battle-page-body">
     <!-- Top Navigation Header matching img5_battle.png -->
-    <header class="home-header battle-header-clean">
+    <header class="home-header">
       <div class="container home-nav-container">
         <!-- Brand Logo -->
         <a href="/home" class="brand-logo" aria-label="KUIZU Home">
@@ -100,8 +100,8 @@
           <span class="brand-text">KUIZU</span>
         </a>
 
-        <!-- Middle Navigation Tabs matching img5_battle.png -->
-        <nav class="home-nav-tabs battle-nav-tabs-clean">
+        <!-- Middle Navigation Tabs -->
+        <nav class="home-nav-tabs">
           <a href="/home" class="nav-tab nav-tab-inactive" id="tab-home">
             <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 10.5L12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 20v-9.5z"/>
@@ -127,8 +127,7 @@
             <span>Quiz</span>
           </a>
 
-          <!-- Active Battle Tab with Crossed Swords icon -->
-          <a href="/battle" class="nav-tab active battle-active-tab-clean" id="tab-battle">
+          <a href="/battle" class="nav-tab active" id="tab-battle">
             <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="14.5" y1="9.5" x2="21" y2="3"></line>
               <line x1="3" y1="21" x2="9.5" y2="14.5"></line>
@@ -139,22 +138,22 @@
             </svg>
             <span>Battle</span>
           </a>
-        </nav>
-
-        <!-- Right User Profile Pill & Popup Dropdown -->
+        </nav>        <!-- Right User Profile Pill & Popup Dropdown -->
         <div class="user-profile-menu-wrap">
-          <button type="button" class="user-avatar-btn battle-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false">
+          <button type="button" class="user-avatar-btn" id="btn-user-avatar" aria-label="Open User Menu" aria-expanded="false">
             <img src="/images/home_avatar.png" alt="User Profile Avatar" class="user-nav-avatar" />
             <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </button>
 
-          <!-- Profile Pop-up Card -->
+          <!-- Exact Profile Pop-up Card matching user screenshot -->
           <div class="user-dropdown-menu profile-popup-card" id="user-dropdown">
+            
+            <!-- User Info Row: Avatar + Name + XP Badge -->
             <div class="popup-user-header">
               <div class="popup-avatar-wrap">
-                <img src="/images/home_avatar.png" alt="Anuj Profile" class="popup-avatar-img" />
+                <img src="/images/home_avatar.png" alt="User Profile" class="popup-avatar-img" />
               </div>
               <div class="popup-user-details">
                 <h3 class="popup-user-name" id="menu-user-name">Anuj</h3>
@@ -169,9 +168,11 @@
 
             <hr class="popup-divider" />
 
+            <!-- Menu Items List -->
             <div class="popup-menu-list">
-              <!-- Leaderboard -->
-              <a href="/problem/mainleaderboard" class="popup-menu-item" id="btn-menu-leaderboard" style="text-decoration: none;">
+              
+              <!-- 1. Leaderboard -->
+              <button type="button" class="popup-menu-item" id="btn-menu-leaderboard">
                 <div class="menu-item-left">
                   <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
@@ -183,9 +184,9 @@
                   <span>Leaderboard</span>
                 </div>
                 <span class="menu-item-chevron">›</span>
-              </a>
+              </button>
 
-              <!-- Theme -->
+              <!-- 2. Theme -->
               <button type="button" class="popup-menu-item" id="btn-menu-theme">
                 <div class="menu-item-left">
                   <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -212,19 +213,19 @@
                 <span class="menu-item-chevron">›</span>
               </a>
 
-              <!-- Settings -->
+              <!-- 4. Settings -->
               <button type="button" class="popup-menu-item" id="btn-menu-settings">
                 <div class="menu-item-left">
                   <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                   </svg>
                   <span>Settings</span>
                 </div>
                 <span class="menu-item-chevron">›</span>
               </button>
 
-              <!-- Admin Panel (Strictly shown only if user email is anujschavan007@gmail.com) -->
+              <!-- 4. Admin Panel (Strictly shown only if user email is anujschavan007@gmail.com) -->
               <a href="/admin" class="popup-menu-item popup-menu-admin" id="btn-menu-admin" style="display: none;">
                 <div class="menu-item-left">
                   <svg class="menu-icon admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -236,21 +237,24 @@
                 </div>
                 <span class="menu-item-chevron">›</span>
               </a>
+
             </div>
 
             <hr class="popup-divider" />
 
-            <!-- Sign Out Button -->
+            <!-- Logout Button -->
             <a href="/sign-in" class="popup-logout-btn" id="btn-logout">
               <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                 <polyline points="16 17 21 12 16 7"></polyline>
                 <line x1="21" y1="12" x2="9" y2="12"></line>
               </svg>
-              <span>Sign Out</span>
+              <span>Logout</span>
             </a>
+
           </div>
         </div>
+
       </div>
     </header>
 
@@ -732,7 +736,13 @@
         <div class="final-battle-leaderboard-wrap" style="width: 100%; margin: 18px 0; text-align: left;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
             <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #1e1b4b; display: flex; align-items: center; gap: 6px;">
-              <span>🏆</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
               <span>Live Battle Specific Leaderboard</span>
             </h4>
             <span id="final-battle-room-type-tag" style="font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 9999px; background: #ede9fe; color: #4f46e5;">Admin Battle Arena</span>
