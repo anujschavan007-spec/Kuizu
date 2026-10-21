@@ -395,10 +395,11 @@ export function initUserHeaderProfile() {
 // Listen to storage and custom events to update header dynamically if avatar or user changes
 if (typeof window !== 'undefined') {
   window.addEventListener('storage', (e) => {
-    if (e.key === 'kuizu_user_xp' || e.key === 'kuizu_user_name' || e.key === 'kuizu_user_avatar') {
+    if (e.key === 'kuizu_user_xp' || e.key === 'kuizu_user_name' || e.key === 'kuizu_user_avatar' || e.key === 'kuizu_user_streak') {
       updateHeaderDOM({
         name: localStorage.getItem('kuizu_user_name') || currentProfile.name,
         xp: Number(localStorage.getItem('kuizu_user_xp')) || currentProfile.xp,
+        streak: Number(localStorage.getItem('kuizu_user_streak')) || currentProfile.streak,
         avatar: localStorage.getItem('kuizu_user_avatar') || currentProfile.avatar
       });
     }
@@ -417,6 +418,14 @@ if (typeof window !== 'undefined') {
     if (e.detail?.xp !== undefined) {
       localStorage.setItem('kuizu_user_xp', String(e.detail.xp));
       updateHeaderDOM({ xp: Number(e.detail.xp) });
+    }
+  });
+
+  // Custom event when streak is updated locally in daily quizzes
+  window.addEventListener('kuizu:streak-updated', (e: any) => {
+    if (e.detail?.streak !== undefined) {
+      localStorage.setItem('kuizu_user_streak', String(e.detail.streak));
+      updateHeaderDOM({ streak: Number(e.detail.streak) });
     }
   });
 }

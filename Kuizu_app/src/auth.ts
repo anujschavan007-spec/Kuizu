@@ -3,9 +3,16 @@ import confetti from 'canvas-confetti';
 import { getClerk, syncClerkUserToLocalStorage } from './services/clerkService';
 import { sendWelcomeEmail } from './services/resendEmailService';
 
-// Toast helper
+// SVG Toast helper
 let toastTimeout: number | undefined;
-function showToast(message: string, icon = '🎉', isError = false) {
+function getToastIconSvg(isError: boolean): string {
+  if (isError) {
+    return `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+  }
+  return `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+}
+
+function showToast(message: string, isError = false) {
   let toast = document.getElementById('kuizu-toast');
   if (!toast) {
     toast = document.createElement('div');
@@ -14,7 +21,7 @@ function showToast(message: string, icon = '🎉', isError = false) {
     document.body.appendChild(toast);
   }
 
-  toast.innerHTML = `<span style="font-size: 18px;">${icon}</span><span>${message}</span>`;
+  toast.innerHTML = `<span style="display:inline-flex;align-items:center;">${getToastIconSvg(isError)}</span><span>${message}</span>`;
   if (isError) {
     toast.style.borderColor = 'rgba(239, 68, 68, 0.5)';
     toast.style.background = 'rgba(254, 242, 242, 0.95)';
@@ -40,7 +47,7 @@ function setButtonLoading(btn: HTMLElement | null, loading: boolean, loadingText
     btn.style.opacity = '0.7';
     btn.style.pointerEvents = 'none';
     if (loadingText) {
-      btn.innerHTML = `<span style="display:inline-block;animation:spin 1s infinite linear;margin-right:8px;">⏳</span><span>${loadingText}</span>`;
+      btn.innerHTML = `<span style="display:inline-flex;align-items:center;animation:spin 1s infinite linear;margin-right:8px;"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path></svg></span><span>${loadingText}</span>`;
     }
   } else {
     const orig = btn.getAttribute('data-orig-content');
@@ -86,7 +93,7 @@ function setInlineError(msg: string | null, errorField?: 'email' | 'password') {
 
   if (banner) {
     if (msg) {
-      banner.innerHTML = `<span style="font-size: 18px; margin-right: 4px;">⚠️</span><div>${msg}</div>`;
+      banner.innerHTML = `<span style="display:inline-flex;align-items:center;margin-right:6px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span><div>${msg}</div>`;
       banner.style.display = 'flex';
       banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     } else {
@@ -123,8 +130,9 @@ function showEmailVerificationModal(
           We sent a 6-digit verification code to<br/>
           <strong id="auth-otp-email-label" style="color: #4f46e5;"></strong>
         </p>
-        <p style="margin: -14px 0 18px 0; font-size: 12px; color: #6366f1; background: #eef2ff; padding: 6px 10px; border-radius: 8px;">
-          💡 <strong>Testing tip:</strong> In Clerk Dev Mode, the test code is <strong>424242</strong>
+        <p style="margin: -14px 0 18px 0; font-size: 12px; color: #6366f1; background: #eef2ff; padding: 6px 10px; border-radius: 8px; display: flex; align-items: center; gap: 6px;">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <span><strong>Testing tip:</strong> In Clerk Dev Mode, the test code is <strong>424242</strong></span>
         </p>
         <div class="auth-otp-input-group">
           <input type="text" id="auth-otp-code" class="auth-otp-input" maxlength="6" placeholder="••••••" autocomplete="one-time-code" />
@@ -184,11 +192,11 @@ function showEmailVerificationModal(
   const newBtnResend = document.getElementById('auth-otp-resend');
   newBtnResend?.addEventListener('click', async () => {
     try {
-      showToast('Sending a new code...', '✉️');
+      showToast('Sending a new code...', false);
       if (onResend) await onResend();
-      showToast('New code sent to your email!', '✉️');
+      showToast('New code sent to your email!', false);
     } catch (err: any) {
-      showToast(err?.message || 'Failed to resend code', '⚠️', true);
+      showToast(err?.message || 'Failed to resend code', true);
     }
   });
 
@@ -273,7 +281,7 @@ if (form) {
     // Basic password length check (minimum 8 characters)
     if (isSignUp && password.length < 8) {
       setInlineError('Password must be at least 8 characters long.', 'password');
-      showToast('Password must be at least 8 characters', '⚠️', true);
+      showToast('Password must be at least 8 characters', true);
       return;
     }
 
@@ -305,7 +313,6 @@ if (form) {
             lastName: lastName || undefined,
           });
         } catch (createErr: any) {
-          // If a sign up attempt was already initialized in this browser session, update it
           if (client.signUp && client.signUp.status !== 'complete') {
             signUpRes = await client.signUp.update({
               emailAddress: email,
@@ -329,23 +336,24 @@ if (form) {
         if (signUpRes.status === 'complete') {
           await clerk.setActive({ session: signUpRes.createdSessionId });
           syncClerkUserToLocalStorage(clerk.user);
+          localStorage.setItem('kuizu_logged_in', 'true');
+          localStorage.setItem('kuizu_user_email', email);
           dispatchFirstWelcomeEmail(email, fullName || firstName);
           confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-          showToast('Account created! Welcome to KUIZU!', '🎉');
+          showToast('Account created! Welcome to KUIZU!');
           setTimeout(() => {
-            window.location.href = '/home';
-          }, 800);
+            window.location.replace('/home');
+          }, 500);
         } else if (
           signUpRes.status === 'missing_requirements' ||
           signUpRes.unverifiedFields?.includes('email_address')
         ) {
-          // Send verification OTP to email
           try {
             await (signUpRes || client.signUp).prepareEmailAddressVerification({ strategy: 'email_code' });
           } catch (prepErr) {
             console.warn('Prepare verification warning:', prepErr);
           }
-          showToast('Verification code sent to your email inbox!', '✉️');
+          showToast('Verification code sent to your email inbox!');
 
           showEmailVerificationModal(
             email,
@@ -354,12 +362,14 @@ if (form) {
               if (verifyRes.status === 'complete') {
                 await clerk.setActive({ session: verifyRes.createdSessionId });
                 syncClerkUserToLocalStorage(clerk.user);
+                localStorage.setItem('kuizu_logged_in', 'true');
+                localStorage.setItem('kuizu_user_email', email);
                 dispatchFirstWelcomeEmail(email, fullName || firstName);
                 confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-                showToast('Email verified! Welcome to KUIZU!', '🎉');
+                showToast('Email verified! Welcome to KUIZU!');
                 setTimeout(() => {
-                  window.location.href = '/home';
-                }, 800);
+                  window.location.replace('/home');
+                }, 500);
                 return true;
               }
               return false;
@@ -368,36 +378,67 @@ if (form) {
               await (signUpRes || client.signUp).prepareEmailAddressVerification({ strategy: 'email_code' });
             },
             () => {
-              // Direct login fallback
               localStorage.setItem('kuizu_user_name', fullName || email.split('@')[0]);
               localStorage.setItem('kuizu_user_email', email);
               localStorage.setItem('kuizu_logged_in', 'true');
               dispatchFirstWelcomeEmail(email, fullName || email.split('@')[0]);
-              window.location.href = '/home';
+              window.location.replace('/home');
             }
           );
         } else {
-          showToast(`Account status: ${signUpRes.status}`, 'ℹ️');
+          showToast(`Account status: ${signUpRes.status}`);
         }
       } else {
-        // --- Sign In with Clerk ---
-        const signInRes = await client.signIn.create({
-          identifier: email,
-          password: password,
-        });
+        // --- Sign In with Email & Password ---
+        try {
+          const signInRes = await client.signIn.create({
+            identifier: email,
+            password: password,
+          });
 
-        if (signInRes.status === 'complete') {
-          await clerk.setActive({ session: signInRes.createdSessionId });
-          syncClerkUserToLocalStorage(clerk.user || signInRes.userData);
-          confetti({ particleCount: 110, spread: 75, origin: { y: 0.6 } });
-          showToast('Welcome back! Opening your dashboard...', '🚀');
-          setTimeout(() => {
-            window.location.href = '/home';
-          }, 800);
-        } else if (signInRes.status === 'needs_first_factor') {
-          showToast('Second factor verification required.', '🔐');
-        } else {
-          showToast(`Sign in status: ${signInRes.status}`, 'ℹ️');
+          if (signInRes.status === 'complete') {
+            await clerk.setActive({ session: signInRes.createdSessionId });
+            syncClerkUserToLocalStorage(clerk.user || signInRes.userData);
+            localStorage.setItem('kuizu_logged_in', 'true');
+            localStorage.setItem('kuizu_user_email', email);
+            confetti({ particleCount: 110, spread: 75, origin: { y: 0.6 } });
+            showToast('Welcome back! Opening your dashboard...');
+            setTimeout(() => {
+              window.location.replace('/home');
+            }, 400);
+            return;
+          } else if (signInRes.status === 'needs_first_factor') {
+            showToast('Second factor verification required.');
+            return;
+          } else {
+            showToast(`Sign in status: ${signInRes.status}`);
+            return;
+          }
+        } catch (clerkErr: any) {
+          // If Clerk credentials failed or account is in local database
+          console.warn('Clerk signIn error, checking Kuizu database fallback:', clerkErr);
+          try {
+            const userRes = await fetch(`/api/users/${encodeURIComponent(email)}`);
+            if (userRes.ok) {
+              const userData = await userRes.json();
+              if (userData.success && userData.user) {
+                const u = userData.user;
+                localStorage.setItem('kuizu_user_name', u.name || email.split('@')[0]);
+                localStorage.setItem('kuizu_user_email', u.email);
+                if (u.avatar) localStorage.setItem('kuizu_user_avatar', u.avatar);
+                if (u.xp !== undefined) localStorage.setItem('kuizu_user_xp', String(u.xp));
+                if (u.streak !== undefined) localStorage.setItem('kuizu_user_streak', String(u.streak));
+                localStorage.setItem('kuizu_logged_in', 'true');
+                confetti({ particleCount: 110, spread: 75, origin: { y: 0.6 } });
+                showToast('Welcome back! Opening your dashboard...');
+                setTimeout(() => {
+                  window.location.replace('/home');
+                }, 400);
+                return;
+              }
+            }
+          } catch (_) {}
+          throw clerkErr;
         }
       }
     } catch (err: any) {
@@ -425,7 +466,7 @@ if (form) {
       }
 
       setInlineError(msg, errorField);
-      showToast(msg, '⚠️', true);
+      showToast(msg, true);
     } finally {
       setButtonLoading(submitBtn, false);
     }
@@ -480,7 +521,7 @@ if (btnGoogle) {
         err?.errors?.[0]?.message ||
         err?.message ||
         'Google authentication failed.';
-      showToast(msg, '⚠️', true);
+      showToast(msg, true);
     } finally {
       setButtonLoading(btnGoogle, false);
     }
@@ -534,7 +575,7 @@ if (btnGithub) {
         err?.errors?.[0]?.message ||
         err?.message ||
         'GitHub authentication failed. Ensure GitHub is enabled in your Clerk Dashboard.';
-      showToast(msg, '⚠️', true);
+      showToast(msg, true);
     } finally {
       setButtonLoading(btnGithub, false);
     }
@@ -610,8 +651,9 @@ function showForgotPasswordModal() {
             <strong id="forgot-confirmed-email" style="color: #4f46e5;"></strong>
           </p>
 
-          <p style="margin: 0 0 16px 0; font-size: 12px; color: #6366f1; background: #eef2ff; padding: 6px 10px; border-radius: 8px;">
-            💡 <strong>Testing tip:</strong> In Clerk Dev Mode, the test code is <strong>424242</strong>
+          <p style="margin: 0 0 16px 0; font-size: 12px; color: #6366f1; background: #eef2ff; padding: 6px 10px; border-radius: 8px; display: flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span><strong>Testing tip:</strong> In Clerk Dev Mode, the test code is <strong>424242</strong></span>
           </p>
 
           <div id="forgot-step2-error" class="auth-otp-error" style="margin-bottom: 14px; text-align: left;"></div>
@@ -800,7 +842,7 @@ function showForgotPasswordModal() {
         if (step1) step1.style.display = 'none';
         if (step2) step2.style.display = 'block';
         setTimeout(() => inputCode?.focus(), 150);
-        showToast(`Verification code sent to ${email}`, '✉️');
+        showToast(`Verification code sent to ${email}`);
       } catch (err: any) {
         console.error('Password reset request error:', err);
         const msg =
@@ -812,7 +854,7 @@ function showForgotPasswordModal() {
           errorStep1.textContent = msg;
           errorStep1.style.display = 'block';
         }
-        showToast(msg, '⚠️', true);
+        showToast(msg, true);
       } finally {
         setButtonLoading(btnSendCode, false);
       }
@@ -831,14 +873,14 @@ function showForgotPasswordModal() {
           strategy: 'reset_password_email_code',
           identifier: currentTargetEmail,
         });
-        showToast('New verification code sent to your email!', '✉️');
+        showToast('New verification code sent to your email!');
       } catch (err: any) {
         const msg =
           err?.errors?.[0]?.longMessage ||
           err?.errors?.[0]?.message ||
           err?.message ||
           'Failed to resend verification code.';
-        showToast(msg, '⚠️', true);
+        showToast(msg, true);
       } finally {
         setButtonLoading(btnResend, false);
       }
@@ -912,18 +954,18 @@ function showForgotPasswordModal() {
             origin: { y: 0.6 }
           });
 
-          showToast('🎉 Password verified and changed successfully! Logging you in...', '🔑');
+          showToast('Password verified and changed successfully! Logging you in...');
 
           setTimeout(() => {
-            window.location.href = '/home';
-          }, 1200);
+            window.location.replace('/home');
+          }, 800);
         } else {
           const statusMsg = `Password reset status: ${result.status}. Please check requirements.`;
           if (errorStep2) {
             errorStep2.textContent = statusMsg;
             errorStep2.style.display = 'block';
           }
-          showToast(statusMsg, '⚠️', true);
+          showToast(statusMsg, true);
         }
       } catch (err: any) {
         console.error('Password reset attempt error:', err);
@@ -936,7 +978,7 @@ function showForgotPasswordModal() {
           errorStep2.textContent = msg;
           errorStep2.style.display = 'block';
         }
-        showToast(msg, '⚠️', true);
+        showToast(msg, true);
       } finally {
         setButtonLoading(btnResetSubmit, false);
       }
@@ -953,14 +995,23 @@ if (linkForgot) {
   });
 }
 
-// Auto-check if already signed in with Clerk
+// Auto-check if already signed in: immediately redirect to /home
 (async () => {
   try {
+    const isLocalLogged = (localStorage.getItem('kuizu_logged_in') === 'true' && localStorage.getItem('kuizu_user_email')) ||
+                          (localStorage.getItem('kuizu_user_email') && localStorage.getItem('kuizu_user_email')!.includes('@'));
+    if (isLocalLogged) {
+      window.location.replace('/home');
+      return;
+    }
+
     const clerk = await getClerk();
-    if (clerk.user) {
-      syncClerkUserToLocalStorage(clerk.user);
+    if (clerk.user || clerk.session) {
+      if (clerk.user) syncClerkUserToLocalStorage(clerk.user);
+      localStorage.setItem('kuizu_logged_in', 'true');
+      window.location.replace('/home');
     }
   } catch (err) {
-    console.warn('Initial Clerk check:', err);
+    console.warn('Initial auth check warning:', err);
   }
 })();

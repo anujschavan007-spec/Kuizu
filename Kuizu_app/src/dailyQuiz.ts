@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           fallbackDesc.style.color = '#be123c';
         }
         if (arenaExpiryPill) {
-          arenaExpiryPill.textContent = '⏰ Expired (12 PM IST)';
+          arenaExpiryPill.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;display:inline-block;vertical-align:-1px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span>Expired (12 PM IST)</span>`;
           arenaExpiryPill.style.color = '#e11d48';
           arenaExpiryPill.style.background = '#ffe4e6';
           arenaExpiryPill.style.borderColor = '#fecdd3';
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span class="daily-option-text" style="font-size: 15px; font-weight: 600; color: ${textCol}; flex: 1;">
               ${opt.text || `Option ${opt.key}`}
             </span>
-            ${isSelected ? `<span style="color: #4f46e5; font-size: 18px; font-weight: 800;">✓</span>` : ''}
+            ${isSelected ? `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>` : ''}
           </button>
         `;
       }).join('');
@@ -328,6 +328,16 @@ document.addEventListener('DOMContentLoaded', async () => {
           spread: 80,
           origin: { y: 0.55 }
         });
+
+        // Accurately record streak and XP locally and across pages
+        const updatedStreak = data.newStreak || data.streak || (Number(localStorage.getItem('kuizu_user_streak')) || 0) + 1;
+        localStorage.setItem('kuizu_user_streak', String(updatedStreak));
+        window.dispatchEvent(new CustomEvent('kuizu:streak-updated', { detail: { streak: updatedStreak } }));
+
+        if (data.newXp !== undefined) {
+          localStorage.setItem('kuizu_user_xp', String(data.newXp));
+          window.dispatchEvent(new CustomEvent('kuizu:xp-updated', { detail: { xp: data.newXp } }));
+        }
 
         const score = data.score || 0;
         const total = data.totalQuestions || questions.length;

@@ -18,6 +18,12 @@
     <script id="kuizu-theme-preloader">
       (function() {
         try {
+          var isLocalLogged = (localStorage.getItem('kuizu_logged_in') === 'true' && localStorage.getItem('kuizu_user_email')) ||
+                              (localStorage.getItem('kuizu_user_email') && localStorage.getItem('kuizu_user_email').indexOf('@') !== -1);
+          if (isLocalLogged) {
+            window.location.replace('/home');
+            return;
+          }
           var fast = localStorage.getItem('kuizu_accent_color');
           var raw = localStorage.getItem('kuizu_user_settings_v1');
           var parsed = raw ? JSON.parse(raw) : null;

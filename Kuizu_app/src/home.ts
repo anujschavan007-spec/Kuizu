@@ -137,8 +137,8 @@ btnArrowClub?.addEventListener('click', launchClub);
 const pillStreak = document.getElementById('pill-streak');
 pillStreak?.addEventListener('click', () => {
   confetti({ particleCount: 50, spread: 50, origin: { y: 0.5 } });
-  const streak = Number(localStorage.getItem('kuizu_user_streak')) || 1;
-  showToast(`${streak} Days Streak. Practice every day to maintain consistency.`);
+  const streak = Number(localStorage.getItem('kuizu_user_streak')) || 0;
+  showToast(`${streak} ${streak === 1 ? 'Day' : 'Days'} Streak. Practice every day to maintain consistency.`);
 });
 
 const pillXp = document.getElementById('pill-xp');

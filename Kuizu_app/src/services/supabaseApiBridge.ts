@@ -1342,22 +1342,115 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
   }
 
   if (pathname === '/api/daily-quiz/submit' && method === 'POST') {
-    const { userEmail, userId, correctCount = 3, totalQuestions = 3, earnedXp = 15 } = body;
-    if (userEmail || userId) {
-      const { data: user } = await supabase.from('users').select('*').or(`id.eq.${userId},email.ilike.${userEmail}`).maybeSingle();
+    const effectiveEmail = (body.email || body.userEmail || '').trim().toLowerCase();
+    const effectiveUserId = body.userId;
+    const dailyQuizId = body.dailyQuizId;
+    const userAnswers = body.answers || {};
+
+    let totalQuestions = 0;
+    let score = 0;
+    let rewardXp = 15;
+    let streakBonus = 5;
+
+    if (dailyQuizId) {
+      const numId = Number(dailyQuizId);
+      const filterId = isNaN(numId) ? dailyQuizId : numId;
+      const { data: dq } = await supabase.from('daily_quizzes').select('*').eq('id', filterId).maybeSingle();
+      if (dq) {
+        rewardXp = Number(dq.reward_xp) || 15;
+        streakBonus = Number(dq.streak_bonus) || 5;
+        let questions: any[] = [];
+        try { questions = dq.questions_json ? JSON.parse(dq.questions_json) : []; } catch {}
+        if (!Array.isArray(questions) || questions.length === 0) {
+          questions = [
+            {
+              id: 1,
+              name: 'Core Concept Check',
+              questionContent: 'What is the time complexity of binary search on a sorted array?',
+              optionA: 'O(N)',
+              optionB: 'O(log N)',
+              optionC: 'O(N^2)',
+              optionD: 'O(1)',
+              correctOption: 'B'
+            }
+          ];
+        }
+        totalQuestions = questions.length;
+        questions.forEach((q: any) => {
+          const userChoice = userAnswers[q.id];
+          const correctOpt = q.correctOption || q.correct_option || q.answer;
+          if (userChoice && correctOpt && String(userChoice).trim().toUpperCase() === String(correctOpt).trim().toUpperCase()) {
+            score++;
+          }
+        });
+      }
+    }
+
+    if (totalQuestions === 0) {
+      const answerKeys = Object.keys(userAnswers);
+      totalQuestions = answerKeys.length > 0 ? answerKeys.length : (Number(body.totalQuestions) || 3);
+      score = body.correctCount !== undefined ? Number(body.correctCount) : totalQuestions;
+    }
+
+    // Award participation + proportional score XP
+    const earnedXp = Math.max(10, Math.round((Math.max(1, score) / Math.max(1, totalQuestions)) * rewardXp));
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    let newStreak = 1;
+    let newXp = earnedXp;
+
+    if (effectiveEmail || effectiveUserId) {
+      let query = supabase.from('users').select('*');
+      if (effectiveUserId && effectiveEmail) {
+        query = query.or(`id.eq.${effectiveUserId},email.ilike.${effectiveEmail}`);
+      } else if (effectiveEmail) {
+        query = query.ilike('email', effectiveEmail);
+      } else {
+        query = query.eq('id', effectiveUserId);
+      }
+
+      const { data: user } = await query.maybeSingle();
+
       if (user) {
-        let completed = [];
+        let completed: string[] = [];
         try { completed = JSON.parse(user.completed_daily_kuizu_json || '[]'); } catch {}
-        completed.push(new Date().toISOString().split('T')[0]);
+        if (!completed.includes(todayStr)) {
+          completed.push(todayStr);
+        }
+
+        const currentStreak = Number(user.streak) || 0;
+        const lastStreakDate = user.last_streak_date;
+
+        if (lastStreakDate === todayStr) {
+          // Already counted for today, preserve existing streak
+          newStreak = Math.max(1, currentStreak);
+        } else {
+          // Increment streak for completing today's daily quiz
+          newStreak = currentStreak + 1;
+        }
+
+        newXp = (Number(user.xp) || 0) + earnedXp;
+
         await supabase.from('users').update({
           completed_daily_kuizu_json: JSON.stringify(completed),
-          streak: (user.streak || 0) + 1,
-          xp: (user.xp || 0) + Number(earnedXp || 15),
+          streak: newStreak,
+          last_streak_date: todayStr,
+          xp: newXp,
+          daily_kuizu_active: 1,
           last_active: 'Today'
         }).eq('id', user.id);
       }
     }
-    return jsonResponse({ success: true, earnedXp: Number(earnedXp || 15) });
+
+    return jsonResponse({
+      success: true,
+      score,
+      totalQuestions,
+      earnedXp,
+      streak: newStreak,
+      newStreak,
+      newXp
+    });
   }
 
   // ----------------------------------------------------
@@ -1954,7 +2047,7 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
     }
 
     if (!resendApiKey) {
-      console.log('ℹ️ [Resend Bridge] Email queued for:', to, subject, '(Provide RESEND_API_KEY to send live)');
+      console.log('[Resend Bridge] Email queued for:', to, subject, '(Provide RESEND_API_KEY to send live)');
       return jsonResponse({
         success: true,
         simulated: true,
