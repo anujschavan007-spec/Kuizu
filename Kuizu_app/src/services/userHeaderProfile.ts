@@ -82,9 +82,33 @@ export function updateHeaderDOM(data: Partial<UserHeaderData>) {
 
   if (data.avatar) {
     currentProfile.avatar = data.avatar;
-    const avatarImgs = document.querySelectorAll<HTMLImageElement>(
-      '.popup-avatar-img, .user-nav-avatar, #btn-user-avatar img, .profile-avatar-img, .profile-hero-avatar, .home-user-avatar, #active-avatar-preview-img, .settings-avatar-img, #modal-preview-avatar, #sidebar-admin-avatar-img, #admin-account-avatar-preview'
-    );
+    const currentEmail = data.email || currentProfile.email || localStorage.getItem('kuizu_user_email') || '';
+    const isAdmin = isAuthorizedAdmin(currentEmail);
+
+    const userFacingSelectors = [
+      '.popup-avatar-img',
+      '.user-nav-avatar',
+      '#btn-user-avatar img',
+      '.profile-avatar-img',
+      '.profile-hero-avatar',
+      '.home-user-avatar',
+      '#active-avatar-preview-img',
+      '.settings-avatar-img',
+      '#modal-preview-avatar'
+    ];
+
+    const adminFacingSelectors = [
+      '#sidebar-admin-avatar-img',
+      '#admin-account-avatar-preview',
+      '.admin-avatar-circle img',
+      '.admin-profile-modal-avatar'
+    ];
+
+    const selectors = isAdmin
+      ? [...userFacingSelectors, ...adminFacingSelectors]
+      : userFacingSelectors;
+
+    const avatarImgs = document.querySelectorAll<HTMLImageElement>(selectors.join(', '));
     avatarImgs.forEach(img => {
       if (img.src !== currentProfile.avatar) {
         img.src = currentProfile.avatar;

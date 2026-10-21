@@ -223,12 +223,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       updateHeaderDOM({ avatar: gAvatar });
       await refreshActiveAvatarCard();
       renderPixarGrid('all');
-      showAvatarToast('✨ Kept your Google profile picture!');
+      showAvatarToast('Kept your Google profile picture!');
     } catch (err) {
       console.warn('Keep Google profile error:', err);
     } finally {
       btnKeepGoogleAvatar.disabled = false;
-      btnKeepGoogleAvatar.innerHTML = '<span>🔄</span><span>Keep Google Profile</span>';
+      btnKeepGoogleAvatar.innerHTML = '<span></span><span>Keep Google Profile</span>';
     }
   });
 
@@ -237,15 +237,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   customImageFileInput?.addEventListener('change', async () => {
     const file = customImageFileInput.files?.[0];
     if (!file) return;
-    showAvatarToast('⏳ Uploading your photo to Supabase...');
+    showAvatarToast('Uploading your photo to Supabase...');
     const uploadedUrl = await uploadCustomAvatarImage(file);
     if (uploadedUrl) {
       updateHeaderDOM({ avatar: uploadedUrl });
       await refreshActiveAvatarCard();
       renderPixarGrid('all');
-      showAvatarToast('✨ Custom profile photo updated and saved!');
+      showAvatarToast('Custom profile photo updated and saved!');
     } else {
-      showAvatarToast('❌ Photo upload failed. Please try a valid image file.');
+      showAvatarToast('Photo upload failed. Please try a valid image file.');
     }
     customImageFileInput.value = '';
   });
@@ -258,8 +258,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateHeaderDOM({ avatar: url });
     await refreshActiveAvatarCard();
     renderPixarGrid('all');
-    showAvatarToast('✨ Profile picture updated from URL!');
+    showAvatarToast('Profile picture updated from URL!');
     if (inputCustomPhotoUrl) inputCustomPhotoUrl.value = '';
+  });
+
+  // Save Selected Avatar Button Listener
+  btnSaveSelectedAvatar?.addEventListener('click', () => {
+    saveStagedAvatar();
   });
 
   // 4. Render 2D Pixar avatar grid
@@ -336,23 +341,17 @@ function renderPixarGrid(filter: 'all' | 'male' | 'female'): void {
   });
 }
 
+// Staged avatar selection before clicking "Save Profile Image"
+let pendingSelectedAvatar: { image: string; name: string } | null = null;
+const btnSaveSelectedAvatar = document.getElementById('btn-save-selected-avatar') as HTMLButtonElement | null;
+
 /**
- * Handle 2D Pixar avatar selection
+ * Handle 2D Pixar avatar selection - stages the avatar and reveals Save Profile Image button
  */
 function choosePixarAvatar(avatar: PixarAvatarPreset): void {
-  // Update storage & backend
-  setPresetAvatar(avatar.image, avatar.name);
+  pendingSelectedAvatar = { image: avatar.image, name: avatar.name };
 
-  // Trigger celebration confetti
-  try {
-    confetti({
-      particleCount: 80,
-      spread: 70,
-      origin: { y: 0.65 }
-    });
-  } catch (_) {}
-
-  // Update UI cards
+  // Update UI cards preview
   document.querySelectorAll('.avatar-card').forEach((el) => {
     const isCurrent = (el as HTMLElement).dataset.image === avatar.image;
     el.classList.toggle('active', isCurrent);
@@ -360,14 +359,83 @@ function choosePixarAvatar(avatar: PixarAvatarPreset): void {
     if (badge) badge.classList.toggle('visible', isCurrent);
     const btn = el.querySelector('.btn-select-avatar');
     if (btn) {
-      btn.textContent = isCurrent ? 'Active Avatar' : 'Set as Profile Avatar';
+      btn.textContent = isCurrent ? 'Selected (Click Save Above)' : 'Select Avatar';
       btn.classList.toggle('btn-selected', isCurrent);
     }
   });
 
-  refreshActiveAvatarCard();
-  updateHeaderDOM({ avatar: avatar.image });
-  showAvatarToast(`✨ Profile avatar updated to ${avatar.name}!`);
+  // Temporarily preview selected avatar in hero circle
+  if (activeHeroImg) activeHeroImg.src = avatar.image;
+  if (activeHeroTag) activeHeroTag.textContent = `${avatar.name} • Selected (Click "Save Profile Image")`;
+
+  // Reveal Save Profile Image button with attention animation
+  if (btnSaveSelectedAvatar) {
+    btnSaveSelectedAvatar.style.display = 'inline-flex';
+    btnSaveSelectedAvatar.innerHTML = `
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <span>Save "${avatar.name}"</span>
+    `;
+    btnSaveSelectedAvatar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  showAvatarToast(`Selected ${avatar.name}! Click "Save Profile Image" to apply across all pages.`);
+}
+
+/**
+ * Save the staged avatar permanently across Supabase, localStorage, and DOM
+ */
+async function saveStagedAvatar(): Promise<void> {
+  if (!pendingSelectedAvatar) return;
+
+  if (btnSaveSelectedAvatar) {
+    btnSaveSelectedAvatar.disabled = true;
+    btnSaveSelectedAvatar.innerHTML = `
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" style="animation: spin 1s linear infinite;">
+        <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+        <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
+      </svg>
+      <span>Saving...</span>
+    `;
+  }
+
+  try {
+    const { image, name } = pendingSelectedAvatar;
+
+    // Persist to Supabase and localStorage
+    await setPresetAvatar(image, name);
+
+    // Update DOM (respects admin access: only user-facing if user is student)
+    updateHeaderDOM({ avatar: image });
+    await refreshActiveAvatarCard();
+
+    // Trigger celebration confetti
+    try {
+      confetti({
+        particleCount: 85,
+        spread: 75,
+        origin: { y: 0.65 }
+      });
+    } catch (_) {}
+
+    showAvatarToast(`Profile image saved! Updated across all pages.`);
+    pendingSelectedAvatar = null;
+
+    if (btnSaveSelectedAvatar) {
+      btnSaveSelectedAvatar.style.display = 'none';
+      btnSaveSelectedAvatar.disabled = false;
+    }
+
+    renderPixarGrid('all');
+  } catch (err: any) {
+    console.error('Error saving avatar:', err);
+    showAvatarToast('Failed to save profile image. Please try again.');
+    if (btnSaveSelectedAvatar) {
+      btnSaveSelectedAvatar.disabled = false;
+      btnSaveSelectedAvatar.innerHTML = `<span>Save Profile Image</span>`;
+    }
+  }
 }
 
 /**
@@ -678,12 +746,12 @@ function setupGlbUpload(): void {
 async function handleFileSelection(file: File): Promise<void> {
   const ext = file.name.split('.').pop()?.toLowerCase();
   if (ext !== 'glb' && ext !== 'gltf') {
-    showAvatarToast('⚠️ Please upload a valid .glb or .gltf 3D file.');
+    showAvatarToast('Please upload a valid .glb or .gltf 3D file.');
     return;
   }
 
   if (file.size > 50 * 1024 * 1024) {
-    showAvatarToast('⚠️ File is too large. Max size is 50MB.');
+    showAvatarToast('File is too large. Max size is 50MB.');
     return;
   }
 
@@ -763,11 +831,11 @@ function loadGlbFromBuffer(buffer: ArrayBuffer, fileName: string): void {
           action.play();
         });
         if (glbModelStatus) {
-          glbModelStatus.textContent = `✅ Loaded: ${fileName} (${gltf.animations.length} animation(s) detected)`;
+          glbModelStatus.textContent = `Loaded: ${fileName} (${gltf.animations.length} animation(s) detected)`;
         }
       } else {
         if (glbModelStatus) {
-          glbModelStatus.textContent = `✅ Loaded: ${fileName} (Static character pose)`;
+          glbModelStatus.textContent = `Loaded: ${fileName} (Static character pose)`;
         }
       }
 
@@ -779,12 +847,12 @@ function loadGlbFromBuffer(buffer: ArrayBuffer, fileName: string): void {
       }
 
       if (btnSaveGlbAvatar) btnSaveGlbAvatar.disabled = false;
-      showAvatarToast(`🎉 3D Model "${fileName}" loaded! Rotate with mouse.`);
+      showAvatarToast(`3D Model "${fileName}" loaded! Rotate with mouse.`);
     },
     (err) => {
       console.error('Error parsing GLB buffer:', err);
-      if (glbModelStatus) glbModelStatus.textContent = '❌ Failed to parse 3D file.';
-      showAvatarToast('❌ Failed to load 3D model.');
+      if (glbModelStatus) glbModelStatus.textContent = 'Failed to parse 3D file.';
+      showAvatarToast('Failed to load 3D model.');
     }
   );
 }
@@ -807,12 +875,12 @@ function set3dDisplayMode(mode: 'playable' | 'still'): void {
     if (currentModel) {
       currentModel.position.y = 0;
     }
-    showAvatarToast('🧍 Still Mode Activated (Static Pose)');
+    showAvatarToast('Still Mode Activated (Static Pose)');
   } else {
     if (mixer) {
       mixer.timeScale = 1; // Resume animation mixer
     }
-    showAvatarToast('🎮 Playable Mode Activated (Dynamic Animations)');
+    showAvatarToast('Playable Mode Activated (Dynamic Animations)');
   }
 }
 
@@ -821,7 +889,7 @@ function set3dDisplayMode(mode: 'playable' | 'still'): void {
  */
 async function saveCurrentGlbToProfile(): Promise<void> {
   if (!currentGlbBuffer || !renderer || !scene || !camera) {
-    showAvatarToast('⚠️ Please upload or select a 3D model first.');
+    showAvatarToast('Please upload or select a 3D model first.');
     return;
   }
 
@@ -851,13 +919,13 @@ async function saveCurrentGlbToProfile(): Promise<void> {
 
       refreshActiveAvatarCard();
       updateHeaderDOM({ avatar: snapshotUrl });
-      showAvatarToast('🎉 3D Character successfully set as your profile avatar!');
+      showAvatarToast('3D Character successfully set as your profile avatar!');
     } else {
-      showAvatarToast('⚠️ Could not save 3D avatar.');
+      showAvatarToast('Could not save 3D avatar.');
     }
   } catch (err) {
     console.error('Error saving 3D avatar:', err);
-    showAvatarToast('❌ Error saving avatar.');
+    showAvatarToast('Error saving avatar.');
   } finally {
     btnSaveGlbAvatar.disabled = false;
     btnSaveGlbAvatar.textContent = 'Set as 3D Profile Character';
@@ -959,7 +1027,7 @@ function setupSampleModels(): void {
         loadGlbFromBuffer(buffer, currentGlbFileName);
       } catch (err) {
         console.warn('Failed to load sample model:', err);
-        showAvatarToast('⚠️ Failed to download sample model.');
+        showAvatarToast('Failed to download sample model.');
       }
     });
   });

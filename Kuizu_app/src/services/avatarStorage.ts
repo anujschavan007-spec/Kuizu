@@ -358,9 +358,36 @@ function updateCachedUserProfileAvatar(avatarUrl: string): void {
  */
 function notifyAvatarChange(avatarUrl: string, mode: '2d' | '3d', glbMode?: 'playable' | 'still'): void {
   if (typeof document !== 'undefined') {
-    const avatarElements = document.querySelectorAll<HTMLImageElement>(
-      '#btn-user-avatar img, .user-nav-avatar, .popup-avatar-img, .profile-avatar-img, .profile-hero-avatar, #menu-user-avatar, .home-user-avatar, .admin-avatar-circle img, .admin-profile-modal-avatar, #sidebar-admin-avatar-img, #admin-account-avatar-preview, #active-avatar-preview-img, .settings-avatar-img, #modal-preview-avatar'
-    );
+    const currentEmail = localStorage.getItem('kuizu_user_email') || '';
+    const isAdmin = currentEmail.trim().toLowerCase() === 'anujschavan007@gmail.com';
+
+    // Standard user-facing avatar selectors on all pages
+    const userFacingSelectors = [
+      '#btn-user-avatar img',
+      '.user-nav-avatar',
+      '.popup-avatar-img',
+      '.profile-avatar-img',
+      '.profile-hero-avatar',
+      '#menu-user-avatar',
+      '.home-user-avatar',
+      '#active-avatar-preview-img',
+      '.settings-avatar-img',
+      '#modal-preview-avatar'
+    ];
+
+    // Admin-facing avatar selectors
+    const adminFacingSelectors = [
+      '.admin-avatar-circle img',
+      '.admin-profile-modal-avatar',
+      '#sidebar-admin-avatar-img',
+      '#admin-account-avatar-preview'
+    ];
+
+    const activeSelectors = isAdmin
+      ? [...userFacingSelectors, ...adminFacingSelectors]
+      : userFacingSelectors;
+
+    const avatarElements = document.querySelectorAll<HTMLImageElement>(activeSelectors.join(', '));
     avatarElements.forEach((img) => {
       if (avatarUrl) img.src = avatarUrl;
     });
@@ -372,6 +399,7 @@ function notifyAvatarChange(avatarUrl: string, mode: '2d' | '3d', glbMode?: 'pla
           avatarUrl,
           mode,
           glbMode,
+          isAdmin,
           glbUrl: localStorage.getItem('kuizu_avatar_glb_url') || ''
         }
       })
