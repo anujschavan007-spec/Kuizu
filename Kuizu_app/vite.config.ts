@@ -12,6 +12,8 @@ function multiPageRewritePlugin(): Plugin {
 
         if (pathname === '/sign-in' || pathname === '/sign-in/') {
           req.url = `/sign-in/index.html${q}`;
+        } else if (pathname === '/game' || pathname === '/game/') {
+          req.url = `/game/index.html${q}`;
         } else if (pathname === '/sign-up' || pathname === '/sign-up/') {
           req.url = `/sign-up/index.html${q}`;
         } else if (pathname === '/home' || pathname === '/home/') {
@@ -340,7 +342,8 @@ export default defineConfig({
         profile: resolve(import.meta.dirname, 'profile/index.html'),
         badge: resolve(import.meta.dirname, 'badge/index.html'),
         avatar: resolve(import.meta.dirname, 'avatar/index.html'),
-        addavatar: resolve(import.meta.dirname, 'addavatar/index.html')
+        addavatar: resolve(import.meta.dirname, 'addavatar/index.html'),
+        game: resolve(import.meta.dirname, 'game/index.html')
       }
     }
   }

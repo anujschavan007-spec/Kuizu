@@ -1,0 +1,985 @@
+/* ==========================================================================
+   KUIZU 3D HIGHWAY RACER & LEARN - GAME STYLESHEET
+   Pure Vanilla CSS - 0 Emojis - Cyberpunk Glassmorphic Aesthetics
+   ========================================================================== */
+
+:root {
+  --game-primary: #2563eb;
+  --game-primary-glow: rgba(37, 99, 235, 0.45);
+  --game-accent: #06b6d4;
+  --game-accent-glow: rgba(6, 182, 212, 0.4);
+  --game-emerald: #10b981;
+  --game-amber: #f59e0b;
+  --game-rose: #ef4444;
+  --game-bg: #070d19;
+  --game-glass-bg: rgba(13, 22, 41, 0.82);
+  --game-glass-border: rgba(255, 255, 255, 0.12);
+  --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--game-bg);
+  font-family: var(--font-family);
+  color: #ffffff;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#game-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 1;
+}
+
+/* Glassmorphism Surface Utility */
+.game-glass-panel {
+  background: var(--game-glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--game-glass-border);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   TOP HUD: NAVIGATION, RACER PROFILE, LEVEL SELECTOR & TELEMETRY
+   ========================================================================== */
+.game-top-hud {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 10;
+  pointer-events: none;
+  gap: 16px;
+}
+
+.hud-left-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+.btn-game-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.btn-game-home:hover {
+  background: rgba(37, 99, 235, 0.35);
+  border-color: #60a5fa;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+}
+
+.btn-game-home svg {
+  width: 18px;
+  height: 18px;
+  stroke: #60a5fa;
+}
+
+/* Racer Stats Bar */
+.game-stats-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: 18px;
+  gap: 20px;
+}
+
+.hud-stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-stat-item.divider {
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  padding-left: 18px;
+}
+
+.hud-stat-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.hud-stat-label svg {
+  width: 13px;
+  height: 13px;
+}
+
+.hud-stat-val {
+  font-size: 17px;
+  font-weight: 800;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.hud-stat-val.xp {
+  color: #fbbf24;
+}
+
+.hud-stat-val.streak {
+  color: #fb923c;
+}
+
+.hud-stat-val.checkpoints {
+  color: #34d399;
+}
+
+.hud-stat-unit {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+/* Right HUD: Speedometer & Controls */
+.hud-right-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+.speedometer-card {
+  padding: 10px 18px;
+  border-radius: 18px;
+  text-align: right;
+  min-width: 140px;
+}
+
+.speed-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.speed-number {
+  font-size: 32px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(6, 182, 212, 0.45);
+}
+
+.speed-unit {
+  font-size: 12px;
+  font-weight: 700;
+  color: #38bdf8;
+  text-transform: uppercase;
+}
+
+.speed-bar-container {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.speed-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #06b6d4, #3b82f6, #ef4444);
+  border-radius: 9999px;
+  transition: width 0.08s ease;
+}
+
+.hud-controls-hint {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.hud-key-pill {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+/* Sound Toggle Button */
+.btn-sound-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: var(--game-glass-bg);
+  cursor: pointer;
+  color: #60a5fa;
+  transition: all 0.2s ease;
+}
+
+.btn-sound-toggle:hover {
+  background: rgba(37, 99, 235, 0.25);
+  border-color: #60a5fa;
+  transform: scale(1.05);
+}
+
+.btn-sound-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ==========================================================================
+   LEVEL SELECTOR PILL (TOP CENTER)
+   ========================================================================== */
+.level-indicator-pill {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  z-index: 10;
+  pointer-events: auto;
+  cursor: pointer;
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  background: rgba(13, 22, 41, 0.85);
+  transition: all 0.2s ease;
+}
+
+.level-indicator-pill:hover {
+  border-color: #38bdf8;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+}
+
+.level-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #06b6d4;
+  box-shadow: 0 0 10px #06b6d4;
+  animation: levelPulse 1.8s infinite;
+}
+
+@keyframes levelPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.level-name-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.level-switch-hint {
+  font-size: 11px;
+  font-weight: 600;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+/* ==========================================================================
+   BOTTOM CHECKPOINT DISTANCE BANNER
+   ========================================================================== */
+.checkpoint-distance-banner {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  z-index: 10;
+  pointer-events: none;
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(6, 182, 212, 0.2);
+}
+
+.cp-banner-icon {
+  width: 20px;
+  height: 20px;
+  color: #38bdf8;
+  flex-shrink: 0;
+}
+
+.cp-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.cp-name-highlight {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.cp-dist-badge {
+  background: rgba(6, 182, 212, 0.22);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: #38bdf8;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   CRASH SCREEN / GAME OVER MODAL
+   ========================================================================== */
+.game-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(3, 7, 18, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modalFadeIn 0.25s ease forwards;
+}
+
+.game-modal-overlay.is-active {
+  display: flex;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.crash-card {
+  max-width: 520px;
+  width: 100%;
+  border-radius: 28px;
+  padding: 32px 36px;
+  text-align: center;
+  border: 1.5px solid rgba(239, 68, 68, 0.4);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(239, 68, 68, 0.25);
+  animation: cardSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardSlideUp {
+  from { transform: translateY(20px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.crash-icon-wrap {
+  width: 68px;
+  height: 68px;
+  border-radius: 22px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1.5px solid rgba(239, 68, 68, 0.4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  margin-bottom: 16px;
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.35);
+}
+
+.crash-icon-wrap svg {
+  width: 34px;
+  height: 34px;
+}
+
+.crash-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.crash-subtitle {
+  font-size: 14px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.crash-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 24px;
+}
+
+.crash-stat-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.crash-stat-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.crash-stat-val {
+  font-size: 17px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.crash-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-restart-action {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 22px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-restart-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(239, 68, 68, 0.55);
+  filter: brightness(1.1);
+}
+
+.btn-restart-action svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-quit-action {
+  padding: 14px 20px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-quit-action:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   QUIZ CHECKPOINT CHALLENGE MODAL
+   ========================================================================== */
+.quiz-card {
+  max-width: 620px;
+  width: 100%;
+  border-radius: 28px;
+  padding: 32px 36px;
+  border: 1.5px solid rgba(6, 182, 212, 0.4);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(6, 182, 212, 0.25);
+  animation: cardSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.quiz-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.quiz-checkpoint-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(6, 182, 212, 0.16);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: #38bdf8;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.quiz-checkpoint-badge svg {
+  width: 14px;
+  height: 14px;
+}
+
+.quiz-reward-badge {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fbbf24;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.quiz-reward-badge svg {
+  width: 15px;
+  height: 15px;
+  fill: #fbbf24;
+}
+
+.quiz-question-title {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.4;
+  color: #ffffff;
+  margin: 0 0 20px 0;
+}
+
+.quiz-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.quiz-option-btn {
+  width: 100%;
+  text-align: left;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+.quiz-option-btn:hover:not(:disabled) {
+  background: rgba(37, 99, 235, 0.22);
+  border-color: #60a5fa;
+  transform: translateX(3px);
+}
+
+.quiz-option-btn:disabled {
+  cursor: default;
+}
+
+.quiz-option-btn.correct {
+  background: rgba(16, 185, 129, 0.28) !important;
+  border-color: #10b981 !important;
+  color: #6ee7b7 !important;
+}
+
+.quiz-option-btn.wrong {
+  background: rgba(239, 68, 68, 0.28) !important;
+  border-color: #ef4444 !important;
+  color: #fca5a5 !important;
+}
+
+.quiz-option-num {
+  font-size: 11px;
+  font-weight: 800;
+  color: #94a3b8;
+  padding: 2px 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+}
+
+/* Feedback & Explanation Box */
+.quiz-feedback-box {
+  display: none;
+  padding: 16px 20px;
+  border-radius: 18px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.quiz-feedback-box.is-correct {
+  display: block;
+  background: rgba(6, 78, 59, 0.35);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: #6ee7b7;
+}
+
+.quiz-feedback-box.is-wrong {
+  display: block;
+  background: rgba(120, 53, 15, 0.35);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #fde68a;
+}
+
+.feedback-headline {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.feedback-headline svg {
+  width: 18px;
+  height: 18px;
+}
+
+.feedback-body {
+  color: #ffffff;
+  margin-top: 4px;
+}
+
+.btn-continue-drive {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  color: #022c22;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-continue-drive.show {
+  display: inline-flex;
+}
+
+.btn-continue-drive:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn-continue-drive svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ==========================================================================
+   VICTORY & LEVEL CLEAR MODAL
+   ========================================================================== */
+.victory-card {
+  max-width: 540px;
+  width: 100%;
+  border-radius: 28px;
+  padding: 36px;
+  text-align: center;
+  border: 1.5px solid rgba(251, 191, 36, 0.45);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(251, 191, 36, 0.25);
+  animation: cardSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.victory-trophy-wrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 24px;
+  background: rgba(251, 191, 36, 0.16);
+  border: 1.5px solid rgba(251, 191, 36, 0.45);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fbbf24;
+  margin-bottom: 18px;
+  box-shadow: 0 0 35px rgba(251, 191, 36, 0.35);
+}
+
+.victory-trophy-wrap svg {
+  width: 38px;
+  height: 38px;
+}
+
+.victory-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: #fbbf24;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.victory-desc {
+  font-size: 14px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.victory-xp-log-wrap {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 16px 20px;
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.victory-log-head {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.victory-log-list {
+  max-height: 140px;
+  overflow-y: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  color: #6ee7b7;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.victory-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-next-level {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 22px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #0f172a;
+  box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-next-level:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn-next-level svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ==========================================================================
+   LEVEL SELECTOR MODAL
+   ========================================================================== */
+.level-modal-card {
+  max-width: 600px;
+  width: 100%;
+  border-radius: 28px;
+  padding: 32px 36px;
+  border: 1.5px solid rgba(59, 130, 246, 0.35);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(59, 130, 246, 0.2);
+  animation: cardSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.level-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.level-modal-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.btn-close-modal {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-close-modal:hover {
+  color: #ffffff;
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+}
+
+.level-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.level-select-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.level-select-row:hover {
+  background: rgba(37, 99, 235, 0.2);
+  border-color: #3b82f6;
+  transform: translateX(4px);
+}
+
+.level-select-row.is-selected {
+  background: rgba(37, 99, 235, 0.3);
+  border-color: #60a5fa;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
+}
+
+.level-row-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.level-number-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.25);
+  color: #60a5fa;
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(37, 99, 235, 0.4);
+}
+
+.level-meta-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 3px 0;
+}
+
+.level-meta-sub {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.level-tag-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .game-top-hud {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .hud-left-group, .hud-right-group {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .game-stats-bar {
+    gap: 12px;
+    padding: 8px 14px;
+    flex: 1;
+  }
+  .hud-stat-item.divider {
+    padding-left: 10px;
+  }
+  .level-indicator-pill {
+    position: static;
+    transform: none;
+    margin: 0 auto;
+  }
+}

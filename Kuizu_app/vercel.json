@@ -7,6 +7,7 @@
     { "source": "/sign-in", "destination": "/sign-in/index.html" },
     { "source": "/sign-up", "destination": "/sign-up/index.html" },
     { "source": "/sso-callback", "destination": "/sso-callback/index.html" },
+    { "source": "/game", "destination": "/game/index.html" },
     { "source": "/home", "destination": "/home/index.html" },
     { "source": "/problems", "destination": "/problems/index.html" },
     { "source": "/quiz", "destination": "/quiz/index.html" },
