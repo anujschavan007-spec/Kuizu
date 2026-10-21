@@ -21504,40 +21504,108 @@ html.dark-mode .dropdown-chevron {
 
 /* User Profile Popup Menu (Present on ALL pages) */
 html.dark-mode .profile-popup-card,
-html.dark-mode .user-dropdown-menu {
-  background: #111827 !important;
-  border: 1px solid #1f2937 !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65) !important;
+html.dark-mode .user-dropdown-menu,
+.dark-mode .profile-popup-card,
+.dark-mode .user-dropdown-menu {
+  background: #0f172a !important;
+  border: 1px solid rgba(51, 65, 85, 0.8) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
 }
 
-html.dark-mode .popup-user-name {
+html.dark-mode .popup-user-header:hover,
+.dark-mode .popup-user-header:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+html.dark-mode .popup-user-name,
+.dark-mode .popup-user-name {
   color: #f8fafc !important;
 }
 
-html.dark-mode .popup-divider {
-  border-color: #1e293b !important;
+html.dark-mode .popup-xp-badge,
+.dark-mode .popup-xp-badge {
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: #60a5fa !important;
+  border: 1px solid rgba(59, 130, 246, 0.35) !important;
 }
 
-html.dark-mode .popup-menu-item {
-  color: #cbd5e1 !important;
+html.dark-mode .popup-star-icon,
+.dark-mode .popup-star-icon {
+  fill: #60a5fa !important;
 }
 
-html.dark-mode .popup-menu-item:hover {
-  background: #1f2937 !important;
-  color: #f8fafc !important;
+html.dark-mode .popup-divider,
+.dark-mode .popup-divider {
+  background: rgba(51, 65, 85, 0.6) !important;
+  border-color: rgba(51, 65, 85, 0.6) !important;
 }
 
-html.dark-mode .popup-menu-item.active {
-  background: var(--primary-accent-light) !important;
-  color: var(--primary-accent) !important;
+html.dark-mode .popup-menu-item,
+.dark-mode .popup-menu-item {
+  color: #f1f5f9 !important;
 }
 
-html.dark-mode .popup-logout-btn {
-  color: #f87171 !important;
+html.dark-mode .popup-menu-item .menu-item-left,
+.dark-mode .popup-menu-item .menu-item-left,
+html.dark-mode .popup-menu-item .menu-item-left span,
+.dark-mode .popup-menu-item .menu-item-left span {
+  color: #f1f5f9 !important;
+  font-weight: 600;
 }
 
-html.dark-mode .popup-logout-btn:hover {
-  background: rgba(239, 68, 68, 0.12) !important;
+html.dark-mode .popup-menu-item svg,
+html.dark-mode .popup-menu-item .menu-icon,
+.dark-mode .popup-menu-item svg,
+.dark-mode .popup-menu-item .menu-icon {
+  color: #60a5fa !important;
+  stroke: #60a5fa !important;
+}
+
+html.dark-mode .popup-menu-item .menu-item-chevron,
+.dark-mode .popup-menu-item .menu-item-chevron {
+  color: #60a5fa !important;
+}
+
+html.dark-mode .popup-menu-item:hover,
+.dark-mode .popup-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark-mode .popup-menu-item:hover .menu-item-left span,
+.dark-mode .popup-menu-item:hover .menu-item-left span {
+  color: #ffffff !important;
+}
+
+html.dark-mode .popup-menu-item.active,
+.dark-mode .popup-menu-item.active {
+  background: rgba(59, 130, 246, 0.22) !important;
+}
+
+html.dark-mode .popup-menu-item.active .menu-item-left span,
+.dark-mode .popup-menu-item.active .menu-item-left span {
+  color: #93c5fd !important;
+}
+
+html.dark-mode .popup-menu-admin span,
+.dark-mode .popup-menu-admin span {
+  color: #f1f5f9 !important;
+}
+
+html.dark-mode .popup-logout-btn,
+.dark-mode .popup-logout-btn {
+  background: #fdf2f2 !important;
+  color: #ef4444 !important;
+}
+
+html.dark-mode .popup-logout-btn .logout-icon,
+.dark-mode .popup-logout-btn .logout-icon {
+  stroke: #ef4444 !important;
+}
+
+html.dark-mode .popup-logout-btn:hover,
+.dark-mode .popup-logout-btn:hover {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
 }
 
 /* Home Page */
