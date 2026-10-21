@@ -10,6 +10,7 @@ import { showFirstDailyKuizuBadgeModal } from './services/firstDailyKuizuBadgeMo
 import { showFirstLooserBadgeModal } from './services/firstLooserBadgeModal';
 import { getBadges, openBadgeModal, type BadgeRecord } from './services/badgeManager';
 import { initBadge3DCoin, disposeAllBadge3DCoins } from './services/badge3dCoinRenderer';
+import { showAllBadgesModal } from './services/allBadgesModal';
 
 // State management
 let allProblems: Problem[] = [];
@@ -407,7 +408,7 @@ async function init(): Promise<void> {
 
   // Wire View All Badges button
   viewAllBadgesBtn?.addEventListener('click', () => {
-    openBadgeModal('first-problem-solver');
+    showAllBadgesModal();
   });
 
   // Listen for real-time badge updates from problem compiler, battles, quizzes

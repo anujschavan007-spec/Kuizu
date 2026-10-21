@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 interface CoinInstance {
   id: string;
+  scope: string;
   canvas: HTMLCanvasElement;
   card: HTMLElement;
   scene: THREE.Scene;
@@ -119,7 +120,8 @@ export async function initBadge3DCoin(
   card: HTMLElement,
   glbUrl: string,
   badgeId: string,
-  index: number
+  index: number,
+  scope: string = 'main'
 ): Promise<void> {
   const width = canvas.clientWidth || 110;
   const height = canvas.clientHeight || 110;
@@ -167,6 +169,7 @@ export async function initBadge3DCoin(
 
   const coin: CoinInstance = {
     id: badgeId,
+    scope,
     canvas,
     card,
     scene,
@@ -223,22 +226,28 @@ export async function initBadge3DCoin(
 }
 
 /**
- * Dispose all currently active 3D coin instances
+ * Dispose all or scoped currently active 3D coin instances
  */
-export function disposeAllBadge3DCoins(): void {
-  if (animFrameId !== null) {
-    cancelAnimationFrame(animFrameId);
-    animFrameId = null;
-  }
+export function disposeAllBadge3DCoins(targetScope?: string): void {
+  const remaining: CoinInstance[] = [];
 
   for (let i = 0; i < activeCoins.length; i++) {
     const coin = activeCoins[i];
-    coin.disposed = true;
-    try {
-      coin.renderer.dispose();
-      coin.renderer.forceContextLoss();
-    } catch (_) {}
+    if (!targetScope || coin.scope === targetScope) {
+      coin.disposed = true;
+      try {
+        coin.renderer.dispose();
+        coin.renderer.forceContextLoss();
+      } catch (_) {}
+    } else {
+      remaining.push(coin);
+    }
   }
 
-  activeCoins = [];
+  activeCoins = remaining;
+
+  if (activeCoins.length === 0 && animFrameId !== null) {
+    cancelAnimationFrame(animFrameId);
+    animFrameId = null;
+  }
 }
