@@ -2200,8 +2200,8 @@ if (typeof window !== 'undefined') {
       } catch {}
     }
 
-    // Always route email dispatch and leetcode proxy to server endpoint (Vercel Edge or Bun server)
-    if (path === '/api/email/send' || path === '/api/leetcode') {
+    // Always route email dispatch, leetcode proxy, and problem fetcher to server endpoint
+    if (path === '/api/email/send' || path === '/api/leetcode' || path === '/api/fetchProblem') {
       return nativeFetch(input, init);
     }
 

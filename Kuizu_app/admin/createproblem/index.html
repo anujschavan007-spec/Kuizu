@@ -236,6 +236,64 @@
 
         <form id="create-problem-form" class="admin-create-problem-form">
           
+          <!-- Card 0: LeetCode & GeeksforGeeks Problem Fetcher -->
+          <div class="admin-card admin-form-card" style="border: 2px solid #e0e7ff; background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%); position: relative; overflow: hidden; margin-bottom: 24px;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #f59e0b 0%, #10b981 50%, #2563eb 100%);"></div>
+            
+            <div class="admin-form-card-title-row" style="margin-bottom: 14px;">
+              <div class="admin-form-card-icon-wrap" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+              </div>
+              <div style="flex: 1;">
+                <h2 class="admin-card-title" style="margin: 0; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+                  <span>Fetch from LeetCode or GeeksforGeeks</span>
+                  <span style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;">Live Sync</span>
+                </h2>
+                <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
+                  Enter any LeetCode problem number (e.g. <code>1</code>, <code>42</code>), slug, or GeeksforGeeks problem name / URL to auto-fill the title, difficulty, statement, tags, and sample test cases.
+                </p>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 160px 1fr auto; gap: 12px; align-items: center; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 6px 8px 6px 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+              <!-- Platform Selector -->
+              <div style="position: relative;">
+                <select id="fetcher-platform" style="width: 100%; border: none; background: transparent; font-size: 14px; font-weight: 700; color: #0f172a; padding-right: 20px; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none;">
+                  <option value="leetcode">⚡ LeetCode</option>
+                  <option value="gfg">🟢 GeeksforGeeks</option>
+                </select>
+                <span style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 12px; color: #64748b;">▼</span>
+              </div>
+
+              <!-- Input query / problem number -->
+              <div style="border-left: 1.5px solid #e2e8f0; padding-left: 14px;">
+                <input 
+                  type="text" 
+                  id="fetcher-query-input" 
+                  placeholder="Enter problem number (e.g. 1) or slug (e.g. two-sum)..." 
+                  style="width: 100%; border: none; outline: none; font-size: 14px; color: #0f172a; background: transparent;"
+                />
+              </div>
+
+              <!-- Fetch Button -->
+              <button 
+                type="button" 
+                id="btn-fetch-problem-details" 
+                class="admin-btn-primary" 
+                style="padding: 10px 20px; font-size: 13.5px; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; cursor: pointer; background: #2563eb; color: #ffffff;"
+              >
+                <span>⚡ Fetch Problem</span>
+              </button>
+            </div>
+
+            <!-- Fetch Status & Preview Pill -->
+            <div id="fetcher-status-box" style="display: none; margin-top: 12px; font-size: 13px; font-weight: 500; border-radius: 8px; padding: 8px 12px;"></div>
+          </div>
+
           <!-- Card 1: Problem Details -->
           <div class="admin-card admin-form-card">
             <div class="admin-form-card-title-row">

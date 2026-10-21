@@ -126,6 +126,203 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  // ----------------------------------------------------
+  // LeetCode & GeeksforGeeks Problem Auto-Fetcher
+  // ----------------------------------------------------
+  const fetcherPlatform = document.getElementById('fetcher-platform') as HTMLSelectElement | null;
+  const fetcherQueryInput = document.getElementById('fetcher-query-input') as HTMLInputElement | null;
+  const btnFetchProblem = document.getElementById('btn-fetch-problem-details') as HTMLButtonElement | null;
+  const fetcherStatusBox = document.getElementById('fetcher-status-box');
+
+  if (fetcherPlatform && fetcherQueryInput) {
+    fetcherPlatform.addEventListener('change', () => {
+      if (fetcherPlatform.value === 'leetcode') {
+        fetcherQueryInput.placeholder = 'Enter problem number (e.g. 1) or slug (e.g. two-sum)...';
+      } else {
+        fetcherQueryInput.placeholder = 'Enter GFG problem slug (e.g. parenthesis-checker2744) or URL...';
+      }
+    });
+  }
+
+  // Pre-load LeetCode number-to-slug mapping from public data
+  let leetCodeMap: Record<string, string> = {};
+  fetch('/data/leetcode_slug_map.json')
+    .then(r => r.json())
+    .then(data => { leetCodeMap = data; })
+    .catch(() => {});
+
+  async function handleProblemFetch() {
+    const rawQuery = fetcherQueryInput?.value.trim() || '';
+    if (!rawQuery) {
+      showToast('Please enter a problem number, slug, or URL.');
+      fetcherQueryInput?.focus();
+      return;
+    }
+
+    const platform = fetcherPlatform?.value || 'leetcode';
+
+    if (fetcherStatusBox) {
+      fetcherStatusBox.style.display = 'block';
+      fetcherStatusBox.style.background = '#eff6ff';
+      fetcherStatusBox.style.color = '#1d4ed8';
+      fetcherStatusBox.style.border = '1px solid #bfdbfe';
+      fetcherStatusBox.innerHTML = `<span>⏳ Fetching details from <strong>${platform === 'leetcode' ? 'LeetCode' : 'GeeksforGeeks'}</strong> for "${rawQuery}"...</span>`;
+    }
+
+    if (btnFetchProblem) {
+      btnFetchProblem.setAttribute('disabled', 'true');
+      btnFetchProblem.innerHTML = `<span>⏳ Fetching...</span>`;
+    }
+
+    try {
+      // If LeetCode number is given, check our client-side map first to accelerate lookup
+      let queryToSend = rawQuery;
+      if (platform === 'leetcode' && /^\d+$/.test(rawQuery) && leetCodeMap[rawQuery]) {
+        queryToSend = leetCodeMap[rawQuery];
+      }
+
+      const res = await fetch(`/api/fetchProblem?platform=${platform}&query=${encodeURIComponent(queryToSend)}`);
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || `Could not find ${platform.toUpperCase()} problem`);
+      }
+
+      // Populate form fields
+      const titleInput = document.getElementById('prob-title') as HTMLInputElement | null;
+      const diffSelect = document.getElementById('prob-difficulty') as HTMLSelectElement | null;
+      const tagsSelect = document.getElementById('prob-tags') as HTMLSelectElement | null;
+      const idInput = document.getElementById('prob-id') as HTMLInputElement | null;
+      const descInput = document.getElementById('prob-desc') as HTMLTextAreaElement | null;
+
+      if (titleInput && data.title) {
+        titleInput.value = data.title;
+      }
+      if (diffSelect && data.difficulty) {
+        diffSelect.value = data.difficulty;
+      }
+      if (idInput && data.problemId) {
+        idInput.value = data.problemId;
+      }
+      if (descInput && data.description) {
+        descInput.value = data.description;
+      }
+      if (statementArea && data.statement) {
+        statementArea.value = data.statement;
+      }
+
+      // Match or add topic
+      if (tagsSelect && data.topic) {
+        let matchedOption = false;
+        for (let i = 0; i < tagsSelect.options.length; i++) {
+          if (tagsSelect.options[i].value.toLowerCase().includes(data.topic.toLowerCase()) ||
+              data.topic.toLowerCase().includes(tagsSelect.options[i].value.toLowerCase())) {
+            tagsSelect.selectedIndex = i;
+            matchedOption = true;
+            break;
+          }
+        }
+        if (!matchedOption && data.topic) {
+          const newOpt = document.createElement('option');
+          newOpt.value = data.topic;
+          newOpt.textContent = data.topic;
+          tagsSelect.appendChild(newOpt);
+          tagsSelect.value = data.topic;
+        }
+      }
+
+      // Populate Test Cases table if any were parsed
+      const tcTbodyEl = document.getElementById('test-cases-tbody');
+      if (tcTbodyEl && Array.isArray(data.testCases) && data.testCases.length > 0) {
+        tcTbodyEl.innerHTML = data.testCases.map((tc: any, index: number) => {
+          const isSample = tc.visibility === 'Sample' || index === 0;
+          const badge = isSample
+            ? `<span class="admin-status-badge active"><span class="status-dot"></span>Sample</span>`
+            : `<span class="admin-status-badge hidden-vis"><span class="status-dot"></span>Hidden</span>`;
+          return `
+            <tr data-tc-id="${tc.id || index + 1}">
+              <td class="text-muted">${index + 1}</td>
+              <td class="font-semibold tc-name">${tc.name || `Test Case ${index + 1}`}</td>
+              <td class="tc-input font-mono">${(tc.input || '').replace(/\n/g, '<br>')}</td>
+              <td class="tc-output font-mono">${(tc.output || '-').replace(/\n/g, '<br>')}</td>
+              <td>${badge}</td>
+              <td style="text-align: right;">
+                <div class="admin-action-icons-wrap">
+                  <button type="button" class="admin-icon-btn btn-edit-tc" title="Edit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                    </svg>
+                  </button>
+                  <button type="button" class="admin-icon-btn btn-delete-tc" title="Delete">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+        bindTcActions();
+      }
+
+      // Add to problem examples
+      if (data.sampleInput || (data.testCases && data.testCases[0]?.input)) {
+        problemExamples = [
+          {
+            id: 'ex-fetched',
+            input: data.sampleInput || data.testCases[0]?.input || '',
+            output: data.sampleOutput || data.testCases[0]?.output || '',
+            explanation: ''
+          }
+        ];
+        renderExamples();
+      }
+
+      if (fetcherStatusBox) {
+        fetcherStatusBox.style.display = 'block';
+        fetcherStatusBox.style.background = '#ecfdf5';
+        fetcherStatusBox.style.color = '#065f46';
+        fetcherStatusBox.style.border = '1px solid #a7f3d0';
+        fetcherStatusBox.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <strong>✓ Successfully fetched:</strong> ${data.title} (${data.difficulty})
+              <span style="margin-left: 8px; color: #047857; font-size: 12px;">• Ready to review and click "Save Problem"</span>
+            </div>
+            ${data.originalUrl ? `<a href="${data.originalUrl}" target="_blank" style="color: #047857; font-weight: 700; text-decoration: underline; font-size: 12px;">Open ${platform === 'leetcode' ? 'LeetCode' : 'GFG'} ↗</a>` : ''}
+          </div>
+        `;
+      }
+
+      showToast(`Fetched "${data.title}"! Review details and click Save Problem.`);
+    } catch (err: any) {
+      console.error('[handleProblemFetch] Error:', err);
+      if (fetcherStatusBox) {
+        fetcherStatusBox.style.display = 'block';
+        fetcherStatusBox.style.background = '#fef2f2';
+        fetcherStatusBox.style.color = '#991b1b';
+        fetcherStatusBox.style.border = '1px solid #fecaca';
+        fetcherStatusBox.textContent = `✗ ${err.message || 'Failed to fetch problem. Please verify the problem number or slug.'}`;
+      }
+      showToast(err.message || 'Failed to fetch problem details.', 4000);
+    } finally {
+      if (btnFetchProblem) {
+        btnFetchProblem.removeAttribute('disabled');
+        btnFetchProblem.innerHTML = `<span>⚡ Fetch Problem</span>`;
+      }
+    }
+  }
+
+  btnFetchProblem?.addEventListener('click', handleProblemFetch);
+  fetcherQueryInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleProblemFetch();
+    }
+  });
+
   // Rich text formatting toolbar
   document.querySelectorAll<HTMLButtonElement>('.admin-editor-tool-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
