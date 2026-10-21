@@ -38,6 +38,27 @@ export interface LevelConfig {
   checkpoints: CheckpointQuestion[];
 }
 
+export interface RemoteCarInstance {
+  mesh: THREE.Group;
+  nameTag: THREE.Sprite;
+  targetX: number;
+  targetZ: number;
+  currentSpeed: number;
+  lastUpdate: number;
+  color: number;
+}
+
+const FRIEND_CAR_COLORS = [
+  0xf43f5e, // Crimson Rose
+  0xa855f7, // Cyber Violet
+  0x10b981, // Emerald Green
+  0xf59e0b, // Amber Gold
+  0xec4899, // Neon Pink
+  0x3b82f6, // Royal Blue
+  0x14b8a6, // Bright Teal
+  0xeab308  // Electric Gold
+];
+
 const LEVEL_CONFIGS: Record<number, LevelConfig> = {
   1: {
     id: 1,
@@ -533,6 +554,8 @@ class RoomGameApp {
   private checkpointGates: THREE.Group[] = [];
   private traffic!: TrafficController;
   private audio = new AudioEngine();
+  private remoteCars: Map<string, RemoteCarInstance> = new Map();
+  private lastPosBroadcastTime: number = 0;
 
   // Driving Physics
   private playerSpeed: number = 0;
@@ -735,6 +758,11 @@ class RoomGameApp {
         if (leftPresences) {
           for (const p of leftPresences) {
             this.racersMap.delete(p.id);
+            const remote = this.remoteCars.get(p.id);
+            if (remote && this.scene) {
+              this.scene.remove(remote.mesh);
+              this.remoteCars.delete(p.id);
+            }
           }
           this.renderRacersGrid();
           this.renderLiveLeaderboard();
@@ -743,6 +771,9 @@ class RoomGameApp {
       // 2. Broadcast Events
       .on('broadcast', { event: 'START_RACE' }, (payload: any) => {
         this.handleStartRaceBroadcast(payload.payload);
+      })
+      .on('broadcast', { event: 'PLAYER_POS' }, (payload: any) => {
+        this.handleRemotePlayerPos(payload.payload);
       })
       .on('broadcast', { event: 'CHECKPOINT_UPDATE' }, (payload: any) => {
         this.handleCheckpointBroadcast(payload.payload);
@@ -856,6 +887,7 @@ class RoomGameApp {
   }
 
   private leaveRoom() {
+    this.clearRemoteCars();
     if (this.channel) {
       supabase.removeChannel(this.channel);
       this.channel = null;
@@ -907,6 +939,18 @@ class RoomGameApp {
     // Launch Three.js 3D world
     this.initThreeWorld();
 
+    // Stagger starting grid across 4 lanes so racers don't overlap
+    const racerKeys = Array.from(this.racersMap.keys());
+    const myGridIndex = Math.max(0, racerKeys.indexOf(this.userId));
+    const startingGridX = [-2.2, 2.2, -6.6, 6.6];
+    const initialLaneX = startingGridX[myGridIndex % startingGridX.length];
+    if (this.playerCar) {
+      this.playerCar.position.set(initialLaneX, 0, 0);
+    }
+
+    // Broadcast starting position so everyone sees each other lined up on the highway
+    this.broadcastPosition();
+
     // Start 3-second synchronized countdown
     this.runCountdown(payload.countdown || 3);
   }
@@ -946,6 +990,7 @@ class RoomGameApp {
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     if (!this.canvas) return;
 
+    this.clearRemoteCars();
     const levelCfg = LEVEL_CONFIGS[this.selectedLevelId] || LEVEL_CONFIGS[1];
 
     this.scene = new THREE.Scene();
@@ -1076,6 +1121,164 @@ class RoomGameApp {
     this.scene.add(this.playerCar);
   }
 
+  private createNameTagSprite(name: string, isHost: boolean): THREE.Sprite {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 72;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+      ctx.strokeStyle = isHost ? '#f59e0b' : '#22d3ee';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      if (typeof (ctx as any).roundRect === 'function') {
+        (ctx as any).roundRect(6, 6, 244, 60, 16);
+      } else {
+        ctx.rect(6, 6, 244, 60);
+      }
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const displayStr = isHost ? `${name.slice(0, 10)} (Host)` : name.slice(0, 14);
+      ctx.fillText(displayStr, 128, 36);
+    }
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    const spriteMat = new THREE.SpriteMaterial({ map: texture, depthTest: false, transparent: true });
+    const sprite = new THREE.Sprite(spriteMat);
+    sprite.scale.set(4.2, 1.2, 1);
+    sprite.position.set(0, 3.2, 0);
+    return sprite;
+  }
+
+  private buildRemotePlayerCar(name: string, colorHex: number, isHost: boolean): RemoteCarInstance {
+    const group = new THREE.Group();
+
+    // Chassis
+    const bodyGeo = new THREE.BoxGeometry(2.3, 0.8, 4.4);
+    const bodyMat = new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.25, metalness: 0.7 });
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.position.y = 0.65;
+    group.add(body);
+
+    // Cabin
+    const cabinGeo = new THREE.BoxGeometry(1.9, 0.6, 2.3);
+    const cabinMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1, metalness: 0.9 });
+    const cabin = new THREE.Mesh(cabinGeo, cabinMat);
+    cabin.position.set(0, 1.3, -0.2);
+    group.add(cabin);
+
+    // 4 Wheels
+    const wheelGeo = new THREE.CylinderGeometry(0.44, 0.44, 0.38, 16);
+    const wheelMat = new THREE.MeshLambertMaterial({ color: 0x090d16 });
+    const wheelPos: [number, number, number][] = [
+      [-1.2, 0.44, 1.3],
+      [1.2, 0.44, 1.3],
+      [-1.2, 0.44, -1.3],
+      [1.2, 0.44, -1.3]
+    ];
+    wheelPos.forEach(p => {
+      const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+      wheel.rotation.z = Math.PI / 2;
+      wheel.position.set(p[0], p[1], p[2]);
+      group.add(wheel);
+    });
+
+    // Headlights
+    const hlGeo = new THREE.BoxGeometry(0.35, 0.2, 0.1);
+    const hlMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
+    const hl1 = new THREE.Mesh(hlGeo, hlMat);
+    hl1.position.set(-0.8, 0.6, -2.25);
+    const hl2 = new THREE.Mesh(hlGeo, hlMat);
+    hl2.position.set(0.8, 0.6, -2.25);
+    group.add(hl1, hl2);
+
+    // Taillights
+    const tlGeo = new THREE.BoxGeometry(0.38, 0.2, 0.1);
+    const tlMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+    const tl1 = new THREE.Mesh(tlGeo, tlMat);
+    tl1.position.set(-0.8, 0.6, 2.25);
+    const tl2 = new THREE.Mesh(tlGeo, tlMat);
+    tl2.position.set(0.8, 0.6, 2.25);
+    group.add(tl1, tl2);
+
+    // Floating Name Tag
+    const nameTag = this.createNameTagSprite(name, isHost);
+    group.add(nameTag);
+
+    return {
+      mesh: group,
+      nameTag,
+      targetX: 0,
+      targetZ: 0,
+      currentSpeed: 0,
+      lastUpdate: performance.now(),
+      color: colorHex
+    };
+  }
+
+  private handleRemotePlayerPos(data: any) {
+    if (!data || !data.userId || data.userId === this.userId) return;
+
+    let remote = this.remoteCars.get(data.userId);
+    if (!remote && this.scene) {
+      const racerData = this.racersMap.get(data.userId);
+      const isHost = Boolean(racerData?.isHost);
+      const colorIndex = Math.abs(data.userId.split('').reduce((acc: number, c: string) => acc + c.charCodeAt(0), 0)) % FRIEND_CAR_COLORS.length;
+      const carColor = FRIEND_CAR_COLORS[colorIndex];
+
+      remote = this.buildRemotePlayerCar(data.name || 'Friend', carColor, isHost);
+      remote.mesh.position.set(data.x, 0, data.z);
+      this.scene.add(remote.mesh);
+      this.remoteCars.set(data.userId, remote);
+    }
+
+    if (remote) {
+      remote.targetX = data.x;
+      remote.targetZ = data.z;
+      remote.currentSpeed = data.speed || 0;
+      remote.lastUpdate = performance.now();
+    }
+
+    if (data.checkpoint !== undefined) {
+      const racer = this.racersMap.get(data.userId);
+      if (racer && !racer.finished) {
+        racer.checkpoint = data.checkpoint;
+      }
+    }
+
+    this.renderMiniOpponentsTracker();
+  }
+
+  private broadcastPosition() {
+    if (!this.channel || !this.playerCar) return;
+    this.channel.send({
+      type: 'broadcast',
+      event: 'PLAYER_POS',
+      payload: {
+        userId: this.userId,
+        name: this.userName,
+        x: this.playerCar.position.x,
+        z: this.playerCar.position.z,
+        speed: this.playerSpeed,
+        checkpoint: this.currentCheckpointIdx
+      }
+    });
+  }
+
+  private clearRemoteCars() {
+    for (const remote of this.remoteCars.values()) {
+      if (this.scene) {
+        this.scene.remove(remote.mesh);
+      }
+    }
+    this.remoteCars.clear();
+  }
+
   private buildCheckpointGates(levelCfg: LevelConfig) {
     this.checkpointGates = [];
     levelCfg.checkpoints.forEach((cp, idx) => {
@@ -1173,6 +1376,36 @@ class RoomGameApp {
         if (this.playerCar.position.z <= nextCp.zPos) {
           this.triggerCheckpointQuiz(this.currentCheckpointIdx);
         }
+      }
+
+      // Broadcast local car telemetry to friends (~22 times/sec)
+      const now = performance.now();
+      if (this.channel && now - this.lastPosBroadcastTime > 45) {
+        this.lastPosBroadcastTime = now;
+        this.broadcastPosition();
+      }
+    }
+
+    // Smoothly interpolate (lerp) all remote friend cars toward their broadcast positions
+    const nowTime = performance.now();
+    for (const [id, remote] of this.remoteCars.entries()) {
+      remote.mesh.position.x += (remote.targetX - remote.mesh.position.x) * 0.22;
+      remote.mesh.position.z += (remote.targetZ - remote.mesh.position.z) * 0.22;
+
+      // Subtle chassis steer tilt based on horizontal motion
+      const diffX = remote.targetX - remote.mesh.position.x;
+      remote.mesh.rotation.y = -diffX * 0.12;
+      remote.mesh.rotation.z = -diffX * 0.04;
+
+      // Keep 3D floating name tag facing the camera
+      if (this.camera) {
+        remote.nameTag.quaternion.copy(this.camera.quaternion);
+      }
+
+      // Cleanup if player went inactive for > 20 seconds
+      if (nowTime - remote.lastUpdate > 20000) {
+        this.scene.remove(remote.mesh);
+        this.remoteCars.delete(id);
       }
     }
 
@@ -1348,7 +1581,24 @@ class RoomGameApp {
     const racers = Array.from(this.racersMap.values());
     container.innerHTML = racers.map(r => {
       const isYou = r.id === this.userId;
-      const statusText = r.finished ? 'Finished' : `CP ${r.checkpoint}/5`;
+      let statusText = '';
+      if (r.finished) {
+        statusText = 'Finished';
+      } else if (isYou) {
+        statusText = `CP ${this.currentCheckpointIdx}/5`;
+      } else {
+        const remote = this.remoteCars.get(r.id);
+        if (remote && this.playerCar) {
+          const diffM = Math.round(this.playerCar.position.z - remote.mesh.position.z);
+          if (diffM > 0) {
+            statusText = `${diffM}m ahead`;
+          } else {
+            statusText = `${Math.abs(diffM)}m behind`;
+          }
+        } else {
+          statusText = `CP ${r.checkpoint}/5`;
+        }
+      }
       return `
         <div class="rg-opp-chip ${r.finished ? 'is-finished' : ''}">
           <span class="rg-opp-chip-name">${r.name} ${isYou ? '(You)' : ''}</span>
