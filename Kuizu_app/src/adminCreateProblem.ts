@@ -166,12 +166,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       fetcherStatusBox.style.background = '#eff6ff';
       fetcherStatusBox.style.color = '#1d4ed8';
       fetcherStatusBox.style.border = '1px solid #bfdbfe';
-      fetcherStatusBox.innerHTML = `<span>⏳ Fetching details from <strong>${platform === 'leetcode' ? 'LeetCode' : 'GeeksforGeeks'}</strong> for "${rawQuery}"...</span>`;
+      fetcherStatusBox.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" style="animation: spin 1s linear infinite;">
+            <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+            <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
+          </svg>
+          <span>Fetching details from <strong>${platform === 'leetcode' ? 'LeetCode' : 'GeeksforGeeks'}</strong> for "${rawQuery}"...</span>
+        </div>
+      `;
     }
 
     if (btnFetchProblem) {
       btnFetchProblem.setAttribute('disabled', 'true');
-      btnFetchProblem.innerHTML = `<span>⏳ Fetching...</span>`;
+      btnFetchProblem.innerHTML = `
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" style="animation: spin 1s linear infinite;">
+          <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+          <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
+        </svg>
+        <span>Fetching...</span>
+      `;
     }
 
     try {
@@ -286,12 +300,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         fetcherStatusBox.style.color = '#065f46';
         fetcherStatusBox.style.border = '1px solid #a7f3d0';
         fetcherStatusBox.innerHTML = `
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div>
-              <strong>✓ Successfully fetched:</strong> ${data.title} (${data.difficulty})
-              <span style="margin-left: 8px; color: #047857; font-size: 12px;">• Ready to review and click "Save Problem"</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#059669" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span><strong>Successfully fetched:</strong> ${data.title} (${data.difficulty})</span>
+              <span style="color: #047857; font-size: 12px;">• Ready to review and click "Save Problem"</span>
             </div>
-            ${data.originalUrl ? `<a href="${data.originalUrl}" target="_blank" style="color: #047857; font-weight: 700; text-decoration: underline; font-size: 12px;">Open ${platform === 'leetcode' ? 'LeetCode' : 'GFG'} ↗</a>` : ''}
+            ${data.originalUrl ? `
+              <a href="${data.originalUrl}" target="_blank" style="color: #047857; font-weight: 700; text-decoration: none; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                <span>Open ${platform === 'leetcode' ? 'LeetCode' : 'GFG'}</span>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </a>
+            ` : ''}
           </div>
         `;
       }
@@ -304,13 +330,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         fetcherStatusBox.style.background = '#fef2f2';
         fetcherStatusBox.style.color = '#991b1b';
         fetcherStatusBox.style.border = '1px solid #fecaca';
-        fetcherStatusBox.textContent = `✗ ${err.message || 'Failed to fetch problem. Please verify the problem number or slug.'}`;
+        fetcherStatusBox.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#dc2626" stroke-width="2.2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>${err.message || 'Failed to fetch problem. Please verify the problem number or slug.'}</span>
+          </div>
+        `;
       }
       showToast(err.message || 'Failed to fetch problem details.', 4000);
     } finally {
       if (btnFetchProblem) {
         btnFetchProblem.removeAttribute('disabled');
-        btnFetchProblem.innerHTML = `<span>⚡ Fetch Problem</span>`;
+        btnFetchProblem.innerHTML = `
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>Fetch Problem</span>
+        `;
       }
     }
   }

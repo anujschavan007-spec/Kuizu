@@ -599,7 +599,10 @@
                 </span>
                 <a href="/problem/qlibrary/compiler/submission" class="admin-view-all-link" style="display: inline-flex; align-items: center; gap: 4px; text-decoration: none;">
                   <span>Full View</span>
-                  <span>→</span>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
                 </a>
               </div>
             </div>
@@ -651,7 +654,12 @@
             </div>
             <h3 id="admin-sub-modal-title" style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">Problem Title</h3>
           </div>
-          <button type="button" class="admin-modal-close" id="btn-close-admin-sub-modal" aria-label="Close Modal">✕</button>
+          <button type="button" class="admin-modal-close" id="btn-close-admin-sub-modal" aria-label="Close Modal">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
         
         <div style="padding: 16px 0 0 0;">
@@ -682,7 +690,12 @@
 
           <div class="admin-modal-actions" style="margin-top: 18px; display: flex; justify-content: space-between; align-items: center;">
             <a href="#" id="admin-sub-modal-compiler-link" target="_blank" class="admin-btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-              <span>Open in Compiler ↗</span>
+              <span>Open in Compiler</span>
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
             </a>
             <button type="button" class="admin-btn-primary" id="btn-admin-sub-modal-done">Done</button>
           </div>
@@ -695,7 +708,12 @@
       <div class="admin-modal-dialog">
         <div class="admin-modal-header">
           <h3 class="admin-modal-title">Edit Student Profile</h3>
-          <button class="admin-modal-close" id="close-profile-modal">✕</button>
+          <button class="admin-modal-close" id="close-profile-modal" aria-label="Close Modal">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
         <form id="edit-profile-form" class="admin-modal-form">
           <div class="admin-form-group">
@@ -739,7 +757,12 @@
       <div class="admin-modal-dialog">
         <div class="admin-modal-header">
           <h3 class="admin-modal-title">Edit Attendance (Admin Only)</h3>
-          <button class="admin-modal-close" id="close-attendance-modal">✕</button>
+          <button class="admin-modal-close" id="close-attendance-modal" aria-label="Close Modal">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
         <form id="edit-attendance-form" class="admin-modal-form">
           <div class="admin-form-group">
@@ -763,7 +786,12 @@
       <div class="admin-modal-dialog">
         <div class="admin-modal-header">
           <h3 class="admin-modal-title" id="edit-card-modal-title">Edit Card</h3>
-          <button class="admin-modal-close" id="close-card-modal">✕</button>
+          <button class="admin-modal-close" id="close-card-modal" aria-label="Close Modal">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
         <form id="edit-card-form" class="admin-modal-form">
           <input type="hidden" id="edit-card-type" value="" />
@@ -772,7 +800,10 @@
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <label for="input-card-link" id="label-card-link">Profile / Contest Link URL</label>
               <button type="button" id="btn-fetch-leetcode" class="admin-btn-secondary" style="display:none; padding: 4px 10px; font-size: 12px; border-radius: 6px; font-weight: 600; color: #0284c7; background: #e0f2fe; border: 1px solid #bae6fd; cursor: pointer; align-items: center; gap: 4px;">
-                <span>⚡ Fetch Live Count</span>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                <span>Fetch Live Count</span>
               </button>
             </div>
             <input type="url" id="input-card-link" class="admin-form-input" placeholder="https://..." />
@@ -795,7 +826,12 @@
 
           <div class="admin-modal-actions" style="display:flex; justify-content:space-between; align-items:center;">
             <a href="#" target="_blank" id="btn-open-external-link" class="admin-btn-secondary" style="text-decoration:none; display:none; align-items:center; gap:6px;">
-              <span>Open Link ↗</span>
+              <span>Open Link</span>
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
             </a>
             <div style="display:flex; gap:10px; margin-left:auto;">
               <button type="button" class="admin-btn-secondary" id="cancel-card-btn">Cancel</button>

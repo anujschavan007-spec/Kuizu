@@ -518,10 +518,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (leetcodeFetchStatus) {
       leetcodeFetchStatus.style.display = 'block';
       leetcodeFetchStatus.style.color = '#0284c7';
-      leetcodeFetchStatus.textContent = `Fetching live solved count for @${username}...`;
+      leetcodeFetchStatus.innerHTML = `
+        <span style="display: inline-flex; align-items: center; gap: 6px;">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" style="animation: spin 1s linear infinite;">
+            <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+            <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
+          </svg>
+          <span>Fetching live solved count for @${username}...</span>
+        </span>
+      `;
     }
     if (btnFetchLeetcode) {
-      btnFetchLeetcode.textContent = '⏳ Fetching...';
+      btnFetchLeetcode.innerHTML = `
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" style="animation: spin 1s linear infinite;">
+          <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+          <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
+        </svg>
+        <span>Fetching...</span>
+      `;
       btnFetchLeetcode.setAttribute('disabled', 'true');
     }
 
@@ -534,7 +548,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (leetcodeFetchStatus) {
           leetcodeFetchStatus.style.display = 'block';
           leetcodeFetchStatus.style.color = '#16a34a';
-          leetcodeFetchStatus.innerHTML = `✓ Found @${stats.username}: <strong>${stats.solved} problems solved</strong> (Daily 12 PM sync active)`;
+          leetcodeFetchStatus.innerHTML = `
+            <span style="display: inline-flex; align-items: center; gap: 6px;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#16a34a" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Found @${stats.username}: <strong>${stats.solved} problems solved</strong> (Daily 12 PM sync active)</span>
+            </span>
+          `;
         }
         if (!quiet) showToast(`Fetched ${stats.solved} solved problems for @${stats.username}!`);
       } else {
@@ -552,7 +573,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     } finally {
       if (btnFetchLeetcode) {
-        btnFetchLeetcode.textContent = '⚡ Fetch Live Count';
+        btnFetchLeetcode.innerHTML = `
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>Fetch Live Count</span>
+        `;
         btnFetchLeetcode.removeAttribute('disabled');
       }
     }
@@ -804,12 +830,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         adminSubModalStatusPill.style.background = '#ecfdf5';
         adminSubModalStatusPill.style.color = '#059669';
         adminSubModalStatusPill.style.borderColor = '#a7f3d0';
-        adminSubModalStatusPill.innerHTML = `<span>✓ Accepted</span>`;
+        adminSubModalStatusPill.innerHTML = `
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Accepted</span>
+        `;
       } else {
         adminSubModalStatusPill.style.background = '#fef2f2';
         adminSubModalStatusPill.style.color = '#dc2626';
         adminSubModalStatusPill.style.borderColor = '#fecaca';
-        adminSubModalStatusPill.innerHTML = `<span>✗ Failed</span>`;
+        adminSubModalStatusPill.innerHTML = `
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          <span>Failed</span>
+        `;
       }
     }
 
@@ -986,8 +1023,11 @@ document.addEventListener('DOMContentLoaded', async () => {
               </div>
             </td>
             <td>
-              <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 9999px; font-size: 11.5px; font-weight: 700; ${isAccepted ? 'background: #ecfdf5; color: #059669;' : 'background: #fef2f2; color: #dc2626;'}">
-                <span>${isAccepted ? '✓ Accepted' : '✗ Failed'}</span>
+              <span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 9999px; font-size: 11.5px; font-weight: 700; ${isAccepted ? 'background: #ecfdf5; color: #059669;' : 'background: #fef2f2; color: #dc2626;'}">
+                ${isAccepted 
+                  ? `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Accepted</span>`
+                  : `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Failed</span>`
+                }
               </span>
             </td>
             <td>
