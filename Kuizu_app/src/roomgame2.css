@@ -245,9 +245,30 @@ html, body {
   line-height: 1.6;
 }
 
+.rg-btn-emerald {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--emerald-primary) 0%, #059669 100%);
+  color: var(--text-white);
+  border: none;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+.rg-btn-emerald:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
 .rg-action-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
   margin-bottom: 30px;
 }

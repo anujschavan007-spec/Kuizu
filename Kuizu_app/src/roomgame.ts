@@ -49,6 +49,27 @@ export interface RemoteCarInstance {
   color: number;
 }
 
+export interface AIBotInstance {
+  id: string;
+  name: string;
+  mesh: THREE.Group;
+  nameTag: THREE.Sprite;
+  wheels: THREE.Group[];
+  speed: number;
+  baseSpeed: number;
+  currentLane: number;
+  targetX: number;
+  laneChangeTimer: number;
+  checkpoint: number;
+  score: number;
+  finished: boolean;
+  finishTimeMs: number | null;
+  finishTimeStr: string | null;
+  quizPauseTimer: number;
+  nitroTimer: number;
+  nitroFlames: THREE.Mesh[];
+}
+
 const FRIEND_CAR_COLORS = [
   0xf43f5e, // Crimson Rose
   0xa855f7, // Cyber Violet
@@ -585,6 +606,13 @@ class RoomGameApp {
   private audio = new AudioEngine();
   private remoteCars: Map<string, RemoteCarInstance> = new Map();
   private lastPosBroadcastTime: number = 0;
+  private isSinglePlayer: boolean = false;
+  private aiBots: AIBotInstance[] = [];
+  private botConfigs = [
+    { id: 'bot_alpha', name: 'CyberBot_Alpha [BOT]', color: 0x10b981 },
+    { id: 'bot_neo', name: 'ByteRacer_Neo [BOT]', color: 0xa855f7 },
+    { id: 'bot_turbo', name: 'AlgoSpeed_X [BOT]', color: 0xf59e0b }
+  ];
 
   // Driving Physics & Nitro Booster
   private playerSpeed: number = 0;
@@ -769,6 +797,18 @@ class RoomGameApp {
         return;
       }
       this.joinRoom(code);
+    });
+
+    // Single Player Play vs Bots
+    document.getElementById('btn-play-single')?.addEventListener('click', () => {
+      const selectLevel = document.getElementById('select-single-level') as HTMLSelectElement | null;
+      const levelId = parseInt(selectLevel?.value || '1', 10);
+      this.startSinglePlayer(levelId);
+    });
+
+    // Add Bot in Lobby
+    document.getElementById('btn-add-bot')?.addEventListener('click', () => {
+      this.addAIBotToLobby();
     });
 
     // Copy Code / Share
@@ -1201,6 +1241,9 @@ class RoomGameApp {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
+    // Spawn AI Bots if present
+    this.spawnAIBots();
+
     // Start Animation Loop
     this.animate();
   }
@@ -1295,6 +1338,270 @@ class RoomGameApp {
     const banner = document.getElementById('booster-banner');
     if (banner) banner.style.display = 'none';
     this.nitroFlames.forEach(f => (f.visible = false));
+  }
+
+  // ========================================================================
+  // SINGLE PLAYER & AI BOTS LOGIC
+  // ========================================================================
+
+  private startSinglePlayer(levelId: number) {
+    this.isSinglePlayer = true;
+    this.isHost = true;
+    this.selectedLevelId = levelId;
+    this.roomTitle = 'Single Player vs AI Bots';
+    this.roomCode = `SP-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    if (this.channel) {
+      supabase.removeChannel(this.channel);
+      this.channel = null;
+    }
+
+    // Add local user
+    this.racersMap.clear();
+    this.racersMap.set(this.userId, {
+      id: this.userId,
+      name: this.userName,
+      avatar: this.userAvatar,
+      isHost: true,
+      checkpoint: 0,
+      score: 0,
+      finished: false,
+      finishTimeMs: null,
+      finishTimeStr: null,
+      joinedAt: Date.now()
+    });
+
+    // Add 3 default bots
+    this.botConfigs.forEach(b => {
+      this.racersMap.set(b.id, {
+        id: b.id,
+        name: b.name,
+        avatar: '/images/home_avatar.png',
+        isHost: false,
+        checkpoint: 0,
+        score: 0,
+        finished: false,
+        finishTimeMs: null,
+        finishTimeStr: null,
+        joinedAt: Date.now()
+      });
+    });
+
+    this.handleStartRaceBroadcast({
+      levelId: this.selectedLevelId,
+      title: this.roomTitle,
+      countdown: 3
+    });
+  }
+
+  private addAIBotToLobby() {
+    const existingCount = Array.from(this.racersMap.values()).filter(r => r.id.startsWith('bot_')).length;
+    if (existingCount >= 6) return;
+
+    const baseBot = this.botConfigs[existingCount % this.botConfigs.length];
+    const botId = `bot_${Date.now()}_${Math.floor(Math.random() * 100)}`;
+    const botName = existingCount < this.botConfigs.length ? baseBot.name : `RacerAI_${existingCount + 1} [BOT]`;
+
+    this.racersMap.set(botId, {
+      id: botId,
+      name: botName,
+      avatar: '/images/home_avatar.png',
+      isHost: false,
+      checkpoint: 0,
+      score: 0,
+      finished: false,
+      finishTimeMs: null,
+      finishTimeStr: null,
+      joinedAt: Date.now()
+    });
+
+    this.renderRacersGrid();
+  }
+
+  private spawnAIBots() {
+    this.aiBots = [];
+    const botRacers = Array.from(this.racersMap.values()).filter(r => r.id.startsWith('bot_'));
+    const lanes = [-5.5, -1.8, 1.8, 5.5];
+
+    botRacers.forEach((b, idx) => {
+      const group = new THREE.Group();
+      const botColor = this.botConfigs[idx % this.botConfigs.length]?.color || 0xa855f7;
+
+      // Chassis
+      const body = new THREE.Mesh(
+        new THREE.BoxGeometry(2.3, 0.8, 4.4),
+        new THREE.MeshStandardMaterial({ color: botColor, roughness: 0.3, metalness: 0.6 })
+      );
+      body.position.y = 0.65;
+      group.add(body);
+
+      // Cabin
+      const cabin = new THREE.Mesh(
+        new THREE.BoxGeometry(1.9, 0.6, 2.3),
+        new THREE.MeshStandardMaterial({ color: 0x16243a, roughness: 0.1, metalness: 0.85 })
+      );
+      cabin.position.set(0, 1.3, -0.2);
+      group.add(cabin);
+
+      // 4 Wheels
+      const wheels: THREE.Group[] = [];
+      const wheelGeo = new THREE.CylinderGeometry(0.44, 0.44, 0.38, 16);
+      const wheelMat = new THREE.MeshLambertMaterial({ color: 0x090d16 });
+      const wheelPos: [number, number, number][] = [
+        [-1.2, 0.44, 1.3],
+        [1.2, 0.44, 1.3],
+        [-1.2, 0.44, -1.3],
+        [1.2, 0.44, -1.3]
+      ];
+      wheelPos.forEach(p => {
+        const wg = new THREE.Group();
+        wg.position.set(p[0], p[1], p[2]);
+        const w = new THREE.Mesh(wheelGeo, wheelMat);
+        w.rotation.z = Math.PI / 2;
+        wg.add(w);
+        group.add(wg);
+        wheels.push(wg);
+      });
+
+      // Name Tag
+      const nameTag = this.createNameTagSprite(b.name, false);
+      group.add(nameTag);
+
+      // Nitro Flames
+      const flameGeo = new THREE.ConeGeometry(0.2, 1.2, 8);
+      const flameMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.9 });
+      const f1 = new THREE.Mesh(flameGeo, flameMat);
+      f1.rotation.x = -Math.PI / 2;
+      f1.position.set(-0.7, 0.5, 2.7);
+      const f2 = new THREE.Mesh(flameGeo, flameMat);
+      f2.rotation.x = -Math.PI / 2;
+      f2.position.set(0.7, 0.5, 2.7);
+      f1.visible = false;
+      f2.visible = false;
+      group.add(f1, f2);
+
+      const assignedLane = (idx + 1) % lanes.length;
+      const startX = lanes[assignedLane];
+      const startZ = -10 - idx * 14;
+
+      group.position.set(startX, 0, startZ);
+      this.scene.add(group);
+
+      this.aiBots.push({
+        id: b.id,
+        name: b.name,
+        mesh: group,
+        nameTag,
+        wheels,
+        speed: 1.35 + Math.random() * 0.2,
+        baseSpeed: 1.35 + Math.random() * 0.2,
+        currentLane: assignedLane,
+        targetX: startX,
+        laneChangeTimer: 2.0 + Math.random() * 3.0,
+        checkpoint: 0,
+        score: 0,
+        finished: false,
+        finishTimeMs: null,
+        finishTimeStr: null,
+        quizPauseTimer: 0,
+        nitroTimer: 0,
+        nitroFlames: [f1, f2]
+      });
+    });
+  }
+
+  private updateAIBots(now: number, dt: number) {
+    const levelCfg = LEVEL_CONFIGS[this.selectedLevelId] || LEVEL_CONFIGS[1];
+    const lanes = [-5.5, -1.8, 1.8, 5.5];
+
+    for (const bot of this.aiBots) {
+      if (this.camera) {
+        bot.nameTag.quaternion.copy(this.camera.quaternion);
+      }
+
+      if (bot.finished) {
+        bot.mesh.position.z -= 0.6;
+        continue;
+      }
+
+      // Checkpoint quiz pause simulation
+      if (bot.quizPauseTimer > 0) {
+        bot.quizPauseTimer -= dt;
+        if (bot.quizPauseTimer <= 0) {
+          // Solved quiz!
+          bot.checkpoint++;
+          bot.score += 20;
+
+          // 60% chance of nitro booster
+          if (Math.random() > 0.4) {
+            bot.nitroTimer = 4.0;
+            bot.nitroFlames.forEach(f => (f.visible = true));
+          }
+
+          const racerEntry = this.racersMap.get(bot.id);
+          if (racerEntry) {
+            racerEntry.checkpoint = bot.checkpoint;
+            racerEntry.score = bot.score;
+          }
+
+          // Check if finished final checkpoint
+          if (bot.checkpoint >= levelCfg.checkpoints.length) {
+            bot.finished = true;
+            const elapsedMs = now - this.raceStartTime;
+            bot.finishTimeMs = elapsedMs;
+            const minutes = Math.floor(elapsedMs / 60000);
+            const seconds = ((elapsedMs % 60000) / 1000).toFixed(1);
+            bot.finishTimeStr = `${minutes > 0 ? `${minutes}m ` : ''}${seconds}s`;
+
+            if (racerEntry) {
+              racerEntry.finished = true;
+              racerEntry.finishTimeMs = bot.finishTimeMs;
+              racerEntry.finishTimeStr = bot.finishTimeStr;
+            }
+            this.renderLiveLeaderboard();
+          }
+          this.renderMiniOpponentsTracker();
+        }
+        continue;
+      }
+
+      // Nitro speed handling
+      if (bot.nitroTimer > 0) {
+        bot.nitroTimer -= dt;
+        bot.speed = bot.baseSpeed * 1.55;
+        if (bot.nitroTimer <= 0) {
+          bot.speed = bot.baseSpeed;
+          bot.nitroFlames.forEach(f => (f.visible = false));
+        }
+      }
+
+      // Forward motion
+      bot.mesh.position.z -= bot.speed;
+
+      // Wheel rotation
+      bot.wheels.forEach(w => {
+        w.children[0].rotation.x += bot.speed * 0.4;
+      });
+
+      // Smooth lane change steering
+      bot.laneChangeTimer -= dt;
+      if (bot.laneChangeTimer <= 0) {
+        bot.laneChangeTimer = 3.0 + Math.random() * 4.0;
+        const dir = Math.random() > 0.5 ? 1 : -1;
+        bot.currentLane = Math.max(0, Math.min(lanes.length - 1, bot.currentLane + dir));
+        bot.targetX = lanes[bot.currentLane];
+      }
+
+      bot.mesh.position.x += (bot.targetX - bot.mesh.position.x) * 0.08;
+
+      // Checkpoint trigger
+      if (bot.checkpoint < levelCfg.checkpoints.length) {
+        const nextCp = levelCfg.checkpoints[bot.checkpoint];
+        if (bot.mesh.position.z <= nextCp.zPos) {
+          bot.quizPauseTimer = 2.2 + Math.random() * 2.5; // Simulate bot reading & answering
+        }
+      }
+    }
   }
 
   private createNameTagSprite(name: string, isHost: boolean): THREE.Sprite {
@@ -1621,6 +1928,9 @@ class RoomGameApp {
         this.remoteCars.delete(id);
       }
     }
+
+    // Update AI Bots
+    this.updateAIBots(nowTime, 0.016);
 
     if (this.renderer && this.scene && this.camera) {
       this.renderer.render(this.scene, this.camera);

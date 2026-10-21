@@ -51,6 +51,29 @@ export interface RemoteCarInstance {
   wheels: THREE.Group[];
 }
 
+export interface OpenWorldBotInstance {
+  id: string;
+  name: string;
+  mesh: THREE.Group;
+  nameTag: THREE.Sprite;
+  wheels: THREE.Group[];
+  curveT: number;
+  laneOffset: number;
+  speed: number;
+  baseSpeed: number;
+  checkpoint: number;
+  score: number;
+  finished: boolean;
+  finishTimeMs: number | null;
+  finishTimeStr: string | null;
+  quizPauseTimer: number;
+  nitroTimer: number;
+  nitroFlames: THREE.Mesh[];
+  x: number;
+  z: number;
+  heading: number;
+}
+
 const FRIEND_CAR_COLORS = [
   0xf43f5e, // Crimson Rose
   0xa855f7, // Cyber Violet
@@ -416,6 +439,13 @@ class RoomGame2App {
   private audio = new AudioEngine();
   private remoteCars: Map<string, RemoteCarInstance> = new Map();
   private lastPosBroadcastTime: number = 0;
+  private isSinglePlayer: boolean = false;
+  private aiBots: OpenWorldBotInstance[] = [];
+  private botConfigs = [
+    { id: 'bot_apex', name: 'ApexBot [BOT]', color: 0x10b981 },
+    { id: 'bot_vortex', name: 'VortexAI [BOT]', color: 0xa855f7 },
+    { id: 'bot_zenith', name: 'ZenithBot [BOT]', color: 0xf59e0b }
+  ];
 
   // Track Curve & Waypoints
   private trackCurve!: THREE.CatmullRomCurve3;
@@ -599,6 +629,18 @@ class RoomGame2App {
         return;
       }
       this.joinRoom(code);
+    });
+
+    // Single Player Play vs Bots
+    document.getElementById('btn-play-single')?.addEventListener('click', () => {
+      const selectLevel = document.getElementById('select-single-level') as HTMLSelectElement | null;
+      const levelId = parseInt(selectLevel?.value || '1', 10);
+      this.startSinglePlayer(levelId);
+    });
+
+    // Add Bot in Lobby
+    document.getElementById('btn-add-bot')?.addEventListener('click', () => {
+      this.addAIBotToLobby();
     });
 
     // Copy Code / Share
@@ -1143,6 +1185,9 @@ class RoomGame2App {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
+    // Spawn AI Bots if present
+    this.spawnAIBots();
+
     // Start Game Loop
     this.animate();
   }
@@ -1540,6 +1585,292 @@ class RoomGame2App {
   }
 
   // ========================================================================
+  // SINGLE PLAYER & AI BOTS LOGIC
+  // ========================================================================
+
+  private startSinglePlayer(levelId: number) {
+    this.isSinglePlayer = true;
+    this.isHost = true;
+    this.selectedLevelId = levelId;
+    this.roomTitle = 'Open Highway Single Player Arena';
+    this.roomCode = `SP-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    if (this.channel) {
+      supabase.removeChannel(this.channel);
+      this.channel = null;
+    }
+
+    // Add local user
+    this.racersMap.clear();
+    this.racersMap.set(this.userId, {
+      id: this.userId,
+      name: this.userName,
+      avatar: this.userAvatar,
+      isHost: true,
+      checkpoint: 0,
+      score: 0,
+      finished: false,
+      finishTimeMs: null,
+      finishTimeStr: null,
+      joinedAt: Date.now()
+    });
+
+    // Add 3 default bots
+    this.botConfigs.forEach(b => {
+      this.racersMap.set(b.id, {
+        id: b.id,
+        name: b.name,
+        avatar: '/images/home_avatar.png',
+        isHost: false,
+        checkpoint: 0,
+        score: 0,
+        finished: false,
+        finishTimeMs: null,
+        finishTimeStr: null,
+        joinedAt: Date.now()
+      });
+    });
+
+    this.launchCountdownSequence();
+  }
+
+  private addAIBotToLobby() {
+    const existingCount = Array.from(this.racersMap.values()).filter(r => r.id.startsWith('bot_')).length;
+    if (existingCount >= 6) return;
+
+    const baseBot = this.botConfigs[existingCount % this.botConfigs.length];
+    const botId = `bot_${Date.now()}_${Math.floor(Math.random() * 100)}`;
+    const botName = existingCount < this.botConfigs.length ? baseBot.name : `OpenRacer_${existingCount + 1} [BOT]`;
+
+    this.racersMap.set(botId, {
+      id: botId,
+      name: botName,
+      avatar: '/images/home_avatar.png',
+      isHost: false,
+      checkpoint: 0,
+      score: 0,
+      finished: false,
+      finishTimeMs: null,
+      finishTimeStr: null,
+      joinedAt: Date.now()
+    });
+
+    this.renderRacersGrid();
+  }
+
+  private spawnAIBots() {
+    this.aiBots = [];
+    const botRacers = Array.from(this.racersMap.values()).filter(r => r.id.startsWith('bot_'));
+    const offsets = [-3.8, 0, 3.8, -2.0, 2.0];
+
+    botRacers.forEach((b, idx) => {
+      const group = new THREE.Group();
+      const botColor = this.botConfigs[idx % this.botConfigs.length]?.color || 0x10b981;
+
+      // Chassis
+      const body = new THREE.Mesh(
+        new THREE.BoxGeometry(2.1, 0.7, 4.4),
+        new THREE.MeshStandardMaterial({ color: botColor, roughness: 0.3, metalness: 0.6 })
+      );
+      body.position.y = 0.72;
+      group.add(body);
+
+      // Cabin
+      const cabin = new THREE.Mesh(
+        new THREE.BoxGeometry(1.7, 0.62, 2.2),
+        new THREE.MeshStandardMaterial({ color: 0x16243a, roughness: 0.1, metalness: 0.85 })
+      );
+      cabin.position.set(0, 1.34, -0.22);
+      group.add(cabin);
+
+      // Wheels
+      const wheels: THREE.Group[] = [];
+      const wheelGeo = new THREE.CylinderGeometry(0.44, 0.44, 0.36, 16);
+      const wheelMat = new THREE.MeshStandardMaterial({ color: 0x15151a, roughness: 0.85 });
+      const wheelPositions: [number, number, number][] = [
+        [1.08, 0.44, 1.35],
+        [-1.08, 0.44, 1.35],
+        [1.08, 0.44, -1.35],
+        [-1.08, 0.44, -1.35]
+      ];
+      wheelPositions.forEach(p => {
+        const wg = new THREE.Group();
+        wg.position.set(p[0], p[1], p[2]);
+        const w = new THREE.Mesh(wheelGeo, wheelMat);
+        w.rotation.z = Math.PI / 2;
+        wg.add(w);
+        group.add(wg);
+        wheels.push(wg);
+      });
+
+      // Name Tag
+      const nameTag = this.createNameTagSprite(b.name, false);
+      group.add(nameTag);
+
+      // Nitro Flames
+      const flameGeo = new THREE.ConeGeometry(0.22, 1.3, 8);
+      const flameMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.9 });
+      const f1 = new THREE.Mesh(flameGeo, flameMat);
+      f1.rotation.x = Math.PI / 2;
+      f1.position.set(-0.65, 0.55, 2.7);
+      const f2 = new THREE.Mesh(flameGeo, flameMat);
+      f2.rotation.x = Math.PI / 2;
+      f2.position.set(0.65, 0.55, 2.7);
+      f1.visible = false;
+      f2.visible = false;
+      group.add(f1, f2);
+
+      const laneOffset = offsets[idx % offsets.length];
+      const startT = Math.max(0.002, 0.012 - idx * 0.003);
+      const pt = this.trackCurve.getPointAt(startT);
+      const tg = this.trackCurve.getTangentAt(startT);
+      const nx = -tg.z;
+      const nz = tg.x;
+      const heading = Math.atan2(tg.x, tg.z);
+
+      const posX = pt.x + nx * laneOffset;
+      const posZ = pt.z + nz * laneOffset;
+
+      group.position.set(posX, 0, posZ);
+      group.rotation.y = heading;
+      this.scene.add(group);
+
+      this.aiBots.push({
+        id: b.id,
+        name: b.name,
+        mesh: group,
+        nameTag,
+        wheels,
+        curveT: startT,
+        laneOffset,
+        speed: 36 + Math.random() * 6,
+        baseSpeed: 36 + Math.random() * 6,
+        checkpoint: 0,
+        score: 0,
+        finished: false,
+        finishTimeMs: null,
+        finishTimeStr: null,
+        quizPauseTimer: 0,
+        nitroTimer: 0,
+        nitroFlames: [f1, f2],
+        x: posX,
+        z: posZ,
+        heading
+      });
+    });
+  }
+
+  private updateAIBots(now: number, dt: number) {
+    const fractions = [0.17, 0.34, 0.51, 0.68, 0.85];
+
+    for (const bot of this.aiBots) {
+      if (this.camera) {
+        bot.nameTag.quaternion.copy(this.camera.quaternion);
+      }
+
+      if (bot.finished) {
+        continue;
+      }
+
+      // Checkpoint quiz pause simulation
+      if (bot.quizPauseTimer > 0) {
+        bot.quizPauseTimer -= dt;
+        if (bot.quizPauseTimer <= 0) {
+          // Solved quiz!
+          bot.checkpoint++;
+          bot.score += 20;
+
+          // 60% chance of nitro booster
+          if (Math.random() > 0.4) {
+            bot.nitroTimer = 4.0;
+            bot.nitroFlames.forEach(f => (f.visible = true));
+          }
+
+          const racerEntry = this.racersMap.get(bot.id);
+          if (racerEntry) {
+            racerEntry.checkpoint = bot.checkpoint;
+            racerEntry.score = bot.score;
+          }
+
+          // Check if finished final checkpoint
+          if (bot.checkpoint >= 5) {
+            bot.finished = true;
+            const elapsedMs = now - this.raceStartTime;
+            bot.finishTimeMs = elapsedMs;
+            const minutes = Math.floor(elapsedMs / 60000);
+            const seconds = ((elapsedMs % 60000) / 1000).toFixed(1);
+            bot.finishTimeStr = `${minutes > 0 ? `${minutes}m ` : ''}${seconds}s`;
+
+            if (racerEntry) {
+              racerEntry.finished = true;
+              racerEntry.finishTimeMs = bot.finishTimeMs;
+              racerEntry.finishTimeStr = bot.finishTimeStr;
+            }
+            this.renderLiveLeaderboard();
+          }
+          this.renderMiniOpponentsTracker();
+        }
+        continue;
+      }
+
+      // Nitro speed handling
+      if (bot.nitroTimer > 0) {
+        bot.nitroTimer -= dt;
+        bot.speed = bot.baseSpeed * 1.55;
+        if (bot.nitroTimer <= 0) {
+          bot.speed = bot.baseSpeed;
+          bot.nitroFlames.forEach(f => (f.visible = false));
+        }
+      }
+
+      // Progress along curve
+      bot.curveT += (bot.speed / this.trackLength) * dt;
+
+      if (bot.curveT >= 1.0) {
+        bot.curveT = 0.999;
+        if (!bot.finished) {
+          bot.finished = true;
+          const elapsedMs = now - this.raceStartTime;
+          bot.finishTimeMs = elapsedMs;
+          const minutes = Math.floor(elapsedMs / 60000);
+          const seconds = ((elapsedMs % 60000) / 1000).toFixed(1);
+          bot.finishTimeStr = `${minutes > 0 ? `${minutes}m ` : ''}${seconds}s`;
+          const racerEntry = this.racersMap.get(bot.id);
+          if (racerEntry) {
+            racerEntry.finished = true;
+            racerEntry.finishTimeMs = bot.finishTimeMs;
+            racerEntry.finishTimeStr = bot.finishTimeStr;
+          }
+          this.renderLiveLeaderboard();
+        }
+      }
+
+      const clampedT = Math.min(0.999, Math.max(0.001, bot.curveT));
+      const pt = this.trackCurve.getPointAt(clampedT);
+      const tg = this.trackCurve.getTangentAt(clampedT);
+      const nx = -tg.z;
+      const nz = tg.x;
+
+      bot.x = pt.x + nx * bot.laneOffset;
+      bot.z = pt.z + nz * bot.laneOffset;
+      bot.heading = Math.atan2(tg.x, tg.z);
+
+      bot.mesh.position.set(bot.x, 0, bot.z);
+      bot.mesh.rotation.y = bot.heading;
+
+      // Wheel rotation
+      bot.wheels.forEach(w => {
+        w.children[0].rotation.x += (bot.speed * dt) / 0.44;
+      });
+
+      // Checkpoint trigger
+      if (bot.checkpoint < fractions.length && bot.curveT >= fractions[bot.checkpoint]) {
+        bot.quizPauseTimer = 2.2 + Math.random() * 2.5; // Simulate bot reading & answering
+      }
+    }
+  }
+
+  // ========================================================================
   // ANIMATION LOOP & OPEN-WORLD TERRAIN CAR PHYSICS
   // ========================================================================
 
@@ -1731,6 +2062,9 @@ class RoomGame2App {
         this.remoteCars.delete(id);
       }
     }
+
+    // Update AI Bots
+    this.updateAIBots(now, dt);
 
     if (this.renderer && this.scene && this.camera) {
       this.renderer.render(this.scene, this.camera);

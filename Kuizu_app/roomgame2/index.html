@@ -65,9 +65,45 @@
         </p>
       </div>
 
-      <!-- INITIAL CHOICES: CREATE OR JOIN -->
+      <!-- INITIAL CHOICES: SINGLE PLAYER, CREATE OR JOIN -->
       <div id="lobby-initial-actions" class="rg-action-grid">
         
+        <!-- CARD: SINGLE PLAYER VS AI BOTS -->
+        <div class="rg-card glass-panel">
+          <div class="rg-card-icon" style="background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+              <rect x="9" y="9" width="6" height="6"></rect>
+              <line x1="9" y1="1" x2="9" y2="4"></line>
+              <line x1="15" y1="1" x2="15" y2="4"></line>
+              <line x1="9" y1="20" x2="9" y2="23"></line>
+              <line x1="15" y1="20" x2="15" y2="23"></line>
+              <line x1="20" y1="9" x2="23" y2="9"></line>
+              <line x1="20" y1="14" x2="23" y2="14"></line>
+              <line x1="1" y1="9" x2="4" y2="9"></line>
+              <line x1="1" y1="14" x2="4" y2="14"></line>
+            </svg>
+          </div>
+          <h2 class="rg-card-title">Single Player vs Bots</h2>
+          <p class="rg-card-desc">Drive freely on and off road against 3 smart AI racers. No waiting for friends—explore shortcuts, clear checkpoints, and compete on the podium.</p>
+
+          <div class="rg-form-group">
+            <label class="rg-form-label" for="select-single-level">Course Track & Syllabus</label>
+            <select id="select-single-level" class="rg-select">
+              <option value="1">Sunset Valley (CS Foundations & Architecture)</option>
+              <option value="2">Cyber Dunes (DSA & Graphs)</option>
+              <option value="3">Alpine Meadows (Distributed Systems)</option>
+            </select>
+          </div>
+
+          <button id="btn-play-single" class="rg-btn-emerald" style="margin-top: auto;">
+            <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Play vs 3 AI Bots (Instant)</span>
+          </button>
+        </div>
+
         <!-- CARD: CREATE ROOM -->
         <div class="rg-card glass-panel">
           <div class="rg-card-icon">
@@ -94,7 +130,7 @@
             </select>
           </div>
 
-          <button id="btn-create-room" class="rg-btn-primary">
+          <button id="btn-create-room" class="rg-btn-primary" style="margin-top: auto;">
             <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
@@ -121,7 +157,7 @@
 
           <div id="join-error-msg" class="rg-error-msg" style="display: none;"></div>
 
-          <button id="btn-join-room" class="rg-btn-amber">
+          <button id="btn-join-room" class="rg-btn-amber" style="margin-top: auto;">
             <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
               <circle cx="8.5" cy="7" r="4"></circle>
@@ -153,7 +189,7 @@
           <div class="rg-racers-header">
             <span class="rg-section-title">Connected Racers (<span id="racers-count">1</span>/8)</span>
             <span class="rg-racers-status-live">
-              <span class="rg-live-dot"></span> Supabase Realtime Connected
+              <span class="rg-live-dot"></span> Realtime Status Ready
             </span>
           </div>
 
@@ -165,7 +201,16 @@
         <!-- HOST CONTROLS / WAITING MESSAGE -->
         <div class="rg-lobby-footer">
           <div id="host-controls" style="display: none;">
-            <p class="rg-host-hint">You are the <strong>Room Host</strong>. When all racers are ready in the lobby, click below to launch the synchronized race.</p>
+            <p class="rg-host-hint">You are the <strong>Room Host</strong>. When all racers or bots are ready in the lobby, click below to launch the race.</p>
+            <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+              <button id="btn-add-bot" class="rg-btn-secondary" style="flex: 1; justify-content: center;">
+                <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>+ Add AI Bot to Room</span>
+              </button>
+            </div>
             <button id="btn-start-race" class="rg-btn-launch">
               <svg class="rg-icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polygon points="5 3 19 12 5 21 5 3"></polygon>
