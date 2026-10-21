@@ -2516,11 +2516,11 @@ body.home-page-body {
 }
 
 .dark-mode .badges-card-title {
-  color: #f8fafc;
+  color: #ffffff !important;
 }
 
 .dark-mode .badges-card-subtitle {
-  color: #94a3b8;
+  color: #ffffff !important;
 }
 
 .dark-mode .badges-trophy-icon {
@@ -2530,13 +2530,13 @@ body.home-page-body {
 
 .dark-mode .view-all-badges-btn {
   border-color: rgba(255, 255, 255, 0.12);
-  color: #cbd5e1;
+  color: #ffffff !important;
 }
 
 .dark-mode .view-all-badges-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: var(--primary-accent, #818cf8);
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .dark-mode .badge-coin-card {
@@ -2553,21 +2553,21 @@ body.home-page-body {
 }
 
 .dark-mode .badge-coin-title {
-  color: #f8fafc;
+  color: #ffffff !important;
 }
 
 .dark-mode .badge-coin-date {
-  color: #94a3b8;
+  color: #ffffff !important;
 }
 
 .dark-mode .badge-inspect-pill {
   background: rgba(255, 255, 255, 0.07);
-  color: #cbd5e1;
+  color: #ffffff !important;
 }
 
 .dark-mode .badges-count-pill.is-empty {
   background: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
+  color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -2582,11 +2582,11 @@ body.home-page-body {
 }
 
 .dark-mode .badges-zero-title {
-  color: #f1f5f9;
+  color: #ffffff !important;
 }
 
 .dark-mode .badges-zero-desc {
-  color: #94a3b8;
+  color: #ffffff !important;
 }
 
 /* --- Problems List Table Card --- */
@@ -21519,7 +21519,7 @@ html.dark-mode .popup-user-header:hover,
 
 html.dark-mode .popup-user-name,
 .dark-mode .popup-user-name {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 html.dark-mode .popup-xp-badge,
@@ -21542,14 +21542,14 @@ html.dark-mode .popup-divider,
 
 html.dark-mode .popup-menu-item,
 .dark-mode .popup-menu-item {
-  color: #f1f5f9 !important;
+  color: #ffffff !important;
 }
 
 html.dark-mode .popup-menu-item .menu-item-left,
 .dark-mode .popup-menu-item .menu-item-left,
 html.dark-mode .popup-menu-item .menu-item-left span,
 .dark-mode .popup-menu-item .menu-item-left span {
-  color: #f1f5f9 !important;
+  color: #ffffff !important;
   font-weight: 600;
 }
 
@@ -21588,7 +21588,7 @@ html.dark-mode .popup-menu-item.active .menu-item-left span,
 
 html.dark-mode .popup-menu-admin span,
 .dark-mode .popup-menu-admin span {
-  color: #f1f5f9 !important;
+  color: #ffffff !important;
 }
 
 html.dark-mode .popup-logout-btn,
@@ -21837,14 +21837,62 @@ html.dark-mode .motivation-art-wrap {
 /* Profile Page */
 html.dark-mode .profile-card,
 html.dark-mode .profile-stats-card,
-html.dark-mode .profile-modal-box {
+html.dark-mode .profile-modal-box,
+html.dark-mode .profile-hero-card,
+html.dark-mode .profile-attendance-card,
+html.dark-mode .profile-stat-box,
+html.dark-mode .profile-activity-card,
+.dark-mode .profile-card,
+.dark-mode .profile-stats-card,
+.dark-mode .profile-modal-box,
+.dark-mode .profile-hero-card,
+.dark-mode .profile-attendance-card,
+.dark-mode .profile-stat-box,
+.dark-mode .profile-activity-card {
   background: #111827 !important;
   border-color: #1e293b !important;
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
-html.dark-mode .profile-name {
-  color: #f8fafc !important;
+html.dark-mode .profile-name,
+.dark-mode .profile-name,
+html.dark-mode .profile-greeting,
+.dark-mode .profile-greeting,
+html.dark-mode .profile-tagline,
+.dark-mode .profile-tagline,
+html.dark-mode .profile-email-badge,
+.dark-mode .profile-email-badge,
+html.dark-mode .hero-stat-label,
+.dark-mode .hero-stat-label,
+html.dark-mode .hero-stat-value,
+.dark-mode .hero-stat-value,
+html.dark-mode .section-title-text,
+.dark-mode .section-title-text,
+html.dark-mode .attendance-header-title,
+.dark-mode .attendance-header-title,
+html.dark-mode .gauge-percent-label,
+.dark-mode .gauge-percent-label,
+html.dark-mode .attendance-big-score,
+.dark-mode .attendance-big-score,
+html.dark-mode .attendance-sub-label,
+.dark-mode .attendance-sub-label,
+html.dark-mode .stat-box-title,
+.dark-mode .stat-box-title,
+html.dark-mode .stat-box-val,
+.dark-mode .stat-box-val,
+html.dark-mode .stat-box-sub,
+.dark-mode .stat-box-sub,
+html.dark-mode .stat-box-chevron,
+.dark-mode .stat-box-chevron,
+html.dark-mode .activity-heading,
+.dark-mode .activity-heading,
+html.dark-mode .activity-view-all-link,
+.dark-mode .activity-view-all-link,
+html.dark-mode .profile-table th,
+.dark-mode .profile-table th,
+html.dark-mode .profile-table td,
+.dark-mode .profile-table td {
+  color: #ffffff !important;
 }
 
 /* Settings Page */
@@ -21860,8 +21908,15 @@ html.dark-mode .visibility-name,
 html.dark-mode .theme-btn-name,
 html.dark-mode .settings-title,
 html.dark-mode .settings-profile-name,
-html.dark-mode .settings-group-label {
-  color: #f1f5f9 !important;
+html.dark-mode .settings-group-label,
+.dark-mode .settings-card-title,
+.dark-mode .setting-item-name,
+.dark-mode .visibility-name,
+.dark-mode .theme-btn-name,
+.dark-mode .settings-title,
+.dark-mode .settings-profile-name,
+.dark-mode .settings-group-label {
+  color: #ffffff !important;
 }
 
 html.dark-mode .theme-choice-btn {
@@ -21959,33 +22014,342 @@ html.dark-mode .accent-circle-btn.active {
 }
 
 /* Admin Pages Dark Mode */
-html.dark-mode .admin-layout {
+html.dark-mode .admin-layout,
+.dark-mode .admin-layout {
   background: #0b0f19 !important;
+  color: #ffffff !important;
 }
 
-html.dark-mode .admin-sidebar {
+html.dark-mode .admin-sidebar,
+.dark-mode .admin-sidebar {
   background: #111827 !important;
   border-color: #1e293b !important;
+}
+
+html.dark-mode .admin-brand-name,
+.dark-mode .admin-brand-name {
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-nav-item,
+.dark-mode .admin-nav-item,
+html.dark-mode .admin-nav-item span,
+.dark-mode .admin-nav-item span {
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-nav-item .admin-nav-icon,
+.dark-mode .admin-nav-item .admin-nav-icon {
+  stroke: #ffffff !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-nav-item:hover,
+.dark-mode .admin-nav-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-nav-item:hover .admin-nav-icon,
+.dark-mode .admin-nav-item:hover .admin-nav-icon {
+  stroke: #ffffff !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-nav-item.active,
+.dark-mode .admin-nav-item.active {
+  background: rgba(37, 99, 235, 0.28) !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-nav-item.active span,
+.dark-mode .admin-nav-item.active span {
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-nav-item.active .admin-nav-icon,
+.dark-mode .admin-nav-item.active .admin-nav-icon {
+  stroke: #60a5fa !important;
 }
 
 html.dark-mode .admin-kpi-card,
 html.dark-mode .admin-ranking-card,
 html.dark-mode .admin-card,
-html.dark-mode .admin-table-card {
+html.dark-mode .admin-table-card,
+html.dark-mode .admin-bottom-card,
+html.dark-mode .admin-activity-card,
+html.dark-mode .admin-engagement-card,
+.dark-mode .admin-kpi-card,
+.dark-mode .admin-ranking-card,
+.dark-mode .admin-card,
+.dark-mode .admin-table-card,
+.dark-mode .admin-bottom-card,
+.dark-mode .admin-activity-card,
+.dark-mode .admin-engagement-card {
   background: #111827 !important;
   border-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* Titles and subheadings */
+html.dark-mode .admin-dashboard-title,
+.dark-mode .admin-dashboard-title {
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-dashboard-subtitle,
+.dark-mode .admin-dashboard-subtitle {
+  color: #ffffff !important;
+}
+
+/* KPI Cards Texts */
+html.dark-mode .kpi-label,
+.dark-mode .kpi-label {
+  color: #ffffff !important;
 }
 
 html.dark-mode .kpi-value,
-html.dark-mode .ranking-header-title h3,
-html.dark-mode .admin-user-name {
-  color: #f8fafc !important;
+.dark-mode .kpi-value {
+  color: #ffffff !important;
 }
 
-html.dark-mode .admin-search-input {
+html.dark-mode .kpi-trend-sub,
+.dark-mode .kpi-trend-sub {
+  color: #ffffff !important;
+}
+
+/* Ranking Cards & Tables */
+html.dark-mode .ranking-header-title h3,
+.dark-mode .ranking-header-title h3 {
+  color: #ffffff !important;
+}
+
+html.dark-mode .ranking-view-all,
+.dark-mode .ranking-view-all {
+  color: #ffffff !important;
+}
+
+html.dark-mode .ranking-table th,
+.dark-mode .ranking-table th {
+  color: #ffffff !important;
+  border-bottom-color: #1e293b !important;
+}
+
+html.dark-mode .ranking-table td,
+.dark-mode .ranking-table td {
+  border-bottom-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .ranking-num,
+.dark-mode .ranking-num {
+  color: #ffffff !important;
+}
+
+html.dark-mode .student-name,
+.dark-mode .student-name {
+  color: #ffffff !important;
+}
+
+html.dark-mode .val-bold,
+.dark-mode .val-bold {
+  color: #ffffff !important;
+}
+
+html.dark-mode .val-sub,
+.dark-mode .val-sub {
+  color: #ffffff !important;
+}
+
+html.dark-mode .student-avatar-wrap,
+.dark-mode .student-avatar-wrap {
+  background: #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* Bottom Grid: Recent Activity & Student Engagement */
+html.dark-mode .bottom-header-title h3,
+.dark-mode .bottom-header-title h3 {
+  color: #ffffff !important;
+}
+
+html.dark-mode .activity-table-head,
+.dark-mode .activity-table-head,
+html.dark-mode .activity-table-head div,
+.dark-mode .activity-table-head div {
+  color: #ffffff !important;
+  border-bottom-color: #1e293b !important;
+}
+
+html.dark-mode .activity-row,
+.dark-mode .activity-row {
+  border-bottom-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .activity-row:hover,
+.dark-mode .activity-row:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark-mode .activity-time-cell,
+.dark-mode .activity-time-cell,
+html.dark-mode .activity-time-cell span,
+.dark-mode .activity-time-cell span {
+  color: #ffffff !important;
+}
+
+html.dark-mode .time-bullet,
+.dark-mode .time-bullet {
+  color: #60a5fa !important;
+}
+
+html.dark-mode .activity-main-text,
+.dark-mode .activity-main-text {
+  color: #ffffff !important;
+}
+
+html.dark-mode .activity-sub-text,
+.dark-mode .activity-sub-text {
+  color: #ffffff !important;
+}
+
+html.dark-mode .activity-arrow-cell,
+.dark-mode .activity-arrow-cell {
+  color: #ffffff !important;
+}
+
+html.dark-mode .engagement-subtitle,
+.dark-mode .engagement-subtitle {
+  color: #ffffff !important;
+}
+
+html.dark-mode .engagement-range-toggles,
+.dark-mode .engagement-range-toggles {
+  background: #1e293b !important;
+}
+
+html.dark-mode .range-btn,
+.dark-mode .range-btn {
+  color: #ffffff !important;
+}
+
+html.dark-mode .range-btn:hover,
+.dark-mode .range-btn:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark-mode .range-btn.active,
+.dark-mode .range-btn.active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .chart-axis-label,
+.dark-mode .chart-axis-label {
+  fill: #ffffff !important;
+}
+
+html.dark-mode .admin-topbar line,
+html.dark-mode .engagement-svg line,
+.dark-mode .engagement-svg line {
+  stroke: #1e293b !important;
+}
+
+/* Admin Date Range Button */
+html.dark-mode .admin-date-picker-btn,
+.dark-mode .admin-date-picker-btn {
+  background: #111827 !important;
+  border-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-date-picker-btn:hover,
+.dark-mode .admin-date-picker-btn:hover {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html.dark-mode .admin-date-picker-btn .date-cal-icon,
+.dark-mode .admin-date-picker-btn .date-cal-icon {
+  color: #60a5fa !important;
+}
+
+html.dark-mode .admin-date-menu,
+.dark-mode .admin-date-menu {
+  background: #111827 !important;
+  border-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .date-menu-item,
+.dark-mode .date-menu-item {
+  color: #ffffff !important;
+}
+
+html.dark-mode .date-menu-item:hover,
+.dark-mode .date-menu-item:hover {
+  background: #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* Sidebar Footer Profile Row */
+html.dark-mode .admin-sidebar-footer,
+.dark-mode .admin-sidebar-footer {
+  border-top-color: #1e293b !important;
+}
+
+html.dark-mode .admin-user-name,
+.dark-mode .admin-user-name {
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-gear-btn,
+.dark-mode .admin-gear-btn {
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-gear-btn:hover,
+.dark-mode .admin-gear-btn:hover {
+  color: #ffffff !important;
+  background: #1e293b !important;
+}
+
+html.dark-mode .admin-search-input,
+.dark-mode .admin-search-input,
+html.dark-mode .admin-users-search-input,
+.dark-mode .admin-users-search-input {
   background: #1f2937 !important;
   border-color: #374151 !important;
-  color: #f8fafc !important;
+  color: #ffffff !important;
+}
+
+/* Admin Users & Other Admin Pages */
+html.dark-mode .admin-user-card,
+.dark-mode .admin-user-card {
+  background: #111827 !important;
+  border-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode .admin-user-card-name,
+.dark-mode .admin-user-card-name,
+html.dark-mode .admin-user-card-email,
+.dark-mode .admin-user-card-email,
+html.dark-mode .admin-date-label,
+.dark-mode .admin-date-label,
+html.dark-mode .admin-date-val,
+.dark-mode .admin-date-val,
+html.dark-mode .admin-users-count,
+.dark-mode .admin-users-count,
+html.dark-mode .admin-export-btn,
+.dark-mode .admin-export-btn,
+html.dark-mode .admin-filter-btn,
+.dark-mode .admin-filter-btn,
+html.dark-mode .admin-filter-opt,
+.dark-mode .admin-filter-opt {
+  color: #ffffff !important;
 }
 
 /* =========================================================
@@ -24546,7 +24910,7 @@ html.dark-mode .btn-disc-share {
 }
 
 .dark-mode .all-badges-modal-title {
-  color: #f8fafc;
+  color: #ffffff !important;
 }
 
 .all-badges-modal-subtitle {
@@ -24557,7 +24921,7 @@ html.dark-mode .btn-disc-share {
 }
 
 .dark-mode .all-badges-modal-subtitle {
-  color: #94a3b8;
+  color: #ffffff !important;
 }
 
 .all-badges-header-actions {
@@ -24618,13 +24982,13 @@ html.dark-mode .btn-disc-share {
 .dark-mode .all-badges-close-btn {
   background: #1e293b;
   border-color: #334155;
-  color: #94a3b8;
+  color: #ffffff !important;
 }
 
 .dark-mode .all-badges-close-btn:hover {
   background: rgba(239, 68, 68, 0.2);
   border-color: rgba(239, 68, 68, 0.4);
-  color: #f87171;
+  color: #f87171 !important;
 }
 
 /* Filter Tabs Bar */
@@ -24669,7 +25033,7 @@ html.dark-mode .btn-disc-share {
 .dark-mode .all-badges-filter-tab {
   background: #1e293b;
   border-color: #334155;
-  color: #94a3b8;
+  color: #ffffff !important;
 }
 
 .all-badges-filter-tab:hover {
@@ -24811,7 +25175,7 @@ html.dark-mode .btn-disc-share {
 
 .dark-mode .all-badge-status-pill.locked {
   background: rgba(30, 41, 59, 0.8);
-  color: #94a3b8;
+  color: #ffffff !important;
   border-color: #334155;
 }
 
@@ -24875,7 +25239,7 @@ html.dark-mode .btn-disc-share {
 .dark-mode .all-badge-locked-overlay-icon {
   background: #1e293b;
   border-color: #475569;
-  color: #94a3b8;
+  color: #ffffff !important;
 }
 
 /* Card Info */
@@ -24894,7 +25258,7 @@ html.dark-mode .btn-disc-share {
 }
 
 .dark-mode .all-badge-card-title {
-  color: #f8fafc;
+  color: #ffffff !important;
 }
 
 .all-badge-card-sub {
@@ -24905,7 +25269,7 @@ html.dark-mode .btn-disc-share {
 }
 
 .dark-mode .all-badge-card-sub {
-  color: #94a3b8;
+  color: #ffffff !important;
 }
 
 /* How to Earn Criteria Box */
@@ -24962,7 +25326,7 @@ html.dark-mode .btn-disc-share {
 }
 
 .dark-mode .all-badge-criteria-box .criteria-desc {
-  color: #cbd5e1;
+  color: #ffffff !important;
 }
 
 /* Card Actions */
@@ -25008,7 +25372,7 @@ html.dark-mode .btn-disc-share {
 .dark-mode .btn-all-badge-inspect.secondary {
   background: #1e293b;
   border-color: #334155;
-  color: #94a3b8;
+  color: #ffffff !important;
 }
 
 .btn-all-badge-inspect.secondary:hover {
@@ -25046,7 +25410,7 @@ html.dark-mode .btn-disc-share {
   grid-column: 1 / -1;
   padding: 48px 24px;
   text-align: center;
-  color: #94a3b8;
+  color: #ffffff !important;
   display: flex;
   flex-direction: column;
   align-items: center;

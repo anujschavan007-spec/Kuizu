@@ -274,7 +274,7 @@ async function loadAdminRealData() {
         activities.push({
           time: u.joined_date || 'Recent',
           typeClass: 'pill-user',
-          typeLabel: '🔵 User',
+          typeLabel: 'User',
           title: 'Student registered',
           subtitle: `${u.name} (${u.email || u.role})`
         });
@@ -284,7 +284,7 @@ async function loadAdminRealData() {
       activities.push({
         time: 'Oct 20',
         typeClass: 'pill-problem',
-        typeLabel: '🟢 Problem',
+        typeLabel: 'Problem',
         title: 'Problem published',
         subtitle: 'Remove the Last Digit of a Number • Admin'
       });
