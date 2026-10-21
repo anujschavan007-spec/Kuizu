@@ -2200,24 +2200,20 @@ if (typeof window !== 'undefined') {
       } catch {}
     }
 
-    // Always route email dispatch, leetcode proxy, and problem fetcher to server endpoint
-    if (path === '/api/email/send' || path === '/api/leetcode' || path === '/api/fetchProblem') {
-      return nativeFetch(input, init);
-    }
-
-    const isLocal =
-      window.location.hostname.includes('localhost') ||
-      window.location.hostname.includes('127.0.0.1');
-
-    // Only for /api/execute: if local compiler is active on localhost, try it
-    if (path === '/api/execute' && isLocal) {
+    // Always route email dispatch, leetcode proxy, problem fetcher, and code execution to server endpoint
+    if (
+      path === '/api/email/send' ||
+      path === '/api/leetcode' ||
+      path === '/api/fetchProblem' ||
+      path === '/api/execute'
+    ) {
       try {
         const netRes = await nativeFetch(input, init);
-        if (netRes.ok) {
+        if (netRes.ok || netRes.status === 400 || netRes.status === 405) {
           return netRes;
         }
-      } catch {
-        // Fallback to client runner
+      } catch (err) {
+        console.warn('[SupabaseApiBridge] Server execution endpoint unavailable, falling back to local runner:', err);
       }
     }
 
