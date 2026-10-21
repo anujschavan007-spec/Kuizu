@@ -638,28 +638,24 @@ const server = Bun.serve({
           const qList = levelsMap[lvlNum] || [];
           const progress = progressMap[lvlNum];
 
-          // Determine status: Level 1 is unlocked by default; Level N unlocks only when Level N-1 has >= 1 star
+          // Determine status: Level 1 is unlocked by default; Level N unlocks ONLY when Level N-1 has >= 2 stars
           let status: "unlocked" | "locked" | "completed" = "locked";
-          let stars = 0;
+          let stars = Number(progress?.stars) || 0;
 
-          if (progress) {
-            stars = progress.stars || 0;
-            status = progress.status || (stars >= 1 ? "completed" : "unlocked");
+          if (lvlNum === 1) {
+            status = stars >= 1 ? "completed" : "unlocked";
+            previousLevelCompleted = stars >= 2;
           } else {
-            if (lvlNum === 1 || previousLevelCompleted) {
-              status = "unlocked";
+            const canUnlock = previousLevelCompleted;
+            if (canUnlock) {
+              status = stars >= 1 ? "completed" : "unlocked";
+              previousLevelCompleted = stars >= 2;
             } else {
               status = "locked";
+              stars = 0;
+              previousLevelCompleted = false;
             }
           }
-
-          // Level 1 is NEVER locked!
-          if (lvlNum === 1) {
-            status = (stars >= 1 || progress?.status === "completed") ? "completed" : "unlocked";
-          }
-
-          // Check if this level is completed for the next level
-          previousLevelCompleted = status === "completed" || stars >= 1;
 
           // Main name from first quiz in level or Level N
           const firstName = qList[0]?.name || `Level ${lvlNum}`;
@@ -769,9 +765,9 @@ const server = Bun.serve({
           });
         }
 
-        // If at least 1 star earned, unlock the next level!
+        // If at least 2 stars earned, unlock the next level!
         let nextLevelUnlocked = false;
-        if (starsEarned >= 1) {
+        if (starsEarned >= 2) {
           nextLevelUnlocked = true;
           const nextLvlId = lvlId + 1;
           const nextProg = db.query("SELECT * FROM quiz_level_progress WHERE level_id = ?").get(nextLvlId) as any;

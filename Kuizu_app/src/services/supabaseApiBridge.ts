@@ -784,18 +784,43 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
 
   if (pathname === '/api/quizzes/levels' && method === 'GET') {
     const { data: allQuizzes } = await supabase.from('quizzes').select('*').order('level_number', { ascending: true });
-    const { data: progressRows } = await supabase.from('quiz_level_progress').select('*');
+
+    const queryEmail = (searchParams.get('email') || '').trim();
+    const localEmail = (typeof localStorage !== 'undefined' ? (localStorage.getItem('kuizu_user_email') || '') : '').trim();
+    const effectiveEmail = queryEmail || localEmail;
+
+    let userProgress: Record<number, { stars: number; status: 'unlocked' | 'locked' | 'completed' }> = {};
+
+    if (effectiveEmail) {
+      if (typeof localStorage !== 'undefined') {
+        try {
+          const cached = localStorage.getItem(`kuizu_quiz_progress_${effectiveEmail.toLowerCase()}`);
+          if (cached) userProgress = JSON.parse(cached);
+        } catch {}
+      }
+
+      try {
+        const { data: settingRow } = await supabase
+          .from('app_settings')
+          .select('value')
+          .eq('key', `quiz_progress_${effectiveEmail.toLowerCase()}`)
+          .maybeSingle();
+
+        if (settingRow?.value) {
+          const dbProg = JSON.parse(settingRow.value);
+          userProgress = { ...userProgress, ...dbProg };
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(`kuizu_quiz_progress_${effectiveEmail.toLowerCase()}`, JSON.stringify(userProgress));
+          }
+        }
+      } catch {}
+    }
 
     const levelsMap: Record<number, any[]> = {};
     for (const q of allQuizzes || []) {
       const lvl = q.level_number || 1;
       if (!levelsMap[lvl]) levelsMap[lvl] = [];
       levelsMap[lvl].push(q);
-    }
-
-    const progressMap: Record<number, any> = {};
-    for (const p of progressRows || []) {
-      progressMap[p.level_id] = p;
     }
 
     const defaultPositions: Record<number, { leftPercent: number; topPercent: number }> = {
@@ -814,29 +839,34 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
 
     // Guarantee levels 1, 2, 3, 4
     const levelNumbers = Array.from(new Set([...Object.keys(levelsMap).map(Number), 1, 2, 3, 4])).sort((a, b) => a - b);
-    let previousLevelCompleted = true; // Level 1 is always unlocked
+
+    // Rule:
+    // Level 1 is always unlocked by default for any user account.
+    // Level N (N > 1) is unlocked ONLY if the previous level earned at least 2 stars (stars >= 2).
+    let previousLevelStars = 0;
 
     const levelsResult = levelNumbers.map((lvlNum, index) => {
       const qList = levelsMap[lvlNum] || [];
-      const prog = progressMap[lvlNum];
-      let stars = 0;
+      const userLevelData = userProgress[lvlNum];
+      let stars = Number(userLevelData?.stars) || 0;
       let status: 'unlocked' | 'locked' | 'completed' = 'locked';
 
-      if (prog) {
-        stars = Number(prog.stars) || 0;
-        status = prog.status || (stars >= 1 ? 'completed' : 'unlocked');
-      }
-
-      // Level 1 rule: ALWAYS UNLOCKED or COMPLETED, NEVER LOCKED
       if (lvlNum === 1) {
-        status = (stars >= 1 || prog?.status === 'completed') ? 'completed' : 'unlocked';
+        // Level 1: ALWAYS unlocked (or completed if played)
+        status = stars >= 1 ? 'completed' : 'unlocked';
+        previousLevelStars = stars;
       } else {
-        if (!prog) {
-          status = previousLevelCompleted ? 'unlocked' : 'locked';
+        // Unlocking happens ONLY if previous level has AT LEAST 2 STARS!
+        const canUnlock = previousLevelStars >= 2;
+        if (canUnlock) {
+          status = stars >= 1 ? 'completed' : 'unlocked';
+          previousLevelStars = stars;
+        } else {
+          status = 'locked';
+          stars = 0; // locked levels cannot have active stars
+          previousLevelStars = 0;
         }
       }
-
-      previousLevelCompleted = status === 'completed' || stars >= 1;
 
       const pos = defaultPositions[lvlNum] || {
         leftPercent: 14 + ((index * 22) % 70),
@@ -1104,37 +1134,78 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
 
     const xpEarned = starsEarned >= 1 ? 30 : 0;
 
-    // Upsert level completion in Supabase
-    await supabase.from('quiz_level_progress').upsert({
-      level_id: levelId,
-      status: starsEarned >= 1 ? 'completed' : 'unlocked',
-      stars: starsEarned,
-      completed_at: starsEarned >= 1 ? new Date().toISOString() : null
-    });
-
-    // If completed (stars >= 1), unlock next level
-    if (starsEarned >= 1) {
-      const { data: nextProg } = await supabase.from('quiz_level_progress').select('*').eq('level_id', levelId + 1).maybeSingle();
-      if (!nextProg || nextProg.status === 'locked') {
-        await supabase.from('quiz_level_progress').upsert({
-          level_id: levelId + 1,
-          status: 'unlocked',
-          stars: nextProg?.stars || 0,
-          unlocked_at: new Date().toISOString()
-        });
-      }
-    }
+    // Unlock next level ONLY IF current level earned at least 2 stars (starsEarned >= 2)
+    const canUnlockNext = starsEarned >= 2;
 
     if (effectiveEmail) {
-      const { data: user } = await supabase.from('users').select('*').ilike('email', effectiveEmail).maybeSingle();
+      const cleanEmail = effectiveEmail.toLowerCase().trim();
+      let userProgMap: Record<number, any> = {};
+
+      if (typeof localStorage !== 'undefined') {
+        try {
+          const cached = localStorage.getItem(`kuizu_quiz_progress_${cleanEmail}`);
+          if (cached) userProgMap = JSON.parse(cached);
+        } catch {}
+      }
+
+      try {
+        const { data: settingRow } = await supabase
+          .from('app_settings')
+          .select('value')
+          .eq('key', `quiz_progress_${cleanEmail}`)
+          .maybeSingle();
+
+        if (settingRow?.value) {
+          try {
+            userProgMap = { ...userProgMap, ...JSON.parse(settingRow.value) };
+          } catch {}
+        }
+      } catch {}
+
+      const prevStars = Number(userProgMap[levelId]?.stars) || 0;
+      const finalStars = Math.max(prevStars, starsEarned);
+      userProgMap[levelId] = {
+        stars: finalStars,
+        status: finalStars >= 1 ? 'completed' : 'unlocked',
+        completedAt: finalStars >= 1 ? new Date().toISOString() : null
+      };
+
+      if (canUnlockNext) {
+        const nextLvl = levelId + 1;
+        if (!userProgMap[nextLvl] || userProgMap[nextLvl].status === 'locked') {
+          userProgMap[nextLvl] = {
+            stars: userProgMap[nextLvl]?.stars || 0,
+            status: 'unlocked',
+            unlockedAt: new Date().toISOString()
+          };
+        }
+      }
+
+      if (typeof localStorage !== 'undefined') {
+        try {
+          localStorage.setItem(`kuizu_quiz_progress_${cleanEmail}`, JSON.stringify(userProgMap));
+        } catch {}
+      }
+
+      try {
+        await supabase.from('app_settings').upsert({
+          key: `quiz_progress_${cleanEmail}`,
+          value: JSON.stringify(userProgMap),
+          updated_at: new Date().toISOString()
+        });
+      } catch {}
+
+      const { data: user } = await supabase.from('users').select('*').ilike('email', cleanEmail).maybeSingle();
       if (user) {
         let completed: number[] = [];
         try { completed = JSON.parse(user.completed_quiz_levels_json || '[]'); } catch {}
         if (starsEarned >= 1 && !completed.includes(levelId)) {
           completed.push(levelId);
         }
+        const nextUnlockedLevel = canUnlockNext ? Math.max(user.quiz_level || 1, levelId + 1) : (user.quiz_level || 1);
         await supabase.from('users').update({
           completed_quiz_levels_json: JSON.stringify(completed),
+          quiz_level: nextUnlockedLevel,
           xp: (user.xp || 0) + xpEarned,
           last_active: 'Today'
         }).eq('id', user.id);
@@ -1916,14 +1987,14 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
 
       const resendData = await resendRes.json();
       if (!resendRes.ok) {
-        console.warn('⚠️ [Resend] Resend API error:', resendData);
+        console.warn('[Resend] Resend API error:', resendData);
         return jsonResponse({ success: false, error: resendData }, resendRes.status);
       }
 
-      console.log('✅ [Resend] Email successfully sent with attachments:', resendData);
+      console.log('[Resend] Email successfully sent with attachments:', resendData);
       return jsonResponse({ success: true, data: resendData });
     } catch (sendErr: any) {
-      console.warn('⚠️ [Resend] Network error sending email:', sendErr);
+      console.warn('[Resend] Network error sending email:', sendErr);
       return jsonResponse({ success: false, error: sendErr.message }, 500);
     }
   }
@@ -2109,7 +2180,7 @@ export async function handleSupabaseApiRoute(pathname: string, search: string, i
           await supabase.from('users').update({ xp: updatedXp }).eq('id', author.id);
           xpRewarded = true;
           xpAwardedFlag = true;
-          console.log(`🎉 [Discussion Reward] Awarded 15 XP to ${authorEmail} for 15+ likes! Total XP: ${updatedXp}`);
+          console.log(`[Discussion Reward] Awarded 15 XP to ${authorEmail} for 15+ likes! Total XP: ${updatedXp}`);
         } else {
           // Still flag as awarded to prevent infinite retry loops
           xpAwardedFlag = true;
@@ -2229,5 +2300,5 @@ if (typeof window !== 'undefined') {
     }
   };
 
-  console.log('⚡ [Kuizu] Supabase Real-time Cloud Database Bridge initialized');
+  console.log('[Kuizu] Supabase Real-time Cloud Database Bridge initialized');
 }

@@ -215,19 +215,24 @@ const MOCK_LEVEL_QUESTIONS: Record<number, QuizQuestion[]> = {
   ]
 };
 
+function getStorageKey(): string {
+  const email = (typeof localStorage !== 'undefined' ? localStorage.getItem('kuizu_user_email') || 'guest' : 'guest').toLowerCase().trim();
+  return `kuizu_quiz_levels_${email}`;
+}
+
 function getSavedLevels(): QuizLevel[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY_LEVELS);
+    const raw = localStorage.getItem(getStorageKey());
     if (raw) return JSON.parse(raw);
   } catch (e) {
     console.warn('Could not read levels from storage', e);
   }
-  return DEFAULT_MOCK_LEVELS;
+  return DEFAULT_MOCK_LEVELS.map(l => ({ ...l, stars: 0, status: l.id === 1 ? 'unlocked' : 'locked' }));
 }
 
 function saveLevels(levels: QuizLevel[]): void {
   try {
-    localStorage.setItem(STORAGE_KEY_LEVELS, JSON.stringify(levels));
+    localStorage.setItem(getStorageKey(), JSON.stringify(levels));
   } catch (e) {
     console.warn('Could not save levels to storage', e);
   }
@@ -237,23 +242,41 @@ function saveLevels(levels: QuizLevel[]): void {
  * Fetch all quiz levels with progress and star ratings
  */
 export async function fetchQuizLevels(): Promise<QuizLevel[]> {
+  const userEmail = (typeof localStorage !== 'undefined' ? localStorage.getItem('kuizu_user_email') || '' : '').trim();
   try {
-    const res = await fetch('/api/quizzes/levels');
+    const query = userEmail ? `?email=${encodeURIComponent(userEmail)}` : '';
+    const res = await fetch(`/api/quizzes/levels${query}`);
     if (res.ok) {
       const data = await res.json();
       if (data && Array.isArray(data.levels) && data.levels.length > 0) {
+        let prevStars = 0;
         const normalized: QuizLevel[] = data.levels.map((lvl: any, index: number) => {
           const id = Number(lvl.id ?? lvl.levelNumber ?? (index + 1));
-          let status: 'unlocked' | 'locked' | 'completed' = lvl.status || (id === 1 ? 'unlocked' : 'locked');
-          if (id === 1 && status === 'locked') {
-            status = (lvl.stars && lvl.stars >= 1) ? 'completed' : 'unlocked';
+          let stars = Number(lvl.stars) || 0;
+          let status: 'unlocked' | 'locked' | 'completed' = 'locked';
+
+          if (id === 1) {
+            status = stars >= 1 ? 'completed' : 'unlocked';
+            prevStars = stars;
+          } else {
+            // Next level is strictly locked unless previous level has AT LEAST 2 stars
+            const canUnlock = prevStars >= 2;
+            if (canUnlock) {
+              status = stars >= 1 ? 'completed' : 'unlocked';
+              prevStars = stars;
+            } else {
+              status = 'locked';
+              stars = 0;
+              prevStars = 0;
+            }
           }
+
           return {
             ...lvl,
             id,
             levelNumber: id,
             status,
-            stars: Number(lvl.stars) || 0,
+            stars,
             maxStars: 3,
             questionCount: Number(lvl.questionCount) || 3,
             rewardXp: Number(lvl.rewardXp) || 30,
@@ -342,7 +365,8 @@ export async function submitQuizLevelAnswers(
   const xpEarned = starsEarned >= 1 ? 30 : 0;
 
   const currentLevels = await fetchQuizLevels();
-  let nextLevelUnlocked = false;
+  // Unlocking next level strictly requires at least 2 stars!
+  let nextLevelUnlocked = starsEarned >= 2;
 
   const updatedLevels = currentLevels.map((lvl, index) => {
     if (lvl.id === levelId) {
@@ -353,7 +377,7 @@ export async function submitQuizLevelAnswers(
       };
     }
     const curIdx = currentLevels.findIndex(l => l.id === levelId);
-    if (index === curIdx + 1 && starsEarned >= 1) {
+    if (index === curIdx + 1 && starsEarned >= 2) {
       nextLevelUnlocked = true;
       return {
         ...lvl,

@@ -119,6 +119,14 @@ function launchConfetti(): void {
   }
 }
 
+function getFlagMarkerSvg(): string {
+  return `<span class="pedestal-flag-marker" style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: #ef4444; color: #ffffff; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.45);"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></span>`;
+}
+
+function getStarSvg(filled: boolean, customClass = ''): string {
+  return `<svg class="level-star-svg ${filled ? 'star-filled' : 'star-empty'} ${customClass}" viewBox="0 0 24 24" width="16" height="16" fill="${filled ? '#f59e0b' : 'rgba(255,255,255,0.22)'}" stroke="${filled ? '#d97706' : 'rgba(255,255,255,0.35)'}" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+}
+
 /**
  * Update the map level nodes on the canvas
  */
@@ -182,12 +190,12 @@ function updateMapNodes(): void {
             <span class="pedestal-number">${lvlNum}</span>
           </span>
         </span>
-        ${isUnlocked ? '<span class="pedestal-flag-marker">🚩</span>' : ''}
+        ${isUnlocked ? getFlagMarkerSvg() : ''}
       </button>
       <div class="node-stars-row" id="stars-level-${lvlNum}">
-        <span class="level-star ${lvl.stars >= 1 ? 'star-filled' : 'star-empty'}">★</span>
-        <span class="level-star ${lvl.stars >= 2 ? 'star-filled' : 'star-empty'}">★</span>
-        <span class="level-star ${lvl.stars >= 3 ? 'star-filled' : 'star-empty'}">★</span>
+        ${getStarSvg(lvl.stars >= 1)}
+        ${getStarSvg(lvl.stars >= 2)}
+        ${getStarSvg(lvl.stars >= 3)}
       </div>
     `;
   });
@@ -214,12 +222,12 @@ function updateMapNodes(): void {
                   <span class="pedestal-number">1</span>
                 </span>
               </span>
-              <span class="pedestal-flag-marker">🚩</span>
+              ${getFlagMarkerSvg()}
             </button>
             <div class="node-stars-row" id="stars-level-1">
-              <span class="level-star star-empty">★</span>
-              <span class="level-star star-empty">★</span>
-              <span class="level-star star-empty">★</span>
+              ${getStarSvg(false)}
+              ${getStarSvg(false)}
+              ${getStarSvg(false)}
             </div>
           `;
           el.onclick = () => handleLevelClick(1);
@@ -244,12 +252,12 @@ function updateMapNodes(): void {
               </span>
             </button>
             <div class="node-stars-row" id="stars-level-${n}">
-              <span class="level-star star-empty">★</span>
-              <span class="level-star star-empty">★</span>
-              <span class="level-star star-empty">★</span>
+              ${getStarSvg(false)}
+              ${getStarSvg(false)}
+              ${getStarSvg(false)}
             </div>
           `;
-          el.onclick = () => showToast(`Complete Level ${n - 1} with at least 1 star to unlock Level ${n}!`);
+          el.onclick = () => showToast(`Complete Level ${n - 1} with at least 2 stars to unlock Level ${n}!`);
         }
       }
     }
@@ -298,7 +306,7 @@ function handleLevelClick(lvlId: number): void {
       nodeEl.classList.add('shake');
       setTimeout(() => nodeEl.classList.remove('shake'), 450);
     }
-    showToast(`Complete Level ${lvlId - 1} with at least 1 star to unlock Level ${lvlId}!`);
+    showToast(`Complete Level ${lvlId - 1} with at least 2 stars to unlock Level ${lvlId}!`);
     return;
   }
 
@@ -321,9 +329,18 @@ function openLevelOverview(level: QuizLevel): void {
   if (modalStatTime) modalStatTime.textContent = '10:00';
 
   // 3 Stars Progress
-  if (modalStar1) modalStar1.className = `modal-star ${level.stars >= 1 ? 'star-active' : ''}`;
-  if (modalStar2) modalStar2.className = `modal-star ${level.stars >= 2 ? 'star-active' : ''}`;
-  if (modalStar3) modalStar3.className = `modal-star ${level.stars >= 3 ? 'star-active' : ''}`;
+  if (modalStar1) {
+    modalStar1.className = `modal-star ${level.stars >= 1 ? 'star-active' : ''}`;
+    modalStar1.innerHTML = getStarSvg(level.stars >= 1, 'modal-star-svg');
+  }
+  if (modalStar2) {
+    modalStar2.className = `modal-star ${level.stars >= 2 ? 'star-active' : ''}`;
+    modalStar2.innerHTML = getStarSvg(level.stars >= 2, 'modal-star-svg');
+  }
+  if (modalStar3) {
+    modalStar3.className = `modal-star ${level.stars >= 3 ? 'star-active' : ''}`;
+    modalStar3.innerHTML = getStarSvg(level.stars >= 3, 'modal-star-svg');
+  }
   if (modalStarsCaption) modalStarsCaption.textContent = `${level.stars} / 3 Stars Earned`;
 
   modalLevelOverview.classList.add('show');
@@ -591,7 +608,7 @@ function updateAiBannerState(q: QuizQuestion, selectedAnswer?: 'A' | 'B' | 'C' |
   const isCorrect = selectedAnswer === q.correctOption;
   if (aiStatusPill) {
     aiStatusPill.className = `ai-status-pill ${isCorrect ? 'status-correct' : 'status-wrong'}`;
-    aiStatusPill.textContent = isCorrect ? 'Correct Answer! ⭐' : 'Incorrect Choice';
+    aiStatusPill.textContent = isCorrect ? 'Correct Answer!' : 'Incorrect Choice';
   }
 
   if (aiBannerExplanation) {
@@ -626,10 +643,10 @@ function openAiChatModal(): void {
       let cls = 'ai-context-option-pill';
       if (isCorrect) {
         cls += ' is-correct';
-        badge = ' ✓ Correct';
+        badge = ' [Correct]';
       } else if (isUserWrong) {
         cls += ' is-user-wrong';
-        badge = ' ✗ Your choice';
+        badge = ' [Your choice]';
       }
       return `<span class="${cls}">${opt.id}: ${escapeHtml(opt.text)}${badge}</span>`;
     }).join('');
@@ -639,13 +656,13 @@ function openAiChatModal(): void {
   if (!questionChatHistory[q.id] || questionChatHistory[q.id].length === 0) {
     const isCorrect = userChoice === q.correctOption;
     const initialGreeting = isCorrect
-      ? `🎉 **Great job!** You nailed this question with **Option ${q.correctOption} (${correctOpt?.text || ''})**.\n\n` +
+      ? `**Great job!** You nailed this question with **Option ${q.correctOption} (${correctOpt?.text || ''})**.\n\n` +
         `**Explanation:** ${q.explanation || 'This is the verified correct answer based on programming specifications.'}\n\n` +
-        `💡 Would you like to explore a code example, common traps, or test edge cases? Ask me anything below!`
-      : `👋 Let's review this question together!\n\n` +
+        `Would you like to explore a code example, common traps, or test edge cases? Ask me anything below!`
+      : `Let's review this question together!\n\n` +
         `The correct answer is **Option ${q.correctOption}: ${correctOpt?.text || ''}**.\n\n` +
         `**Explanation:** ${q.explanation || 'Review the core concept for this question.'}\n\n` +
-        `⚠️ ${userChoice ? `You selected Option ${userChoice}. ` : ''}Feel free to ask me any question about why this is correct or how to remember this concept!`;
+        `${userChoice ? `You selected Option ${userChoice}. ` : ''}Feel free to ask me any question about why this is correct or how to remember this concept!`;
 
     questionChatHistory[q.id] = [
       { role: 'ai', content: initialGreeting }
@@ -824,12 +841,12 @@ function generateAiTutorResponse(q: QuizQuestion, query: string, userChoice?: 'A
       `* **Core Specification:** In computer science, **${correctText}** meets the exact criteria defined in: *"${q.question}"*.\n\n` +
       `* **Other Choices Breakdown:**\n` +
       q.options.filter(o => o.id !== q.correctOption).map(o => `  - **Option ${o.id} (${o.text}):** Incorrect because it violates or does not satisfy this definition.`).join('\n') +
-      `\n\n💡 Would you like a code snippet demonstrating this?`;
+      `\n\nWould you like a code snippet demonstrating this?`;
   }
 
   // 3. Common traps / mistakes
   if (queryLower.includes('trap') || queryLower.includes('mistake') || queryLower.includes('common') || queryLower.includes('error')) {
-    return `⚠️ **Common Traps & Mistakes Students Make on This Topic:**\n\n` +
+    return `**Common Traps & Mistakes Students Make on This Topic:**\n\n` +
       `1. **Confusing similar naming conventions:** Believing options like ${q.options.map(o => `"${o.text}"`).join(', ')} behave identically.\n` +
       `2. **Assumptions about implicit behavior:** Overlooking type coercion or scoping rules.\n` +
       `3. **Interview Gotchas:** Questions like this are staples in technical screenings to test depth of knowledge beyond just writing basic syntax.\n\n` +
@@ -838,7 +855,7 @@ function generateAiTutorResponse(q: QuizQuestion, query: string, userChoice?: 'A
 
   // 4. Explain simply / beginner
   if (queryLower.includes('simply') || queryLower.includes('beginner') || queryLower.includes('simple') || queryLower.includes('easy')) {
-    return `👶 **Simple Beginner Explanation:**\n\n` +
+    return `**Simple Beginner Explanation:**\n\n` +
       `Imagine you need the right tool for a specific task:\n\n` +
       `* For *"${q.question}"*, the tool built explicitly for this is **${correctText}**.\n` +
       `* The other choices either do something different or belong to older or other languages.\n\n` +
@@ -937,9 +954,9 @@ async function handleQuizSubmit(): Promise<void> {
     // 3 Stars Row
     if (resultsStarsRow) {
       resultsStarsRow.innerHTML = `
-        <span class="res-star ${result.starsEarned >= 1 ? 'star-gold' : ''}">★</span>
-        <span class="res-star ${result.starsEarned >= 2 ? 'star-gold' : ''}">★</span>
-        <span class="res-star ${result.starsEarned >= 3 ? 'star-gold' : ''}">★</span>
+        <span class="res-star ${result.starsEarned >= 1 ? 'star-gold' : ''}">${getStarSvg(result.starsEarned >= 1, 'res-star-svg')}</span>
+        <span class="res-star ${result.starsEarned >= 2 ? 'star-gold' : ''}">${getStarSvg(result.starsEarned >= 2, 'res-star-svg')}</span>
+        <span class="res-star ${result.starsEarned >= 3 ? 'star-gold' : ''}">${getStarSvg(result.starsEarned >= 3, 'res-star-svg')}</span>
       `;
     }
 
