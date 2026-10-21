@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { supabase } from './services/supabaseApiBridge';
+import { getClerk, syncClerkUserToLocalStorage } from './services/clerkService';
 
 // ==========================================================================
 // 1. DATA MODELS & TYPES
@@ -391,6 +392,34 @@ class AudioEngine {
     osc.stop(now + 0.3);
   }
 
+  public playBoosterSound() {
+    this.initContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.exponentialRampToValueAtTime(880, now + 0.6);
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(600, now);
+    filter.frequency.exponentialRampToValueAtTime(2400, now + 0.6);
+
+    gain.gain.setValueAtTime(0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.85);
+  }
+
   public stopEngine() {
     if (this.engineOsc) {
       try {
@@ -557,11 +586,20 @@ class RoomGameApp {
   private remoteCars: Map<string, RemoteCarInstance> = new Map();
   private lastPosBroadcastTime: number = 0;
 
-  // Driving Physics
+  // Driving Physics & Nitro Booster
   private playerSpeed: number = 0;
+  private normalMaxSpeed: number = 1.65;
+  private boostedMaxSpeed: number = 2.75;
+  private normalAccel: number = 0.026;
+  private boostedAccel: number = 0.048;
   private maxSpeed: number = 1.65;
   private accel: number = 0.026;
   private friction: number = 0.965;
+  private hasBoosterActive: boolean = false;
+  private boosterEndTime: number = 0;
+  private nitroFlames: THREE.Mesh[] = [];
+  private myNameTag: THREE.Sprite | null = null;
+
   private keys: Record<string, boolean> = {
     ArrowUp: false,
     ArrowDown: false,
@@ -579,24 +617,108 @@ class RoomGameApp {
     this.checkUrlForRoom();
   }
 
-  // Read authenticated user or guest profile
-  private initUser() {
+  // Read authenticated user from Clerk/Kuizu or show Guest modal
+  private async initUser() {
+    let authenticated = false;
+    let name = '';
+    let email = '';
+    let avatar = '/images/home_avatar.png';
+
+    // 1. Check live Clerk authentication
     try {
-      const stored = localStorage.getItem('kuizu_user');
-      if (stored) {
-        const u = JSON.parse(stored);
-        this.userId = u.id || `usr_${Math.random().toString(36).substring(2, 9)}`;
-        this.userName = u.name || u.username || 'Racer';
-        this.userAvatar = u.avatar || localStorage.getItem('kuizu_avatar') || '/images/home_avatar.png';
-      } else {
-        this.userId = `usr_${Math.random().toString(36).substring(2, 9)}`;
-        this.userName = `Racer_${Math.floor(100 + Math.random() * 900)}`;
+      const clerk = await getClerk();
+      if (clerk && clerk.user) {
+        authenticated = true;
+        syncClerkUserToLocalStorage(clerk.user);
+        const emailAddr = clerk.user.primaryEmailAddress?.emailAddress || '';
+        const emailPrefix = emailAddr ? emailAddr.split('@')[0] : '';
+        name = clerk.user.firstName || clerk.user.fullName || (emailPrefix ? emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1) : '');
+        email = emailAddr;
+        if (clerk.user.imageUrl) {
+          avatar = clerk.user.imageUrl;
+        }
       }
-    } catch (_) {
-      this.userId = `usr_${Math.random().toString(36).substring(2, 9)}`;
-      this.userName = 'Racer_1';
+    } catch (e) {
+      console.warn('Clerk user check:', e);
     }
 
+    // 2. Fallback to cached localStorage user profile
+    if (!authenticated) {
+      const cachedName = localStorage.getItem('kuizu_user_name');
+      const cachedEmail = localStorage.getItem('kuizu_user_email');
+      const isLoggedIn = localStorage.getItem('kuizu_logged_in') === 'true';
+
+      if (isLoggedIn && (cachedName || cachedEmail)) {
+        authenticated = true;
+        if (cachedName) {
+          name = cachedName;
+        } else if (cachedEmail) {
+          const emailPrefix = cachedEmail.split('@')[0];
+          name = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+        }
+        email = cachedEmail || '';
+        const cachedAvatar = localStorage.getItem('kuizu_user_avatar') || localStorage.getItem('kuizu_google_avatar');
+        if (cachedAvatar) avatar = cachedAvatar;
+      }
+    }
+
+    // 3. If authenticated, apply real user name directly
+    if (authenticated && name) {
+      this.userName = name;
+      this.userId = email ? `usr_${email.replace(/[^a-zA-Z0-9]/g, '_')}` : `usr_${Math.random().toString(36).substring(2, 9)}`;
+      this.userAvatar = avatar;
+      this.updateUserHud();
+      return;
+    }
+
+    // 4. If unauthenticated, check if guest name was already chosen in this session
+    const sessionGuestName = sessionStorage.getItem('kuizu_guest_racer_name');
+    if (sessionGuestName) {
+      this.userName = sessionGuestName;
+      this.userId = `guest_${Math.random().toString(36).substring(2, 8)}`;
+      this.userAvatar = '/images/home_avatar.png';
+      this.updateUserHud();
+    } else {
+      // Show Auth / Guest popup modal
+      this.showAuthGateModal();
+    }
+  }
+
+  private showAuthGateModal() {
+    const modal = document.getElementById('modal-auth-gate');
+    const signinBtn = document.getElementById('btn-auth-signin') as HTMLAnchorElement | null;
+    const guestInput = document.getElementById('input-guest-name') as HTMLInputElement | null;
+    const submitGuestBtn = document.getElementById('btn-submit-guest');
+
+    if (modal) modal.style.display = 'flex';
+
+    if (signinBtn) {
+      signinBtn.href = `/sign-in?redirect_url=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+    }
+
+    if (guestInput && !guestInput.value) {
+      guestInput.value = `Racer_${Math.floor(100 + Math.random() * 900)}`;
+    }
+
+    submitGuestBtn?.addEventListener('click', () => {
+      const chosenName = guestInput?.value.trim() || `Racer_${Math.floor(100 + Math.random() * 900)}`;
+      this.userName = chosenName;
+      this.userId = `guest_${Math.random().toString(36).substring(2, 8)}`;
+      this.userAvatar = '/images/home_avatar.png';
+      sessionStorage.setItem('kuizu_guest_racer_name', chosenName);
+
+      if (modal) modal.style.display = 'none';
+      this.updateUserHud();
+
+      const self = this.racersMap.get(this.userId);
+      if (self) {
+        self.name = chosenName;
+      }
+      this.renderRacersGrid();
+    });
+  }
+
+  private updateUserHud() {
     const nameEl = document.getElementById('rg-user-name');
     const avatarEl = document.getElementById('rg-user-avatar') as HTMLImageElement | null;
     const hudRacerName = document.getElementById('hud-racer-name');
@@ -604,6 +726,14 @@ class RoomGameApp {
     if (nameEl) nameEl.textContent = this.userName;
     if (avatarEl) avatarEl.src = this.userAvatar;
     if (hudRacerName) hudRacerName.textContent = this.userName;
+
+    if (this.playerCar) {
+      if (this.myNameTag) {
+        this.playerCar.remove(this.myNameTag);
+      }
+      this.myNameTag = this.createNameTagSprite(this.userName, this.isHost);
+      this.playerCar.add(this.myNameTag);
+    }
   }
 
   private checkUrlForRoom() {
@@ -1117,8 +1247,54 @@ class RoomGameApp {
     hl2.position.set(0.8, 0.6, -2.25);
     this.playerCar.add(hl1, hl2);
 
+    // Taillights
+    const tlGeo = new THREE.BoxGeometry(0.38, 0.2, 0.1);
+    const tlMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+    const tl1 = new THREE.Mesh(tlGeo, tlMat);
+    tl1.position.set(-0.8, 0.6, 2.25);
+    const tl2 = new THREE.Mesh(tlGeo, tlMat);
+    tl2.position.set(0.8, 0.6, 2.25);
+    this.playerCar.add(tl1, tl2);
+
+    // Floating 3D Name Tag right above player's car
+    this.myNameTag = this.createNameTagSprite(this.userName, this.isHost);
+    this.playerCar.add(this.myNameTag);
+
+    // Dual Nitro Exhaust Flames
+    const flameGeo = new THREE.ConeGeometry(0.2, 1.2, 8);
+    const flameMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.85 });
+    const flame1 = new THREE.Mesh(flameGeo, flameMat);
+    flame1.rotation.x = -Math.PI / 2;
+    flame1.position.set(-0.7, 0.5, 2.7);
+    const flame2 = new THREE.Mesh(flameGeo, flameMat);
+    flame2.rotation.x = -Math.PI / 2;
+    flame2.position.set(0.7, 0.5, 2.7);
+    flame1.visible = false;
+    flame2.visible = false;
+    this.playerCar.add(flame1, flame2);
+    this.nitroFlames = [flame1, flame2];
+
     this.playerCar.position.set(0, 0, 0);
     this.scene.add(this.playerCar);
+  }
+
+  private activateBooster(durationSeconds: number = 6.5) {
+    this.hasBoosterActive = true;
+    this.boosterEndTime = performance.now() + durationSeconds * 1000;
+    this.audio.playBoosterSound();
+
+    const banner = document.getElementById('booster-banner');
+    if (banner) banner.style.display = 'flex';
+    this.nitroFlames.forEach(f => (f.visible = true));
+  }
+
+  private deactivateBooster() {
+    this.hasBoosterActive = false;
+    this.boosterEndTime = 0;
+
+    const banner = document.getElementById('booster-banner');
+    if (banner) banner.style.display = 'none';
+    this.nitroFlames.forEach(f => (f.visible = false));
   }
 
   private createNameTagSprite(name: string, isHost: boolean): THREE.Sprite {
@@ -1315,6 +1491,38 @@ class RoomGameApp {
     requestAnimationFrame(this.animate);
 
     if (this.raceActive && !this.isPausedForQuiz && !this.userFinished) {
+      // Update Nitro Speed Booster Physics & Timer
+      if (this.hasBoosterActive) {
+        const remainingMs = this.boosterEndTime - performance.now();
+        if (remainingMs > 0) {
+          this.maxSpeed = this.boostedMaxSpeed;
+          this.accel = this.boostedAccel;
+          const timeText = document.getElementById('booster-time-text');
+          if (timeText) timeText.textContent = `${(remainingMs / 1000).toFixed(1)}s`;
+
+          // Camera warp effect (smooth FOV shift)
+          this.camera.fov += (72 - this.camera.fov) * 0.1;
+          this.camera.updateProjectionMatrix();
+
+          // Nitro flame flicker
+          const flick = 0.85 + Math.random() * 0.45;
+          this.nitroFlames.forEach(f => {
+            f.visible = true;
+            f.scale.set(flick, flick * (1 + Math.random() * 0.6), flick);
+          });
+        } else {
+          this.deactivateBooster();
+        }
+      } else {
+        this.maxSpeed = this.normalMaxSpeed;
+        this.accel = this.normalAccel;
+        if (Math.abs(this.camera.fov - 60) > 0.1) {
+          this.camera.fov += (60 - this.camera.fov) * 0.1;
+          this.camera.updateProjectionMatrix();
+        }
+        this.nitroFlames.forEach(f => (f.visible = false));
+      }
+
       const fwd = this.keys.ArrowUp || this.keys.w;
       const bwd = this.keys.ArrowDown || this.keys.s;
       const left = this.keys.ArrowLeft || this.keys.a;
@@ -1345,6 +1553,11 @@ class RoomGameApp {
       this.camera.position.y = 4.3;
       this.camera.position.z = this.playerCar.position.z + 10.5;
       this.camera.lookAt(this.playerCar.position.x, 1.3, this.playerCar.position.z - 16);
+
+      // Keep player's own 3D name tag facing the camera
+      if (this.myNameTag) {
+        this.myNameTag.quaternion.copy(this.camera.quaternion);
+      }
 
       // Update Traffic
       this.traffic.update(this.playerCar.position.z);
@@ -1416,6 +1629,7 @@ class RoomGameApp {
 
   private handleCarCrash() {
     this.audio.playCrash();
+    this.deactivateBooster();
     this.playerSpeed = 0.1;
     // Shift slightly into safe lane
     this.playerCar.position.x = 0;
@@ -1484,13 +1698,14 @@ class RoomGameApp {
     if (isCorrect) {
       clickedBtn.classList.add('is-correct');
       this.xpScore += 20;
+      this.activateBooster(7.0);
       if (feedbackDiv) {
         feedbackDiv.style.display = 'block';
         feedbackDiv.className = 'rg-quiz-feedback bg-emerald';
         feedbackDiv.style.background = 'rgba(16, 185, 129, 0.15)';
         feedbackDiv.style.border = '1px solid rgba(16, 185, 129, 0.35)';
         feedbackDiv.style.color = '#a7f3d0';
-        feedbackDiv.innerHTML = `<strong>Spot On! (+20 XP)</strong> Excellent grasp of this concept.`;
+        feedbackDiv.innerHTML = `<strong>Spot On! (+20 XP) ⚡ NITRO BOOSTER ACTIVATED!</strong><br/><span style="margin-top:4px;display:block;">Surging to 160% top speed with dual exhaust flames for 7.0s!</span>`;
       }
     } else {
       clickedBtn.classList.add('is-wrong');
@@ -1499,12 +1714,13 @@ class RoomGameApp {
         allBtns[cp.correct].classList.add('is-correct');
       }
       this.xpScore += 10;
+      this.deactivateBooster();
       if (feedbackDiv) {
         feedbackDiv.style.display = 'block';
         feedbackDiv.style.background = 'rgba(245, 158, 11, 0.15)';
         feedbackDiv.style.border = '1px solid rgba(245, 158, 11, 0.35)';
         feedbackDiv.style.color = '#fde68a';
-        feedbackDiv.innerHTML = `<strong>Participation XP (+10 XP)</strong><br/><span style="margin-top:4px;display:block;">${cp.explanation}</span>`;
+        feedbackDiv.innerHTML = `<strong>Participation XP (+10 XP) • Normal Speed</strong><br/><span style="margin-top:4px;display:block;">${cp.explanation}</span>`;
       }
     }
 

@@ -264,6 +264,17 @@
       </div>
     </div>
 
+    <!-- NITRO SPEED BOOSTER BANNER -->
+    <div id="booster-banner" class="rg-booster-toast" style="display: none;">
+      <svg class="rg-icon-md" viewBox="0 0 24 24" fill="none" stroke="#082f49" stroke-width="2.5">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+      </svg>
+      <div>
+        <div class="rg-booster-title">NITRO SPEED BOOSTER ACTIVE!</div>
+        <div class="rg-booster-sub">Max Velocity Surge (<span id="booster-time-text">6.0s</span>)</div>
+      </div>
+    </div>
+
     <!-- 3D WEBGL CANVAS -->
     <canvas id="game-canvas"></canvas>
   </main>
@@ -355,6 +366,65 @@
             <span>Host New Race</span>
           </button>
         </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 5. AUTH / GUEST GATE MODAL (Sign In or Enter as Guest) -->
+  <!-- ======================================================== -->
+  <div id="modal-auth-gate" class="rg-modal-backdrop" style="display: none;">
+    <div class="rg-modal-card glass-panel rg-auth-card">
+      <div class="rg-modal-top">
+        <span class="rg-badge-pill">Kuizu Highway Arena</span>
+        <span class="text-dim" style="font-size: 11px; font-weight: 700;">Multiplayer 3D Racing</span>
+      </div>
+
+      <div class="rg-auth-header">
+        <div class="rg-auth-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+            <path d="M6 12h4m-2-2v4"></path>
+            <circle cx="15" cy="11" r="1"></circle>
+            <circle cx="18" cy="13" r="1"></circle>
+          </svg>
+        </div>
+        <h2 class="rg-modal-question" style="margin-bottom: 6px;">Sign In or Play as Guest</h2>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+          Sign in to automatically link your Kuizu account and email name, or enter as an anonymous guest with a custom racer name.
+        </p>
+      </div>
+
+      <!-- Option 1: Sign in with Kuizu / Clerk -->
+      <a id="btn-auth-signin" href="/sign-in" class="rg-btn-primary" style="width: 100%; text-decoration: none; margin-bottom: 16px;">
+        <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+          <polyline points="10 17 15 12 10 7"></polyline>
+          <line x1="15" y1="12" x2="3" y2="12"></line>
+        </svg>
+        <span>Sign In / Sign Up to Kuizu</span>
+      </a>
+
+      <div class="rg-auth-divider">
+        <span>OR ENTER AS GUEST</span>
+      </div>
+
+      <!-- Option 2: Enter as Guest with custom name -->
+      <div class="rg-guest-box">
+        <label class="rg-form-label" for="input-guest-name">Your Custom Racer Name</label>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="input-guest-name" class="rg-input" placeholder="e.g. SpeedRacer" maxlength="15" value="GuestRacer" />
+          <button id="btn-submit-guest" class="rg-btn-amber" style="white-space: nowrap;">
+            <span>Play as Guest</span>
+            <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        <p style="font-size: 11px; color: var(--text-dim); margin-top: 8px;">
+          This name will float in 3D right above your car so your friends can identify you on the highway.
+        </p>
       </div>
 
     </div>
