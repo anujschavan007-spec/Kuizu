@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Kuizu Open Highway - Multiplayer Off-Road Arena</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/src/roomgame2.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body class="room-game-body">
+
+  <!-- TOP HEADER BAR -->
+  <header class="rg-header glass-panel">
+    <div class="rg-header-left">
+      <a href="/home" class="rg-brand-link" title="Back to Kuizu Home">
+        <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span class="rg-brand-title">KUIZU <span class="rg-brand-accent">OPEN-ROAD</span></span>
+      </a>
+      <span class="rg-badge-pill rg-badge-openworld" id="room-status-badge">Off-Road Enabled</span>
+    </div>
+
+    <div class="rg-header-center" id="header-room-info" style="display: none;">
+      <span class="rg-label">ROOM:</span>
+      <span class="rg-room-code-tag" id="header-room-code">KZ-0000</span>
+      <button id="btn-copy-room-link" class="rg-icon-btn" title="Copy Invite Link">
+        <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="rg-btn-text">Share</span>
+      </button>
+    </div>
+
+    <div class="rg-header-right">
+      <div class="rg-user-pill">
+        <img id="rg-user-avatar" src="/images/home_avatar.png" alt="Racer Avatar" class="rg-avatar-img" />
+        <span id="rg-user-name" class="rg-username">Racer</span>
+      </div>
+      <button id="btn-exit-room" class="rg-btn-secondary" style="display: none;">
+        <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        <span>Leave</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- 1. LOBBY SCREEN (Create / Join / Room Waitlist) -->
+  <!-- ======================================================== -->
+  <main id="screen-lobby" class="rg-screen">
+    <div class="rg-container">
+      
+      <!-- HERO -->
+      <div class="rg-hero-text">
+        <h1 class="rg-main-title">Multiplayer Open Highway Arena</h1>
+        <p class="rg-subtitle">
+          Drive freely across asphalt or cut off-road through rolling hills! Pass through 5 glowing checkpoints, answer quiz questions, unleash nitro boost, and race your friends in real-time.
+        </p>
+      </div>
+
+      <!-- INITIAL CHOICES: CREATE OR JOIN -->
+      <div id="lobby-initial-actions" class="rg-action-grid">
+        
+        <!-- CARD: CREATE ROOM -->
+        <div class="rg-card glass-panel">
+          <div class="rg-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+          </div>
+          <h2 class="rg-card-title">Host Open-World Race</h2>
+          <p class="rg-card-desc">Generate a private 6-digit room code. As the room host, you launch the synchronized countdown when everyone is ready.</p>
+
+          <div class="rg-form-group">
+            <label class="rg-form-label" for="input-create-title">Race Arena Title</label>
+            <input type="text" id="input-create-title" class="rg-input" placeholder="e.g. Open Terrain Grand Prix" maxlength="32" value="Kuizu Open Highway Cup" />
+          </div>
+
+          <div class="rg-form-group">
+            <label class="rg-form-label" for="select-create-level">Course Track & Syllabus</label>
+            <select id="select-create-level" class="rg-select">
+              <option value="1">Sunset Valley (CS Foundations & Architecture)</option>
+              <option value="2">Cyber Dunes (DSA & Graphs)</option>
+              <option value="3">Alpine Meadows (Distributed Systems)</option>
+            </select>
+          </div>
+
+          <button id="btn-create-room" class="rg-btn-primary">
+            <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Create Race Room</span>
+          </button>
+        </div>
+
+        <!-- CARD: JOIN ROOM -->
+        <div class="rg-card glass-panel">
+          <div class="rg-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+          </div>
+          <h2 class="rg-card-title">Join Existing Race</h2>
+          <p class="rg-card-desc">Enter a 6-character room code from your friend to jump directly into their open-world lobby.</p>
+
+          <div class="rg-form-group">
+            <label class="rg-form-label" for="input-join-code">Enter 6-Digit Room Code</label>
+            <input type="text" id="input-join-code" class="rg-input rg-input-code" placeholder="KZ-XXXX" maxlength="8" />
+          </div>
+
+          <div id="join-error-msg" class="rg-error-msg" style="display: none;"></div>
+
+          <button id="btn-join-room" class="rg-btn-amber">
+            <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <polyline points="17 11 19 13 23 9"></polyline>
+            </svg>
+            <span>Join Room</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ACTIVE ROOM LOBBY -->
+      <div id="lobby-active-room" class="rg-active-lobby glass-panel" style="display: none;">
+        
+        <div class="rg-lobby-header">
+          <div>
+            <div class="rg-lobby-sub">Multiplayer Room Lobby</div>
+            <h2 id="active-room-title" class="rg-lobby-title">Kuizu Open Highway Cup</h2>
+            <div class="rg-lobby-track-info" id="active-room-track">Track: Sunset Valley (CS Foundations)</div>
+          </div>
+          <div class="rg-lobby-code-box">
+            <span class="rg-label">ROOM CODE</span>
+            <div class="rg-code-display" id="active-room-code">KZ-4821</div>
+            <button id="btn-copy-code" class="rg-btn-secondary rg-btn-xs">Copy Code</button>
+          </div>
+        </div>
+
+        <!-- RACERS LIST -->
+        <div class="rg-racers-section">
+          <div class="rg-racers-header">
+            <span class="rg-section-title">Connected Racers (<span id="racers-count">1</span>/8)</span>
+            <span class="rg-racers-status-live">
+              <span class="rg-live-dot"></span> Supabase Realtime Connected
+            </span>
+          </div>
+
+          <div id="racers-grid" class="rg-racers-grid">
+            <!-- Racer cards injected dynamically -->
+          </div>
+        </div>
+
+        <!-- HOST CONTROLS / WAITING MESSAGE -->
+        <div class="rg-lobby-footer">
+          <div id="host-controls" style="display: none;">
+            <p class="rg-host-hint">You are the <strong>Room Host</strong>. When all racers are ready in the lobby, click below to launch the synchronized race.</p>
+            <button id="btn-start-race" class="rg-btn-launch">
+              <svg class="rg-icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span>Start Open-World Race (Synchronized)</span>
+            </button>
+          </div>
+
+          <div id="guest-waiting" style="display: none;">
+            <div class="rg-waiting-box">
+              <div class="rg-spinner"></div>
+              <div>
+                <div class="rg-waiting-title">Waiting for Host to Start Race...</div>
+                <div class="rg-waiting-sub">Stay on this screen. The 3D open-terrain race and countdown will launch automatically for everyone.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- 2. GAMEPLAY SCREEN (3D Open Highway & Off-Road Racing) -->
+  <!-- ======================================================== -->
+  <main id="screen-game" class="rg-screen" style="display: none;">
+    
+    <!-- TOP HUD OVERLAY -->
+    <div class="rg-game-hud">
+      <!-- Player & XP Meter -->
+      <div class="glass-panel rg-hud-card">
+        <div class="rg-hud-col">
+          <span class="rg-hud-label">RACER</span>
+          <span class="rg-hud-val" id="hud-racer-name">You</span>
+        </div>
+        <div class="rg-hud-divider"></div>
+        <div class="rg-hud-col">
+          <span class="rg-hud-label">XP SCORE</span>
+          <span class="rg-hud-val text-amber" id="hud-xp-score">0 XP</span>
+        </div>
+        <div class="rg-hud-divider"></div>
+        <div class="rg-hud-col">
+          <span class="rg-hud-label">CHECKPOINTS</span>
+          <span class="rg-hud-val text-emerald"><span id="hud-cp-count">0</span> / 5</span>
+        </div>
+      </div>
+
+      <!-- LIVE OPPONENTS LEADER TRACKER -->
+      <div class="glass-panel rg-hud-card rg-opponents-hud" id="hud-opponents-list">
+        <div class="rg-opp-header">
+          <span class="rg-live-dot"></span>
+          <span>LIVE RACERS</span>
+        </div>
+        <div id="opponents-bars-container" class="rg-opp-list">
+          <!-- Live racer progress chips injected dynamically -->
+        </div>
+      </div>
+
+      <!-- SPEEDOMETER & SURFACE -->
+      <div class="glass-panel rg-hud-card rg-speedo-card">
+        <div class="rg-speed-num"><span id="hud-speed">0</span> <span class="rg-speed-unit">km/h</span></div>
+        <div class="rg-rpm-bar-track">
+          <div id="hud-rpm-fill" class="rg-rpm-fill" style="width: 0%;"></div>
+        </div>
+        <div id="hud-surface-tag" class="rg-surface-tag rg-surface-road">ON-ROAD</div>
+      </div>
+    </div>
+
+    <!-- COMPASS NAVIGATION ARROW (Points directly to active checkpoint) -->
+    <div class="glass-panel rg-compass-hud" id="nav-compass" title="Navigation Compass (Points to next checkpoint)">
+      <div class="rg-compass-arrow" id="nav-arrow"></div>
+    </div>
+
+    <!-- NEXT CHECKPOINT DISTANCE BANNER -->
+    <div id="checkpoint-banner" class="glass-panel rg-cp-banner">
+      <div class="rg-cp-banner-content">
+        <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.5">
+          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+          <line x1="4" y1="22" x2="4" y2="15"></line>
+        </svg>
+        <span>Head to <strong id="next-cp-name" class="text-white">Checkpoint 1</strong> (<span id="next-cp-dist">120</span>m) - Road or Off-Road</span>
+      </div>
+    </div>
+
+    <!-- COUNTDOWN OVERLAY (3... 2... 1... GO!) -->
+    <div id="countdown-overlay" class="rg-countdown-modal" style="display: none;">
+      <div class="rg-countdown-box">
+        <div id="countdown-number" class="rg-countdown-text">3</div>
+        <div class="rg-countdown-sub">GET READY TO RACE!</div>
+      </div>
+    </div>
+
+    <!-- NITRO SPEED BOOSTER BANNER -->
+    <div id="booster-banner" class="rg-booster-toast" style="display: none;">
+      <svg class="rg-icon-md" viewBox="0 0 24 24" fill="none" stroke="#082f49" stroke-width="2.5">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+      </svg>
+      <div>
+        <div class="rg-booster-title">NITRO SPEED BOOSTER ACTIVE!</div>
+        <div class="rg-booster-sub">Max Velocity Surge (<span id="booster-time-text">7.0s</span>)</div>
+      </div>
+    </div>
+
+    <!-- 3D WEBGL CANVAS -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- MOBILE TOUCH BUTTONS -->
+    <div id="touch-controls">
+      <div>
+        <button id="touch-left" aria-label="Steer Left">
+          <svg class="rg-icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <button id="touch-right" aria-label="Steer Right">
+          <svg class="rg-icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+      <div>
+        <button id="touch-down" aria-label="Brake or Reverse">
+          <svg class="rg-icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <button id="touch-up" aria-label="Accelerate">
+          <svg class="rg-icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- 3. CHECKPOINT QUIZ MODAL -->
+  <!-- ======================================================== -->
+  <div id="quiz-modal" class="rg-modal-backdrop" style="display: none;">
+    <div class="rg-modal-card glass-panel">
+      <div class="rg-modal-top">
+        <span id="quiz-badge" class="rg-badge-pill">Checkpoint 1</span>
+        <span class="rg-quiz-reward text-amber">+20 XP & Nitro Boost</span>
+      </div>
+
+      <h2 id="quiz-question" class="rg-modal-question">Question text appears here?</h2>
+
+      <div id="quiz-options" class="rg-quiz-options">
+        <!-- Buttons injected dynamically -->
+      </div>
+
+      <div id="quiz-feedback" class="rg-quiz-feedback" style="display: none;"></div>
+
+      <div class="rg-modal-actions">
+        <button id="btn-continue-drive" class="rg-btn-primary" style="display: none;">
+          <span>Continue Driving</span>
+          <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 4. LIVE RACE LEADERBOARD (Pending & Finished View) -->
+  <!-- ======================================================== -->
+  <div id="leaderboard-modal" class="rg-modal-backdrop" style="display: none;">
+    <div class="rg-leaderboard-card glass-panel">
+      
+      <div class="rg-lb-header">
+        <div class="rg-lb-badge-live">
+          <span class="rg-live-dot"></span> LIVE MULTIPLAYER STANDINGS
+        </div>
+        <h2 class="rg-lb-title">Open Highway Race Leaderboard</h2>
+        <p id="lb-status-summary" class="rg-lb-summary">
+          You finished the race! Waiting for remaining racers to cross the finish line...
+        </p>
+      </div>
+
+      <!-- PODIUM TABLE -->
+      <div class="rg-lb-table-wrap">
+        <table class="rg-lb-table">
+          <thead>
+            <tr>
+              <th>POS</th>
+              <th>RACER</th>
+              <th>STATUS</th>
+              <th>CHECKPOINT</th>
+              <th>RACE TIME</th>
+              <th>SCORE</th>
+            </tr>
+          </thead>
+          <tbody id="lb-table-body">
+            <!-- Racer rows injected dynamically with Finished or Pending status -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- RACE COMPLETION FOOTER -->
+      <div class="rg-lb-footer">
+        <div class="rg-lb-hint" id="lb-footer-hint">
+          <div class="rg-spinner rg-spinner-sm"></div>
+          <span>Syncing live finish results via Supabase Realtime...</span>
+        </div>
+
+        <div class="rg-lb-btns">
+          <button id="btn-lb-lobby" class="rg-btn-secondary">
+            <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Return to Lobby</span>
+          </button>
+          <button id="btn-lb-restart" class="rg-btn-primary" style="display: none;">
+            <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+            <span>Host New Race</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 5. AUTH / GUEST GATE MODAL (Sign In or Enter as Guest) -->
+  <!-- ======================================================== -->
+  <div id="modal-auth-gate" class="rg-modal-backdrop" style="display: none;">
+    <div class="rg-modal-card glass-panel rg-auth-card">
+      <div class="rg-modal-top">
+        <span class="rg-badge-pill">Kuizu Open Highway</span>
+        <span class="text-dim" style="font-size: 11px; font-weight: 700;">Multiplayer 3D Racing</span>
+      </div>
+
+      <div class="rg-auth-header">
+        <div class="rg-auth-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+            <path d="M6 12h4m-2-2v4"></path>
+            <circle cx="15" cy="11" r="1"></circle>
+            <circle cx="18" cy="13" r="1"></circle>
+          </svg>
+        </div>
+        <h2 class="rg-modal-question" style="margin-bottom: 6px;">Sign In or Play as Guest</h2>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+          Sign in to automatically link your Kuizu account and email name, or enter as an anonymous guest with a custom racer name.
+        </p>
+      </div>
+
+      <!-- Option 1: Sign in with Kuizu / Clerk -->
+      <a id="btn-auth-signin" href="/sign-in" class="rg-btn-primary" style="width: 100%; text-decoration: none; margin-bottom: 16px;">
+        <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+          <polyline points="10 17 15 12 10 7"></polyline>
+          <line x1="15" y1="12" x2="3" y2="12"></line>
+        </svg>
+        <span>Sign In / Sign Up to Kuizu</span>
+      </a>
+
+      <div class="rg-auth-divider">
+        <span>OR ENTER AS GUEST</span>
+      </div>
+
+      <!-- Option 2: Enter as Guest with custom name -->
+      <div class="rg-guest-box">
+        <label class="rg-form-label" for="input-guest-name">Your Custom Racer Name</label>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="input-guest-name" class="rg-input" placeholder="e.g. OffroadKing" maxlength="15" value="GuestRacer" />
+          <button id="btn-submit-guest" class="rg-btn-amber" style="white-space: nowrap;">
+            <span>Play as Guest</span>
+            <svg class="rg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        <p style="font-size: 11px; color: var(--text-dim); margin-top: 8px;">
+          This name will float in 3D right above your car so your friends can identify you across the road and open hills.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module" src="/src/roomgame2.ts"></script>
+</body>
+</html>

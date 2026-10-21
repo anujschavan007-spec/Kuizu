@@ -9,6 +9,7 @@
     { "source": "/sso-callback", "destination": "/sso-callback/index.html" },
     { "source": "/game", "destination": "/game/index.html" },
     { "source": "/roomgame", "destination": "/roomgame/index.html" },
+    { "source": "/roomgame2", "destination": "/roomgame2/index.html" },
     { "source": "/home", "destination": "/home/index.html" },
     { "source": "/problems", "destination": "/problems/index.html" },
     { "source": "/quiz", "destination": "/quiz/index.html" },
